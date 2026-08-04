@@ -1,0 +1,6 @@
+{
+  "name": "LGPSM — Future Forward Fashion",
+  "description": "Pure white minimal futuristic fashion landing page interface with interactive dual-image reveal spotlight background.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
