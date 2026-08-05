@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useMotionValue, useSpring } from 'motion/react';
 import bgArmor from '@/assets/bg-armor.png';
 import bgCloak from '@/assets/bg-colored-armor.png';
 
@@ -13,6 +14,11 @@ export const BG_IMAGE_2 = bgCloak;
 const circleMask = (radius: number) =>
   `radial-gradient(circle ${radius}px at center, #000 0%, #000 40%, rgba(0,0,0,0.75) 60%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0.12) 88%, transparent 100%)`;
 
+const initCenter = {
+  x: typeof window !== 'undefined' ? window.innerWidth / 2 : 960,
+  y: typeof window !== 'undefined' ? window.innerHeight / 2 : 540,
+};
+
 export const ImageRevealBackground: React.FC = () => {
   const revealRef = useRef<HTMLDivElement>(null);
   const patternRef = useRef<SVGPatternElement>(null);
@@ -22,24 +28,22 @@ export const ImageRevealBackground: React.FC = () => {
     reveal: BG_IMAGE_2,
   });
 
-  // Raw cursor position, captured in mousemove
-  const cursorRef = useRef<{ x: number; y: number }>({
-    x: typeof window !== 'undefined' ? window.innerWidth / 2 : 960,
-    y: typeof window !== 'undefined' ? window.innerHeight / 2 : 540,
-  });
+  // Raw cursor position (source for the springs)
+  const cursorX = useMotionValue(initCenter.x);
+  const cursorY = useMotionValue(initCenter.y);
 
-  // Smoothed spotlight position, eased toward the cursor in the render loop.
-  // Distance-adaptive: gentle glide at low speeds, quick catch-up on fast
-  // movement, so it feels fluid without trailing the cursor.
-  const smoothRef = useRef<{ x: number; y: number }>({
-    x: typeof window !== 'undefined' ? window.innerWidth / 2 : 960,
-    y: typeof window !== 'undefined' ? window.innerHeight / 2 : 540,
-  });
+  // Spotlight springs - firm and fast so the spotlight tracks the cursor
+  // almost 1:1 with only a hint of smoothing; overdamped so it never overshoots.
+  const spotX = useSpring(cursorX, { stiffness: 600, damping: 70, mass: 1 });
+  const spotY = useSpring(cursorY, { stiffness: 600, damping: 70, mass: 1 });
 
-  const gridOffsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  // Grid parallax springs - heavily damped, slow glide to mimic a lazy lerp.
+  const gridX = useSpring(cursorX, { stiffness: 25, damping: 65, mass: 1 });
+  const gridY = useSpring(cursorY, { stiffness: 25, damping: 65, mass: 1 });
+
   const [gridCellSize, setGridCellSize] = useState<number>(48);
   const [radius, setRadius] = useState<number>(
-    typeof window !== 'undefined' ? Math.round(Math.min(420, Math.max(160, window.innerWidth * 0.16)) * 1.2) : 188,
+    Math.round(Math.min(420, Math.max(160, initCenter.x * 0.32)) * 1.2),
   );
 
   const radiusRef = useRef<number>(radius);
@@ -51,11 +55,29 @@ export const ImageRevealBackground: React.FC = () => {
     const applySpotlight = () => {
       const el = revealRef.current;
       if (!el) return;
-      const { x, y } = smoothRef.current;
       const r = radiusRef.current;
-      const pos = `${x - r}px ${y - r}px`;
+      const pos = `${spotX.get() - r}px ${spotY.get() - r}px`;
       el.style.maskPosition = pos;
       el.style.webkitMaskPosition = pos;
+    };
+
+    const applyGrid = () => {
+      const p = patternRef.current;
+      if (!p) return;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      p.setAttribute('x', ((gridX.get() / w - 0.5) * 12).toFixed(2));
+      p.setAttribute('y', ((gridY.get() / h - 0.5) * 12).toFixed(2));
+    };
+
+    const unSubSpotX = spotX.on('change', applySpotlight);
+    const unSubSpotY = spotY.on('change', applySpotlight);
+    const unSubGridX = gridX.on('change', applyGrid);
+    const unSubGridY = gridY.on('change', applyGrid);
+
+    const handleMouseMove = (e: MouseEvent) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
     };
 
     const updateDimensions = () => {
@@ -64,57 +86,25 @@ export const ImageRevealBackground: React.FC = () => {
       setRadius(Math.round(Math.min(420, Math.max(160, w * 0.16)) * 1.2));
       setGridCellSize(cellSize);
       applySpotlight();
-    };
-
-    const handleMouseMove = (e: MouseEvent) => {
-      cursorRef.current = { x: e.clientX, y: e.clientY };
+      applyGrid();
     };
 
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('resize', updateDimensions);
 
-    let animationFrameId: number;
-
-    const renderLoop = () => {
-      // Ease the spotlight toward the cursor with a gentle constant factor so
-      // it trails smoothly with a slight delay; a mild distance boost only
-      // prevents big jumps across the screen from taking too long to settle
-      const mouse = cursorRef.current;
-      const smooth = smoothRef.current;
-      const dx = mouse.x - smooth.x;
-      const dy = mouse.y - smooth.y;
-      const dist = Math.hypot(dx, dy);
-      const ease = Math.min(0.22, 0.08 + dist / 3000);
-      smooth.x += dx * ease;
-      smooth.y += dy * ease;
-
-      applySpotlight();
-
-      // Imperceptible lazy parallax for the grid overlay only
-      const { x, y } = cursorRef.current;
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const cxNorm = x / w - 0.5;
-      const cyNorm = y / h - 0.5;
-
-      gridOffsetRef.current.x += (cxNorm * 12 - gridOffsetRef.current.x) * 0.06;
-      gridOffsetRef.current.y += (cyNorm * 12 - gridOffsetRef.current.y) * 0.06;
-
-      if (patternRef.current) {
-        patternRef.current.setAttribute('x', gridOffsetRef.current.x.toFixed(2));
-        patternRef.current.setAttribute('y', gridOffsetRef.current.y.toFixed(2));
-      }
-
-      animationFrameId = requestAnimationFrame(renderLoop);
-    };
-
-    animationFrameId = requestAnimationFrame(renderLoop);
-
     return () => {
+      unSubSpotX();
+      unSubSpotY();
+      unSubGridX();
+      unSubGridY();
+      spotX.stop();
+      spotY.stop();
+      gridX.stop();
+      gridY.stop();
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('resize', updateDimensions);
-      cancelAnimationFrame(animationFrameId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -128,9 +118,8 @@ export const ImageRevealBackground: React.FC = () => {
       />
 
       {/* 2. Reveal Layer (BG_IMAGE_2 - Crimson Floral Cloak) - full screen,
-          masked by the spotlight tile whose mask-position follows the cursor.
-          Moving mask-position is a cheap repaint (no canvas / dataURL encode)
-          so the reveal keeps up with the cursor exactly. */}
+          masked by the spotlight tile whose mask-position is driven by motion
+          springs from the cursor, giving a smooth trailing reveal. */}
       <div
         ref={revealRef}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"

@@ -3,6 +3,7 @@ import { ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import crestImg from '@/assets/crest.png';
 import honorLogoImg from '@/assets/honor-logo.png';
+import { RollingText } from './RollingText';
 
 interface SiteHeaderProps {
   activeNavTab: string;
@@ -32,11 +33,11 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount 
             <button
               key={item.path}
               onClick={() => navigate(item.path)}
-              className={`relative pb-1 hover:opacity-50 transition-opacity cursor-pointer whitespace-nowrap ${
+              className={`relative pb-1 cursor-pointer whitespace-nowrap ${
                 isActive ? 'font-bold' : ''
               }`}
             >
-              {item.label}
+              <RollingText>{item.label}</RollingText>
               {isActive && (
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-black" />
               )}
