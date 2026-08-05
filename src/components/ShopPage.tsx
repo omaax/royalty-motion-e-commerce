@@ -1,46 +1,29 @@
 import React, { useState, useMemo } from 'react';
 import {
   Search,
-  User,
-  ShoppingBag,
   LayoutGrid,
   Grid2X2,
   List,
   ChevronDown,
   Plus,
   ArrowRight,
-  Minus,
   X,
   Check,
   Sparkles,
   SlidersHorizontal,
 } from 'lucide-react';
-import { ShopItem, CartItem } from '../types';
+import { ShopItem } from '../types';
 import { SHOP_PRODUCTS } from '../data/shopData';
-import crestImg from '@/assets/crest.png';
 import crestRedImg from '@/assets/crest-red.png';
-import honorLogoImg from '@/assets/honor-logo.png';
 
 interface ShopPageProps {
-  onNavigateHome: () => void;
-  onNavigatePage: (page: 'home' | 'shop' | 'collections' | 'about' | 'contact') => void;
-  cartItems: CartItem[];
   onAddToCart: (item: ShopItem) => void;
-  onOpenCart: () => void;
-  activeNavTab: string;
 }
 
-export const ShopPage: React.FC<ShopPageProps> = ({
-  onNavigateHome,
-  onNavigatePage,
-  cartItems,
-  onAddToCart,
-  onOpenCart,
-  activeNavTab,
-}) => {
+export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart }) => {
   // Filter States
   const [selectedCategory, setSelectedCategory] = useState<string>('All Products');
-  const [maxPrice, setMaxPrice] = useState<number>(5000);
+  const [priceRange, setPriceRange] = useState<[number, number]>([50, 5000]);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [inStockOnly, setInStockOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'featured' | 'price-low' | 'price-high' | 'newest'>('featured');
@@ -58,8 +41,6 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   const [collapsePrice, setCollapsePrice] = useState<boolean>(false);
   const [collapseColor, setCollapseColor] = useState<boolean>(false);
 
-  const totalCartCount = cartItems.reduce((acc, c) => acc + c.quantity, 0);
-
   // Filter Logic
   const filteredProducts = useMemo(() => {
     return SHOP_PRODUCTS.filter((item) => {
@@ -68,7 +49,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
         return false;
       }
       // Price
-      if (item.price > maxPrice) {
+      if (item.price < priceRange[0] || item.price > priceRange[1]) {
         return false;
       }
       // Color
@@ -95,7 +76,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
       if (sortBy === 'newest') return b.id.localeCompare(a.id);
       return 0; // featured default
     });
-  }, [selectedCategory, maxPrice, selectedColor, inStockOnly, sortBy, searchQuery]);
+  }, [selectedCategory, priceRange, selectedColor, inStockOnly, sortBy, searchQuery]);
 
   // Category item counts
   const categoryCounts = useMemo(() => {
@@ -135,159 +116,265 @@ export const ShopPage: React.FC<ShopPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-white text-black font-jakarta selection:bg-black selection:text-white pb-20 relative">
+    <>
+      <div className="lg:flex lg:items-stretch">
       {/* ------------------------------------------------------------- */}
-      {/* TOP HEADER & NAVIGATION                                       */}
+      {/* LEFT SIDEBAR: FILTERS (reaches top of screen) */}
       {/* ------------------------------------------------------------- */}
-      <header className="px-6 lg:px-12 pt-6 pb-4 border-b border-gray-100 relative bg-white">
-        {/* Top Row Header */}
-        <div className="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-0 pb-6">
-          {/* Top Left Crest Logo & Motto (Stacked) */}
-          <div className="flex flex-col items-start gap-3">
-            <div
-              onClick={onNavigateHome}
-              className="w-24 h-24 md:w-28 md:h-28 rounded-full border border-black flex items-center justify-center p-1 overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 shadow-sm"
-              title="Home"
-            >
-              <img src={crestImg} alt="Guild Crest" className="w-full h-full object-cover" />
-            </div>
-            <div className="text-[9px] font-mono tracking-widest text-gray-800 uppercase leading-tight font-semibold">
-              <div>STRENGTH IN SILENCE</div>
-              <div>CROWN OF SHADOWS</div>
-              <div>JUSTICE & SHADOW</div>
-            </div>
-          </div>
-
-          {/* Center Brand Title 'HONOR' Artwork Image */}
-          <div className="relative text-center my-2 md:my-0 self-center md:self-auto flex items-center justify-center">
-            <img
-              src={honorLogoImg}
-              alt="HONOR"
-              className="h-20 md:h-28 lg:h-32 object-contain select-none"
-            />
-          </div>
-
-          {/* Top Right Subnav & Utility Icons */}
-          <div className="flex flex-col items-end gap-3 self-end md:self-auto">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="p-1.5 hover:opacity-60 transition-opacity cursor-pointer"
-                title="Search Shop"
-              >
-                <Search className="w-5 h-5 stroke-[1.5]" />
-              </button>
-
-              <button
-                onClick={() => setShowJoinModal(true)}
-                className="p-1.5 hover:opacity-60 transition-opacity cursor-pointer"
-                title="Account / Member Circle"
-              >
-                <User className="w-5 h-5 stroke-[1.5]" />
-              </button>
-
-              <button
-                onClick={onOpenCart}
-                className="p-1.5 hover:opacity-60 transition-opacity cursor-pointer relative"
-                title="Shopping Bag"
-              >
-                <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
-                {totalCartCount > 0 && (
-                  <span className="absolute -top-1 -right-1.5 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    {totalCartCount}
-                  </span>
-                )}
-              </button>
-            </div>
-
-            <div className="hidden lg:flex items-center text-[10px] font-mono tracking-[0.2em] uppercase text-black font-medium mt-3">
-              <span>LOYALTY</span>
-              <span className="mx-1.5">•</span>
-              <span>GUIDES</span>
-              <span className="mx-1.5">•</span>
-              <span>DESTINY</span>
-              <span className="ml-1.5">✦</span>
-            </div>
-          </div>
+      <aside className="order-2 lg:order-1 w-full lg:w-72 xl:w-80 shrink-0 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto border-t lg:border-t-0 border-gray-100 lg:border-r bg-white">
+        {/* Shop Title */}
+        <div className="px-6 lg:px-8 pt-7 pb-2">
+          <h2 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-black uppercase">
+            SHOP
+          </h2>
         </div>
 
-        {/* Search Overlay Input */}
-        {isSearchOpen && (
-          <div className="pt-3 pb-2 border-t border-gray-100 flex items-center gap-3 animate-fadeIn">
-            <Search className="w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search armor, headgear, tech, accessories..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 text-xs font-mono uppercase tracking-widest bg-transparent focus:outline-none placeholder:text-gray-400"
-              autoFocus
-            />
-            {searchQuery && (
-              <button onClick={() => setSearchQuery('')} className="text-xs text-gray-400 hover:text-black">
-                Clear
-              </button>
+        {/* Filters */}
+        <div className="px-6 lg:px-8 pt-4 space-y-2">
+          {/* Filters Title Header */}
+          <div className="flex items-center justify-between pb-2 border-b border-gray-200 text-xs font-mono tracking-[0.2em] font-bold uppercase">
+            <span className="flex items-center gap-2">
+              <SlidersHorizontal className="w-3.5 h-3.5" />
+              FILTERS
+            </span>
+            <span className="text-gray-400">—</span>
+          </div>
+
+          {/* Category Accordion */}
+          <div className="">
+            <button
+              onClick={() => setCollapseCategory(!collapseCategory)}
+              className="flex items-center justify-between w-full text-xs font-mono font-bold tracking-[0.2em] uppercase text-left hover:opacity-70 cursor-pointer"
+            >
+              <span>CATEGORY</span>
+              <span>{collapseCategory ? '+' : '—'}</span>
+            </button>
+
+            {!collapseCategory && (
+              <div className="space-y-1 pt-1 pl-1 text-xs font-mono">
+                {Object.entries(categoryCounts).map(([catName, count]) => {
+                  const isSelected = selectedCategory === catName;
+                  return (
+                    <button
+                      key={catName}
+                      onClick={() => {
+                        setSelectedCategory(catName);
+                        setCurrentPage(1);
+                      }}
+                      className={`flex items-center justify-between w-full text-left transition-colors cursor-pointer ${isSelected ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
+                        }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <span
+                          className={`w-2 h-2 rounded-full inline-block ${isSelected ? 'bg-black' : 'border border-gray-300'
+                            }`}
+                        />
+                        {catName}
+                      </span>
+                      <span className="text-[10px] text-gray-400">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
             )}
-            <button onClick={() => setIsSearchOpen(false)} className="text-xs font-mono uppercase text-gray-500 hover:text-black">
-              Close [✕]
+          </div>
+
+          {/* Price Filter Accordion */}
+          <div className="space-y-1.5 pt-3 border-t border-gray-100">
+            <button
+              onClick={() => setCollapsePrice(!collapsePrice)}
+              className="flex items-center justify-between w-full text-xs font-mono font-bold tracking-[0.2em] uppercase text-left py-1 hover:opacity-70 cursor-pointer"
+            >
+              <span>PRICE</span>
+              <span>{collapsePrice ? '+' : '—'}</span>
+            </button>
+
+            {!collapsePrice && (
+              <div className="space-y-2 pt-1 text-xs font-mono">
+                <div className="flex items-center justify-between text-gray-600">
+                  <span className="font-bold text-black">${priceRange[0]}</span>
+                  <span>TO</span>
+                  <span className="font-bold text-black">${priceRange[1]}</span>
+                </div>
+
+                <div className="relative h-5">
+                  {/* Track */}
+                  <div className="absolute top-1/2 -translate-y-1/2 w-full h-1 bg-gray-200 rounded-full"></div>
+                  {/* Active Range */}
+                  <div
+                    className="absolute top-1/2 -translate-y-1/2 h-1 bg-black rounded-full"
+                    style={{
+                      left: `${((priceRange[0] - 50) / (5000 - 50)) * 100}%`,
+                      width: `${((priceRange[1] - priceRange[0]) / (5000 - 50)) * 100}%`,
+                    }}
+                  ></div>
+                  {/* Min Handle */}
+                  <input
+                    type="range"
+                    min="50"
+                    max="5000"
+                    step="50"
+                    value={priceRange[0]}
+                    onChange={(e) => {
+                      const val = Math.min(Number(e.target.value), priceRange[1]);
+                      setPriceRange([val, priceRange[1]]);
+                      setCurrentPage(1);
+                    }}
+                    className="absolute top-0 left-0 w-full h-5 appearance-none bg-transparent pointer-events-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer"
+                  />
+                  {/* Max Handle */}
+                  <input
+                    type="range"
+                    min="50"
+                    max="5000"
+                    step="50"
+                    value={priceRange[1]}
+                    onChange={(e) => {
+                      const val = Math.max(Number(e.target.value), priceRange[0]);
+                      setPriceRange([priceRange[0], val]);
+                      setCurrentPage(1);
+                    }}
+                    className="absolute top-0 left-0 w-full h-5 appearance-none bg-transparent pointer-events-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Color Swatches Accordion */}
+          <div className="space-y-1 pt-2 border-t border-gray-100">
+            <button
+              onClick={() => setCollapseColor(!collapseColor)}
+              className="flex items-center justify-between w-full text-xs font-mono font-bold tracking-[0.2em] uppercase text-left py-1 hover:opacity-70 cursor-pointer"
+            >
+              <span>COLOR</span>
+              <span>{collapseColor ? '+' : '—'}</span>
+            </button>
+
+            {!collapseColor && (
+              <div className="space-y-1.5 text-xs font-mono">
+                {Object.entries(colorCounts).map(([colorName, count]) => {
+                  const isSelected = selectedColor === colorName;
+                  const getColorHex = (name: string) => {
+                    if (name === 'Obsidian') return '#121212';
+                    if (name === 'Graphite') return '#4B5563';
+                    if (name === 'Silver') return '#CBD5E1';
+                    if (name === 'Bronze') return '#854D0E';
+                    if (name === 'White') return '#FFFFFF';
+                    return '#9CA3AF';
+                  };
+
+                  return (
+                    <button
+                      key={colorName}
+                      onClick={() => {
+                        setSelectedColor(isSelected ? null : colorName);
+                        setCurrentPage(1);
+                      }}
+                      className={`flex items-center justify-between w-full text-left transition-colors cursor-pointer ${isSelected ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
+                        }`}
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <span
+                          style={{ backgroundColor: getColorHex(colorName) }}
+                          className={`w-3.5 h-3.5 rounded-full inline-block border ${colorName === 'White' ? 'border-gray-300' : 'border-transparent'
+                            }`}
+                        />
+                        {colorName}
+                      </span>
+                      <span className="text-[10px] text-gray-400">{count}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Stock Toggle */}
+          <div className="pt-4 border-t border-gray-100">
+            <label className="flex items-center gap-3 text-xs font-mono tracking-widest uppercase cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={inStockOnly}
+                onChange={(e) => setInStockOnly(e.target.checked)}
+                className="w-3.5 h-3.5 accent-black rounded-none cursor-pointer"
+              />
+              <span>IN STOCK ONLY</span>
+            </label>
+          </div>
+
+          {/* Reset Filters button if any filter applied */}
+          {(selectedCategory !== 'All Products' || priceRange[0] > 50 || priceRange[1] < 5000 || selectedColor || inStockOnly || searchQuery) && (
+            <button
+              onClick={() => {
+                setSelectedCategory('All Products');
+                setPriceRange([50, 5000]);
+                setSelectedColor(null);
+                setInStockOnly(false);
+                setSearchQuery('');
+              }}
+              className="w-full py-2 border border-black text-[10px] font-mono tracking-widest uppercase hover:bg-black hover:text-white transition-all cursor-pointer mt-2"
+            >
+              RESET ALL FILTERS [✕]
+            </button>
+          )}
+
+          {/* Decorative Stars Ambient */}
+          <div className="py-4 flex justify-around text-black opacity-30 text-xs select-none">
+            <span>•</span>
+            <span>✦</span>
+            <span>+</span>
+            <span>✦</span>
+          </div>
+
+          {/* Bottom Left Promotion Box ("HONOR THE CODE") */}
+          <div className="p-4 border border-black rounded-sm space-y-3 bg-white relative overflow-hidden group">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-full border border-red-700/40 flex items-center justify-center p-0.5 shrink-0 overflow-hidden">
+                <img src={crestRedImg} alt="Honor Red Crest" className="w-full h-full object-cover" />
+              </div>
+              <div className="space-y-0.5">
+                <h4 className="font-serif font-bold text-xs tracking-wider uppercase text-black">
+                  HONOR THE CODE
+                </h4>
+                <p className="text-[10px] font-mono text-gray-600 leading-tight">
+                  Unlock exclusive gear and early access.
+                </p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowJoinModal(true)}
+              className="w-full text-left text-xs font-mono font-bold tracking-widest text-black hover:text-red-700 flex items-center gap-1.5 uppercase transition-colors pt-1 cursor-pointer"
+            >
+              <span>JOIN THE CIRCLE</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
-        )}
-
-        {/* Center Main Nav Tabs */}
-        <nav className="flex items-center justify-center gap-8 md:gap-12 pt-4 pb-1 text-xs font-mono tracking-[0.22em] uppercase">
-          <button
-            onClick={onNavigateHome}
-            className="hover:opacity-50 transition-opacity cursor-pointer"
-          >
-            HOME
-          </button>
-          <button
-            onClick={() => onNavigatePage('shop')}
-            className="font-bold relative pb-1 cursor-pointer"
-          >
-            SHOP
-            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-black"></span>
-          </button>
-          <button
-            onClick={() => onNavigatePage('collections')}
-            className="hover:opacity-50 transition-opacity cursor-pointer"
-          >
-            COLLECTIONS
-          </button>
-          <button
-            onClick={() => onNavigatePage('about')}
-            className="hover:opacity-50 transition-opacity cursor-pointer"
-          >
-            ABOUT
-          </button>
-          <button
-            onClick={() => onNavigatePage('contact')}
-            className="hover:opacity-50 transition-opacity cursor-pointer"
-          >
-            CONTACT
-          </button>
-        </nav>
-      </header>
+        </div>
+      </aside>
 
       {/* ------------------------------------------------------------- */}
       {/* MAIN SHOP CONTENT                                            */}
       {/* ------------------------------------------------------------- */}
-      <main className="px-6 lg:px-12 pt-10">
+      <main className="px-6 lg:px-12 pt-10 lg:order-2 flex-1 min-w-0">
         {/* Shop Section Header Banner */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
-          <div className="flex flex-col md:flex-row md:items-baseline gap-6">
-            <h2 className="font-serif text-5xl md:text-6xl font-bold tracking-tight text-black uppercase">
-              SHOP
-            </h2>
-            <div className="text-xs font-mono text-red-700 tracking-wider font-semibold leading-relaxed">
-              <div>Gear forged for the future.</div>
-              <div>For those who move in silence and lead in power.</div>
-            </div>
+          <div className="text-xs font-mono text-red-700 tracking-wider font-semibold leading-relaxed">
+            <div>Gear forged for the future.</div>
+            <div>For those who move in silence and lead in power.</div>
           </div>
 
           {/* Controls: Sort By & View Toggle */}
           <div className="flex items-center gap-6">
+            <button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="p-1.5 hover:opacity-60 transition-opacity cursor-pointer"
+              title="Search Shop"
+            >
+              <Search className="w-5 h-5 stroke-[1.5]" />
+            </button>
+
             <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
               <span className="text-gray-500">SORT BY:</span>
               <div className="relative">
@@ -332,209 +419,32 @@ export const ShopPage: React.FC<ShopPageProps> = ({
           </div>
         </div>
 
-        {/* Body Layout: Sidebar Filters + Products Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-8">
-          {/* ------------------------------------------------------------- */}
-          {/* LEFT SIDEBAR FILTERS                                          */}
-          {/* ------------------------------------------------------------- */}
-          <aside className="lg:col-span-3 space-y-8 pr-0 lg:pr-6 border-r-0 lg:border-r border-gray-100">
-            {/* Filters Title Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-200 text-xs font-mono tracking-[0.2em] font-bold uppercase">
-              <span className="flex items-center gap-2">
-                <SlidersHorizontal className="w-3.5 h-3.5" />
-                FILTERS
-              </span>
-              <span className="text-gray-400">—</span>
-            </div>
-
-            {/* Category Accordion */}
-            <div className="space-y-3">
-              <button
-                onClick={() => setCollapseCategory(!collapseCategory)}
-                className="flex items-center justify-between w-full text-xs font-mono font-bold tracking-[0.2em] uppercase text-left py-1 hover:opacity-70 cursor-pointer"
-              >
-                <span>CATEGORY</span>
-                <span>{collapseCategory ? '+' : '—'}</span>
-              </button>
-
-              {!collapseCategory && (
-                <div className="space-y-2.5 pt-1 pl-1 text-xs font-mono">
-                  {Object.entries(categoryCounts).map(([catName, count]) => {
-                    const isSelected = selectedCategory === catName;
-                    return (
-                      <button
-                        key={catName}
-                        onClick={() => {
-                          setSelectedCategory(catName);
-                          setCurrentPage(1);
-                        }}
-                        className={`flex items-center justify-between w-full text-left transition-colors cursor-pointer ${isSelected ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-                          }`}
-                      >
-                        <span className="flex items-center gap-2">
-                          <span
-                            className={`w-2 h-2 rounded-full inline-block ${isSelected ? 'bg-black' : 'border border-gray-300'
-                              }`}
-                          />
-                          {catName}
-                        </span>
-                        <span className="text-[10px] text-gray-400">{count}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Price Filter Accordion */}
-            <div className="space-y-3 pt-4 border-t border-gray-100">
-              <button
-                onClick={() => setCollapsePrice(!collapsePrice)}
-                className="flex items-center justify-between w-full text-xs font-mono font-bold tracking-[0.2em] uppercase text-left py-1 hover:opacity-70 cursor-pointer"
-              >
-                <span>PRICE</span>
-                <span>{collapsePrice ? '+' : '—'}</span>
-              </button>
-
-              {!collapsePrice && (
-                <div className="space-y-3 pt-1 text-xs font-mono">
-                  <div className="flex items-center justify-between text-gray-600">
-                    <span>$50</span>
-                    <span className="font-bold text-black">${maxPrice}+</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="50"
-                    max="5000"
-                    step="50"
-                    value={maxPrice}
-                    onChange={(e) => {
-                      setMaxPrice(Number(e.target.value));
-                      setCurrentPage(1);
-                    }}
-                    className="w-full accent-black cursor-pointer"
-                  />
-                </div>
-              )}
-            </div>
-
-            {/* Color Swatches Accordion */}
-            <div className="space-y-3 pt-4 border-t border-gray-100">
-              <button
-                onClick={() => setCollapseColor(!collapseColor)}
-                className="flex items-center justify-between w-full text-xs font-mono font-bold tracking-[0.2em] uppercase text-left py-1 hover:opacity-70 cursor-pointer"
-              >
-                <span>COLOR</span>
-                <span>{collapseColor ? '+' : '—'}</span>
-              </button>
-
-              {!collapseColor && (
-                <div className="space-y-2.5 pt-1 text-xs font-mono">
-                  {Object.entries(colorCounts).map(([colorName, count]) => {
-                    const isSelected = selectedColor === colorName;
-                    const getColorHex = (name: string) => {
-                      if (name === 'Obsidian') return '#121212';
-                      if (name === 'Graphite') return '#4B5563';
-                      if (name === 'Silver') return '#CBD5E1';
-                      if (name === 'Bronze') return '#854D0E';
-                      if (name === 'White') return '#FFFFFF';
-                      return '#9CA3AF';
-                    };
-
-                    return (
-                      <button
-                        key={colorName}
-                        onClick={() => {
-                          setSelectedColor(isSelected ? null : colorName);
-                          setCurrentPage(1);
-                        }}
-                        className={`flex items-center justify-between w-full text-left transition-colors cursor-pointer ${isSelected ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
-                          }`}
-                      >
-                        <span className="flex items-center gap-2.5">
-                          <span
-                            style={{ backgroundColor: getColorHex(colorName) }}
-                            className={`w-3.5 h-3.5 rounded-full inline-block border ${colorName === 'White' ? 'border-gray-300' : 'border-transparent'
-                              }`}
-                          />
-                          {colorName}
-                        </span>
-                        <span className="text-[10px] text-gray-400">{count}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Stock Toggle */}
-            <div className="pt-4 border-t border-gray-100">
-              <label className="flex items-center gap-3 text-xs font-mono tracking-widest uppercase cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={inStockOnly}
-                  onChange={(e) => setInStockOnly(e.target.checked)}
-                  className="w-3.5 h-3.5 accent-black rounded-none cursor-pointer"
-                />
-                <span>IN STOCK ONLY</span>
-              </label>
-            </div>
-
-            {/* Reset Filters button if any filter applied */}
-            {(selectedCategory !== 'All Products' || maxPrice < 5000 || selectedColor || inStockOnly || searchQuery) && (
-              <button
-                onClick={() => {
-                  setSelectedCategory('All Products');
-                  setMaxPrice(5000);
-                  setSelectedColor(null);
-                  setInStockOnly(false);
-                  setSearchQuery('');
-                }}
-                className="w-full py-2 border border-black text-[10px] font-mono tracking-widest uppercase hover:bg-black hover:text-white transition-all cursor-pointer mt-2"
-              >
-                RESET ALL FILTERS [✕]
+        {/* Search Overlay Input */}
+        {isSearchOpen && (
+          <div className="pt-3 pb-6 flex items-center gap-3 animate-fadeIn">
+            <Search className="w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search armor, headgear, tech, accessories..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 text-xs font-mono uppercase tracking-widest bg-transparent focus:outline-none placeholder:text-gray-400"
+              autoFocus
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="text-xs text-gray-400 hover:text-black">
+                Clear
               </button>
             )}
+            <button onClick={() => setIsSearchOpen(false)} className="text-xs font-mono uppercase text-gray-500 hover:text-black">
+              Close [✕]
+            </button>
+          </div>
+        )}
 
-            {/* Decorative Stars Ambient */}
-            <div className="py-4 flex justify-around text-black opacity-30 text-xs select-none">
-              <span>•</span>
-              <span>✦</span>
-              <span>+</span>
-              <span>✦</span>
-            </div>
-
-            {/* Bottom Left Promotion Box ("HONOR THE CODE") */}
-            <div className="p-4 border border-black rounded-sm space-y-3 bg-white relative overflow-hidden group">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full border border-red-700/40 flex items-center justify-center p-0.5 shrink-0 overflow-hidden">
-                  <img src={crestRedImg} alt="Honor Red Crest" className="w-full h-full object-cover" />
-                </div>
-                <div className="space-y-0.5">
-                  <h4 className="font-serif font-bold text-xs tracking-wider uppercase text-black">
-                    HONOR THE CODE
-                  </h4>
-                  <p className="text-[10px] font-mono text-gray-600 leading-tight">
-                    Unlock exclusive gear and early access.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setShowJoinModal(true)}
-                className="w-full text-left text-xs font-mono font-bold tracking-widest text-black hover:text-red-700 flex items-center gap-1.5 uppercase transition-colors pt-1 cursor-pointer"
-              >
-                <span>JOIN THE CIRCLE</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </aside>
-
-          {/* ------------------------------------------------------------- */}
-          {/* PRODUCTS GRID                                                */}
-          {/* ------------------------------------------------------------- */}
-          <section className="lg:col-span-9 space-y-12">
-            {filteredProducts.length === 0 ? (
+        {/* Body Layout: Products Grid */}
+        <section className="space-y-12 pt-6">
+          {filteredProducts.length === 0 ? (
               <div className="py-24 text-center space-y-4 border border-dashed border-gray-200">
                 <p className="font-mono text-sm uppercase text-gray-500">
                   No products found matching your active filter criteria.
@@ -542,7 +452,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
                 <button
                   onClick={() => {
                     setSelectedCategory('All Products');
-                    setMaxPrice(5000);
+                    setPriceRange([50, 5000]);
                     setSelectedColor(null);
                     setInStockOnly(false);
                     setSearchQuery('');
@@ -570,7 +480,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({
                       {/* Item Image Slot Frame */}
                       <div
                         onClick={() => setSelectedQuickViewItem(item)}
-                        className="w-full aspect-[4/5] bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center p-3"
+                        className="w-full aspect-[4/4] bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center"
                       >
                         {item.image ? (
                           <img
@@ -682,8 +592,8 @@ export const ShopPage: React.FC<ShopPageProps> = ({
               <span className="ml-12 text-gray-400 text-sm">✦</span>
             </div>
           </section>
-        </div>
       </main>
+    </div>
 
       {/* ------------------------------------------------------------- */}
       {/* QUICK VIEW MODAL                                              */}
@@ -818,6 +728,6 @@ export const ShopPage: React.FC<ShopPageProps> = ({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };

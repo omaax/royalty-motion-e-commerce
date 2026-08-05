@@ -1,5 +1,3 @@
-export type DrawerType = 'shop' | 'collections' | 'journal' | 'cart' | 'quickview' | 'circle' | null;
-
 export interface ShopItem {
   id: string;
   title: string;
