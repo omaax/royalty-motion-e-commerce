@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import bgArmor from '@/assets/bg-armor.png';
-import bgCloak from '@/assets/bg-cloak.png';
+import bgCloak from '@/assets/bg-colored-armor.png';
 
 // High-resolution fashion editorial images for LGPSM reveal experience
 export const BG_IMAGE_1 = bgArmor;
