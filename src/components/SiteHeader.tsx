@@ -1,50 +1,23 @@
 import React from 'react';
-import { ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import crestImg from '@/assets/crest.png';
 import honorLogoImg from '@/assets/honor-logo.png';
-import { RollingText } from './RollingText';
+import { NavBar } from './NavBar';
+import { CartButton } from './CartButton';
 
 interface SiteHeaderProps {
   activeNavTab: string;
   cartCount: number;
 }
 
-const NAV_ITEMS: { label: string; path: string }[] = [
-  { label: 'HOME', path: '/' },
-  { label: 'SHOP', path: '/shop' },
-  { label: 'COLLECTIONS', path: '/collections' },
-  { label: 'JOURNAL', path: '/journal' },
-  { label: 'ABOUT', path: '/about' },
-  { label: 'CONTACT', path: '/contact' },
-];
-
 export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount }) => {
   const navigate = useNavigate();
 
   return (
-    <header className="px-6 lg:px-12 relative bg-white">
+    <header className="px-6 lg:px-12 relative bg-white z-50">
       {/* Center Main Nav Tabs */}
+      <NavBar activeNavTab={activeNavTab} className="pl-0 md:pl-24 lg:pl-40 pt-10 -mb-10" />
 
-      <nav className="flex items-center gap-4 md:gap-6 pl-0 md:pl-24 lg:pl-40 pt-10 -mb-10 text-xs font-mono tracking-[0.22em] uppercase overflow-x-auto">
-        {NAV_ITEMS.map((item) => {
-          const isActive = activeNavTab === item.path;
-          return (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={`relative pb-1 cursor-pointer whitespace-nowrap ${
-                isActive ? 'font-bold' : ''
-              }`}
-            >
-              <RollingText>{item.label}</RollingText>
-              {isActive && (
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-black" />
-              )}
-            </button>
-          );
-        })}
-      </nav>
       <div className="flex flex-col md:flex-row items-start justify-between gap-6 md:gap-0">
         {/* Top Left Crest Logo & Motto (Stacked) */}
         <div className="flex flex-col items-start gap-3">
@@ -74,18 +47,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount 
         {/* Top Right Utility Icons */}
         <div className="flex flex-col items-end gap-3 self-end md:self-auto">
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate('/cart')}
-              className="p-1.5 hover:opacity-60 transition-opacity cursor-pointer relative"
-              title="Shopping Bag"
-            >
-              <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1.5 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
-            </button>
+            <CartButton cartCount={cartCount} />
           </div>
 
           <div className="hidden lg:flex items-center text-[10px] font-mono tracking-[0.2em] uppercase text-black font-medium mt-3">

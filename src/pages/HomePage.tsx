@@ -1,16 +1,30 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ImageRevealBackground, BG_IMAGE_1 } from '../components/ImageRevealBackground';
-import { CornerBracket, CheckerboardGrid, WireframeGlobe } from '../components/SVGIcons';
+import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
+import { NavBar } from '../components/NavBar';
+import { CartButton } from '../components/CartButton';
+import crestRedImg from '@/assets/crest-red.png';
 
-export const HomePage: React.FC = () => {
+interface HomePageProps {
+  cartCount: number;
+}
+
+export const HomePage: React.FC<HomePageProps> = ({ cartCount }) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   return (
     <div className="relative flex-1 flex flex-col justify-between overflow-hidden">
       {/* Interactive Desktop Spotlight Image Reveal Background */}
       <ImageRevealBackground />
+
+      {/* NavBar Overlay + Cart - pinned top-right on desktop, full-width scroll on mobile */}
+      <div className="absolute top-[var(--header-pt)] left-[var(--pad-x)] right-[var(--pad-x)] z-30 flex items-center gap-4 md:gap-6">
+        <NavBar activeNavTab={location.pathname} className="flex-1 justify-start lg:justify-end" />
+        <CartButton cartCount={cartCount} />
+      </div>
 
       {/* Main Hero Section (flex-1, z-10) */}
       <main
@@ -73,51 +87,6 @@ export const HomePage: React.FC = () => {
               </button>
             </div>
           </div>
-
-          {/* Right Lower Feature Block (Bottom Aligned on Desktop) */}
-          <div className="lg:self-end">
-            <div
-              style={{
-                minWidth: 'var(--feature-min)',
-                padding: 'var(--feature-pad)',
-              }}
-              className="relative border border-transparent flex flex-col items-start gap-4"
-            >
-              {/* Corner Brackets at Absolute Corners of framed box */}
-              <CornerBracket
-                position="TL"
-                style={{ width: 'var(--corner)', height: 'var(--corner)' }}
-                className="absolute top-0 left-0 text-black"
-              />
-              <CornerBracket
-                position="TR"
-                style={{ width: 'var(--corner)', height: 'var(--corner)' }}
-                className="absolute top-0 right-0 text-black"
-              />
-              <CornerBracket
-                position="BL"
-                style={{ width: 'var(--corner)', height: 'var(--corner)' }}
-                className="absolute bottom-0 left-0 text-black"
-              />
-              <CornerBracket
-                position="BR"
-                style={{ width: 'var(--corner)', height: 'var(--corner)' }}
-                className="absolute bottom-0 right-0 text-black"
-              />
-
-              {/* Wireframe Globe SVG */}
-              <WireframeGlobe className="text-black" />
-
-              {/* Tagline */}
-              <div
-                className="font-jakarta font-semibold uppercase tracking-[0.18em] text-black leading-tight"
-                style={{ fontSize: 'var(--body)' }}
-              >
-                <div>BEYOND TRENDS.</div>
-                <div>BUILT FOR TOMORROW.</div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Mobile static image section (below hero for < lg viewports) */}
@@ -132,6 +101,13 @@ export const HomePage: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Red Honor Crest Logo - pinned bottom-left of screen */}
+      <img
+        src={crestRedImg}
+        alt="Honor Red Crest"
+        className="absolute left-[var(--pad-x)] bottom-0 w-35 md:w-54 lg:w-105 object-contain select-none z-10"
+      />
     </div>
   );
 };

@@ -50,7 +50,7 @@ export default function App() {
     <>
       <Routes>
         <Route element={<Layout cartCount={totalCartCount} />}>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomePage cartCount={totalCartCount} />} />
           <Route
             path="/shop"
             element={<ShopPage onAddToCart={handleAddToCart} />}
