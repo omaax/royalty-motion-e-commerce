@@ -6,51 +6,68 @@ import bgCloak from '@/assets/bg-colored-armor.png';
 export const BG_IMAGE_1 = bgArmor;
 export const BG_IMAGE_2 = bgCloak;
 
+// Circular spotlight mask matching the original soft radial falloff. Built at
+// runtime with an explicit pixel radius so the fade completes exactly at the
+// tile edge (defaulting to farthest-corner would leave a square halo).
+// radius * 2 = mask tile edge length, so the circle always reads as circular.
+const circleMask = (radius: number) =>
+  `radial-gradient(circle ${radius}px at center, #000 0%, #000 40%, rgba(0,0,0,0.75) 60%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0.12) 88%, transparent 100%)`;
+
 export const ImageRevealBackground: React.FC = () => {
   const revealRef = useRef<HTMLDivElement>(null);
   const patternRef = useRef<SVGPatternElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
 
   const [bgImages] = useState<{ base: string; reveal: string }>({
     base: BG_IMAGE_1,
     reveal: BG_IMAGE_2,
   });
 
-  const mouseRef = useRef<{ x: number; y: number }>({
-    x: typeof window !== 'undefined' ? window.innerWidth / 2 : 500,
-    y: typeof window !== 'undefined' ? window.innerHeight / 2 : 500,
+  // Raw cursor position, captured in mousemove
+  const cursorRef = useRef<{ x: number; y: number }>({
+    x: typeof window !== 'undefined' ? window.innerWidth / 2 : 960,
+    y: typeof window !== 'undefined' ? window.innerHeight / 2 : 540,
   });
 
+  // Smoothed spotlight position, eased toward the cursor in the render loop.
+  // Distance-adaptive: gentle glide at low speeds, quick catch-up on fast
+  // movement, so it feels fluid without trailing the cursor.
   const smoothRef = useRef<{ x: number; y: number }>({
-    x: typeof window !== 'undefined' ? window.innerWidth / 2 : 500,
-    y: typeof window !== 'undefined' ? window.innerHeight / 2 : 500,
+    x: typeof window !== 'undefined' ? window.innerWidth / 2 : 960,
+    y: typeof window !== 'undefined' ? window.innerHeight / 2 : 540,
   });
 
   const gridOffsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [gridCellSize, setGridCellSize] = useState<number>(48);
+  const [radius, setRadius] = useState<number>(
+    typeof window !== 'undefined' ? Math.round(Math.min(420, Math.max(160, window.innerWidth * 0.16)) * 1.2) : 188,
+  );
+
+  const radiusRef = useRef<number>(radius);
+  radiusRef.current = radius;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Offscreen canvas for fast hardware-accelerated spotlight mask rendering
-    const offscreenCanvas = document.createElement('canvas');
-    let ctx = offscreenCanvas.getContext('2d');
+    const applySpotlight = () => {
+      const el = revealRef.current;
+      if (!el) return;
+      const { x, y } = smoothRef.current;
+      const r = radiusRef.current;
+      const pos = `${x - r}px ${y - r}px`;
+      el.style.maskPosition = pos;
+      el.style.webkitMaskPosition = pos;
+    };
 
     const updateDimensions = () => {
       const w = window.innerWidth;
-      const h = window.innerHeight;
-      offscreenCanvas.width = w;
-      offscreenCanvas.height = h;
-
-      // Grid cell size calculation: Math.round(Math.min(64, Math.max(36, window.innerWidth * 0.028)))
       const cellSize = Math.round(Math.min(64, Math.max(36, w * 0.028)));
+      setRadius(Math.round(Math.min(420, Math.max(160, w * 0.16)) * 1.2));
       setGridCellSize(cellSize);
+      applySpotlight();
     };
 
-    updateDimensions();
-
     const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
+      cursorRef.current = { x: e.clientX, y: e.clientY };
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -59,56 +76,29 @@ export const ImageRevealBackground: React.FC = () => {
     let animationFrameId: number;
 
     const renderLoop = () => {
-      const mouse = mouseRef.current;
+      // Ease the spotlight toward the cursor with a gentle constant factor so
+      // it trails smoothly with a slight delay; a mild distance boost only
+      // prevents big jumps across the screen from taking too long to settle
+      const mouse = cursorRef.current;
       const smooth = smoothRef.current;
+      const dx = mouse.x - smooth.x;
+      const dy = mouse.y - smooth.y;
+      const dist = Math.hypot(dx, dy);
+      const ease = Math.min(0.22, 0.08 + dist / 3000);
+      smooth.x += dx * ease;
+      smooth.y += dy * ease;
 
-      // Ease factor 0.1
-      smooth.x += (mouse.x - smooth.x) * 0.1;
-      smooth.y += (mouse.y - smooth.y) * 0.1;
+      applySpotlight();
 
+      // Imperceptible lazy parallax for the grid overlay only
+      const { x, y } = cursorRef.current;
       const w = window.innerWidth;
       const h = window.innerHeight;
+      const cxNorm = x / w - 0.5;
+      const cyNorm = y / h - 0.5;
 
-      // Fluid spotlight radius: Math.round(Math.min(420, Math.max(160, window.innerWidth * 0.16)))
-      const radius = Math.round(Math.min(420, Math.max(160, w * 0.16)));
-
-      if (ctx && revealRef.current) {
-        ctx.clearRect(0, 0, w, h);
-
-        const cx = smooth.x;
-        const cy = smooth.y;
-
-        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
-        // Exact gradient stops
-        grad.addColorStop(0, 'rgba(255,255,255,1)');
-        grad.addColorStop(0.4, 'rgba(255,255,255,1)');
-        grad.addColorStop(0.6, 'rgba(255,255,255,0.75)');
-        grad.addColorStop(0.75, 'rgba(255,255,255,0.4)');
-        grad.addColorStop(0.88, 'rgba(255,255,255,0.12)');
-        grad.addColorStop(1, 'rgba(255,255,255,0)');
-
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-        ctx.fill();
-
-        const dataUrl = offscreenCanvas.toDataURL();
-
-        const elemStyle = revealRef.current.style;
-        elemStyle.maskImage = `url(${dataUrl})`;
-        elemStyle.webkitMaskImage = `url(${dataUrl})`;
-        elemStyle.maskSize = '100% 100%';
-        elemStyle.webkitMaskSize = '100% 100%';
-        elemStyle.maskRepeat = 'no-repeat';
-        elemStyle.webkitMaskRepeat = 'no-repeat';
-      }
-
-      // Parallax Grid Offset calculation
-      const cxNorm = smooth.x / w - 0.5;
-      const cyNorm = smooth.y / h - 0.5;
-
-      gridOffsetRef.current.x += (cxNorm * 16 - gridOffsetRef.current.x) * 0.06;
-      gridOffsetRef.current.y += (cyNorm * 16 - gridOffsetRef.current.y) * 0.06;
+      gridOffsetRef.current.x += (cxNorm * 12 - gridOffsetRef.current.x) * 0.06;
+      gridOffsetRef.current.y += (cyNorm * 12 - gridOffsetRef.current.y) * 0.06;
 
       if (patternRef.current) {
         patternRef.current.setAttribute('x', gridOffsetRef.current.x.toFixed(2));
@@ -137,12 +127,21 @@ export const ImageRevealBackground: React.FC = () => {
         }}
       />
 
-      {/* 2. Reveal Layer (BG_IMAGE_2 - Crimson Floral Cloak) - Clipped by offscreen canvas mask */}
+      {/* 2. Reveal Layer (BG_IMAGE_2 - Crimson Floral Cloak) - full screen,
+          masked by the spotlight tile whose mask-position follows the cursor.
+          Moving mask-position is a cheap repaint (no canvas / dataURL encode)
+          so the reveal keeps up with the cursor exactly. */}
       <div
         ref={revealRef}
         className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
         style={{
           backgroundImage: `url(${bgImages.reveal})`,
+          WebkitMaskImage: circleMask(radius),
+          WebkitMaskSize: `${radius * 2}px ${radius * 2}px`,
+          WebkitMaskRepeat: 'no-repeat',
+          maskImage: circleMask(radius),
+          maskSize: `${radius * 2}px ${radius * 2}px`,
+          maskRepeat: 'no-repeat',
         }}
       />
 
@@ -159,7 +158,6 @@ export const ImageRevealBackground: React.FC = () => {
             y="0"
           >
             <path
-              ref={pathRef}
               d={`M ${gridCellSize} 0 L 0 0 0 ${gridCellSize}`}
               fill="none"
               stroke="#64748b"
