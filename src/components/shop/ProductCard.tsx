@@ -9,16 +9,16 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ item, onQuickView, onAddToCart }) => {
   return (
-    <div className="group flex flex-col justify-between space-y-4 relative">
+    <div className="group flex flex-col justify-between space-y-3 relative">
       <div
         onClick={() => onQuickView(item)}
-        className="w-full aspect-[4/4] bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center"
+        className="w-full aspect-[4/3] bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center"
       >
         {item.image ? (
           <img
             src={item.image}
             alt={item.title}
-            className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center relative bg-gradient-to-b from-gray-50 to-gray-100/50">

@@ -43,5 +43,3 @@ export const SORT_LABELS: Record<string, string> = {
   'price-high': 'PRICE: HIGH TO LOW',
   newest: 'NEWEST',
 };
-
-export const MAX_PAGE = 3;

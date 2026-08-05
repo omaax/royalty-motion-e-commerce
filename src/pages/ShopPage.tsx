@@ -42,9 +42,9 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart }) => {
             />
           )}
 
-          <section className="space-y-5 pt-6">
+          <section className="space-y-5 pt-4">
             <ProductGrid
-              items={filters.filteredProducts}
+              items={filters.visibleProducts}
               gridCols={filters.gridCols}
               onQuickView={setSelectedQuickViewItem}
               onAddToCart={onAddToCart}
@@ -53,7 +53,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart }) => {
 
             <Pagination
               currentPage={filters.currentPage}
-              maxPage={filters.maxPage}
+              maxPage={filters.totalPages}
               onPage={filters.setCurrentPage}
             />
           </section>

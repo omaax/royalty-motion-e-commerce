@@ -7,10 +7,12 @@ interface PaginationProps {
 }
 
 export const Pagination: React.FC<PaginationProps> = ({ currentPage, maxPage, onPage }) => {
+  if (maxPage <= 1) return null;
+
   const pageNumbers = Array.from({ length: maxPage }, (_, i) => i + 1);
 
   return (
-    <div className="pt-12 border-t border-gray-100 flex items-center justify-center gap-3 text-xs font-mono font-bold tracking-widest uppercase">
+    <div className="pt-6 border-t border-gray-100 flex items-center justify-center gap-3 text-xs font-mono font-bold tracking-widest uppercase">
       {pageNumbers.map((page) => (
         <button
           key={page}

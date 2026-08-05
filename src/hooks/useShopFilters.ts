@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ShopItem, SortOption } from '../types';
 import { SHOP_PRODUCTS } from '../data/shopData';
-import { PRICE_MIN, PRICE_MAX, DEFAULT_FILTERS, MAX_PAGE } from '../constants/shop';
+import { PRICE_MIN, PRICE_MAX, DEFAULT_FILTERS } from '../constants/shop';
+
+const PAGE_SIZE = 8;
 
 export function useShopFilters() {
   const [selectedCategory, setSelectedCategory] = useState<string>(DEFAULT_FILTERS.selectedCategory);
@@ -71,6 +73,19 @@ export function useShopFilters() {
     inStockOnly ||
     searchQuery.trim() !== '';
 
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
+  const visibleProducts = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredProducts.slice(start, start + PAGE_SIZE);
+  }, [filteredProducts, currentPage]);
+
   const resetFilters = () => {
     setSelectedCategory(DEFAULT_FILTERS.selectedCategory);
     setPriceRange(DEFAULT_FILTERS.priceRange);
@@ -110,6 +125,8 @@ export function useShopFilters() {
     setCollapsePrice,
     collapseColor,
     setCollapseColor,
-    maxPage: MAX_PAGE,
+    totalPages,
+    visibleProducts,
+    pageSize: PAGE_SIZE,
   };
 }
