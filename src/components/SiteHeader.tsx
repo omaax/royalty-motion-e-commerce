@@ -54,7 +54,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount 
           >
             <img src={crestImg} alt="Guild Crest" className="w-full h-full object-cover" />
           </button>
-          <div className="text-[9px] font-mono tracking-widest text-gray-800 uppercase leading-tight font-semibold">
+          <div className="text-[9px] text-center font-mono tracking-widest uppercase leading-tight font-bold">
             <div>STRENGTH IN SILENCE</div>
             <div>CROWN OF SHADOWS</div>
             <div>JUSTICE & SHADOW</div>
