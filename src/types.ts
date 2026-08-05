@@ -2,8 +2,8 @@ export interface ShopItem {
   id: string;
   title: string;
   price: number;
-  category: 'Wearables' | 'Headgear' | 'Accessories' | 'Tech' | 'Limited Edition';
-  color: 'Obsidian' | 'Graphite' | 'Silver' | 'Bronze' | 'White';
+  category: Category;
+  color: ProductColor;
   inStock: boolean;
   tag?: string;
   description?: string;
@@ -32,5 +32,28 @@ export interface JournalItem {
 export interface ToastMessage {
   id: string;
   text: string;
+}
+
+export type Category = 'Wearables' | 'Headgear' | 'Accessories' | 'Tech' | 'Limited Edition';
+
+export type ProductColor = 'Obsidian' | 'Graphite' | 'Silver' | 'Bronze' | 'White';
+
+export type SortOption = 'featured' | 'price-low' | 'price-high' | 'newest';
+
+export type GridCols = 4 | 2 | 1;
+
+export interface FilterState {
+  selectedCategory: string;
+  priceRange: [number, number];
+  selectedColor: ProductColor | null;
+  inStockOnly: boolean;
+  sortBy: SortOption;
+  searchQuery: string;
+}
+
+export interface AccordionState {
+  category: boolean;
+  price: boolean;
+  color: boolean;
 }
 

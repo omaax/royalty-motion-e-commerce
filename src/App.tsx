@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { HomePage } from './components/HomePage';
-import { ShopPage } from './components/ShopPage';
-import { CollectionsPage } from './components/CollectionsPage';
-import { JournalPage } from './components/JournalPage';
-import { CartPage } from './components/CartPage';
-import { AboutPage } from './components/AboutPage';
-import { ContactPage } from './components/ContactPage';
+import { HomePage } from './pages/HomePage';
+import { ShopPage } from './pages/ShopPage';
+import { CollectionsPage } from './pages/CollectionsPage';
+import { JournalPage } from './pages/JournalPage';
+import { CartPage } from './pages/CartPage';
+import { AboutPage } from './pages/AboutPage';
+import { ContactPage } from './pages/ContactPage';
 import { Toast } from './components/Toast';
 import { ShopItem, CartItem, ToastMessage } from './types';
 
