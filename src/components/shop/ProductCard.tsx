@@ -9,26 +9,26 @@ interface ProductCardProps {
 
 export const ProductCard: React.FC<ProductCardProps> = ({ item, onQuickView, onAddToCart }) => {
   return (
-    <div className="group flex flex-col justify-between space-y-3 relative">
+    <div className="group flex flex-col justify-between space-y-2 relative h-full min-h-0">
       <div
         onClick={() => onQuickView(item)}
-        className="w-full aspect-[4/3] bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center"
+        className="w-full h-48 sm:h-56 lg:h-auto lg:flex-1 lg:min-h-0 bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center p-2"
       >
         {item.image ? (
           <img
             src={item.image}
             alt={item.title}
-            className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center relative bg-gradient-to-b from-gray-50 to-gray-100/50">
+          <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center relative bg-gradient-to-b from-gray-50 to-gray-100/50">
             <span className="absolute top-2 left-2 text-xs font-mono text-gray-300">+</span>
             <span className="absolute top-2 right-2 text-xs font-mono text-gray-300">+</span>
             <span className="absolute bottom-2 left-2 text-xs font-mono text-gray-300">+</span>
             <span className="absolute bottom-2 right-2 text-xs font-mono text-gray-300">+</span>
 
-            <div className="w-16 h-16 rounded-full border border-gray-200 group-hover:border-black flex items-center justify-center text-gray-300 group-hover:text-black transition-colors mb-3">
-              <Sparkles className="w-6 h-6 stroke-[1.2]" />
+            <div className="w-12 h-12 rounded-full border border-gray-200 group-hover:border-black flex items-center justify-center text-gray-300 group-hover:text-black transition-colors mb-2">
+              <Sparkles className="w-5 h-5 stroke-[1.2]" />
             </div>
 
             <span className="text-[10px] font-mono tracking-widest text-gray-400 group-hover:text-black uppercase transition-colors">
@@ -51,15 +51,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onQuickView, onA
         )}
       </div>
 
-      <div className="flex items-start justify-between gap-2 pt-1">
-        <div className="space-y-1 flex-1">
+      <div className="flex items-start justify-between gap-2 pt-1 shrink-0">
+        <div className="space-y-0.5 flex-1 min-w-0">
           <h3
             onClick={() => onQuickView(item)}
-            className="font-mono text-xs font-bold tracking-widest text-black uppercase hover:underline cursor-pointer leading-snug"
+            className="font-mono text-xs font-bold tracking-widest text-black uppercase hover:underline cursor-pointer leading-snug truncate"
+            title={item.title}
           >
             {item.title}
           </h3>
-          <div className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+          <div className="text-[10px] font-mono text-gray-400 uppercase tracking-widest truncate">
             {item.category}
           </div>
           <div className="font-mono text-xs font-bold text-black">

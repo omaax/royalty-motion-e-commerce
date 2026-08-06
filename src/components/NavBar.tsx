@@ -21,7 +21,7 @@ export const NavBar: React.FC<NavBarProps> = ({ activeNavTab, className = '' }) 
 
   return (
     <nav
-      className={`flex items-center gap-4 md:gap-6 text-xs font-mono tracking-[0.22em] uppercase overflow-x-auto whitespace-nowrap ${className}`}
+      className={`flex items-center gap-4 md:gap-6 text-md font-mono tracking-[0.22em] uppercase overflow-x-auto whitespace-nowrap ${className}`}
     >
       {NAV_ITEMS.map((item) => {
         const isActive = activeNavTab === item.path;
@@ -29,13 +29,12 @@ export const NavBar: React.FC<NavBarProps> = ({ activeNavTab, className = '' }) 
           <button
             key={item.path}
             onClick={() => navigate(item.path)}
-            className={`relative pb-1 cursor-pointer whitespace-nowrap ${
-              isActive ? 'font-bold' : ''
-            }`}
+            className={`relative pb-1 cursor-pointer whitespace-nowrap ${isActive ? 'font-bold' : ''
+              }`}
           >
             <RollingText>{item.label}</RollingText>
             {isActive && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-black" />
+              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-1 rounded-full bg-black" />
             )}
           </button>
         );

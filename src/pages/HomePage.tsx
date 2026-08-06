@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { ImageRevealBackground, BG_IMAGE_1 } from '../components/ImageRevealBackground';
 import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
 import { NavBar } from '../components/NavBar';
@@ -38,53 +39,92 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount }) => {
           {/* Left Block (Vertically Centered / Stacked) */}
           <div className="flex flex-col items-start space-y-3 max-w-4xl">
             {/* Top-Left Corner Bracket */}
-            <CornerBracket
+            {/* <CornerBracket
               position="TL"
               style={{
                 width: 'var(--corner)',
                 height: 'var(--corner)',
               }}
               className="text-black mb-1"
-            />
+            /> */}
 
-            {/* Headline */}
-            <h1
-              className="font-orbitron font-extrabold uppercase tracking-[0.08em] leading-[1.05] text-black"
-              style={{ fontSize: 'var(--headline)' }}
-            >
-              <div>FUTURE</div>
-              <div>FORWARD</div>
-              <div className="flex items-baseline flex-wrap">
-                <span>FASHION</span>
-                <CheckerboardGrid className="ml-3 inline-block align-baseline translate-y-[2px]" />
-              </div>
-            </h1>
+            {/* Headline: The Silent King */}
+            <div className="space-y-2">
+              <h1
+                className="font-orbitron font-extrabold uppercase tracking-[0.12em] leading-[1.05] text-black"
+                style={{ fontSize: 'clamp(2.5rem, 5vw, 2.5rem)' }}
+              >
+                THE SILENT KING
+              </h1>
+              <p className="text-sm md:text-base text-gray-700 max-w-lg font-normal leading-relaxed">
+                Hidden behind the shadows, he guards his realm with unyielding strength. Honor is his creed, and justice his blade.
+              </p>
+            </div>
 
             {/* Bottom-Left Corner Bracket */}
-            <CornerBracket
-              position="BL"
+            {/* <CornerBracket
+              position="BR"
               style={{
                 width: 'var(--corner)',
                 height: 'var(--corner)',
               }}
               className="text-black mt-1"
-            />
+            /> */}
 
             {/* CTA Button */}
             <div className="pt-4">
-              <button
+              <motion.button
                 onClick={() => navigate('/shop')}
                 style={{
                   paddingInline: 'var(--btn-px)',
                   paddingBlock: 'var(--btn-py)',
-                  gap: 'var(--btn-gap)',
                   fontSize: 'var(--body)',
                 }}
-                className="border border-gray-400 rounded-md font-jakarta uppercase tracking-[0.18em] font-semibold text-black hover:bg-black hover:text-white hover:border-black transition-all group flex items-center cursor-pointer"
+                initial="initial"
+                whileHover="hover"
+                whileTap={{ scale: 0.97 }}
+                className="relative border border-gray-400 rounded-md font-jakarta uppercase tracking-[0.18em] font-semibold text-black overflow-hidden flex items-center cursor-pointer select-none"
               >
-                <span>SHOP NOW</span>
-                <ArrowUpRight className="w-4 h-4 stroke-[1.8] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </button>
+                {/* Sliding black background fill from left to right */}
+                <motion.div
+                  variants={{
+                    initial: { x: '-100%' },
+                    hover: { x: '0%' },
+                  }}
+                  transition={{
+                    type: 'tween',
+                    ease: [0.25, 1, 0.5, 1],
+                    duration: 0.35,
+                  }}
+                  className="absolute inset-0 bg-black pointer-events-none"
+                />
+
+                {/* Button Content (Text + Arrow) */}
+                <motion.span
+                  variants={{
+                    initial: { color: '#000000' },
+                    hover: { color: '#ffffff' },
+                  }}
+                  transition={{ duration: 0.25 }}
+                  className="relative z-10 flex items-center"
+                  style={{ gap: 'var(--btn-gap)' }}
+                >
+                  <span>SHOP NOW</span>
+                  <motion.div
+                    variants={{
+                      initial: { x: 0, y: 0 },
+                      hover: { x: 3, y: -3 },
+                    }}
+                    transition={{
+                      type: 'spring',
+                      stiffness: 400,
+                      damping: 25,
+                    }}
+                  >
+                    <ArrowUpRight className="w-4 h-4 stroke-[1.8]" />
+                  </motion.div>
+                </motion.span>
+              </motion.button>
             </div>
           </div>
         </div>

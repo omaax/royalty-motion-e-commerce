@@ -4,8 +4,20 @@ import cubeImg from '@/assets/products/cube.png';
 import coreImg from '@/assets/products/core.png';
 import visorImg from '@/assets/products/visor.png';
 import bladesImg from '@/assets/products/blades.png';
+import sinnerTShirtImg from '@/assets/products/sinner-tshirt.png';
 
 export const SHOP_PRODUCTS: ShopItem[] = [
+  {
+    id: 'sinner-tshirt',
+    title: 'SINNER T-SHIRT',
+    price: 750.0,
+    category: 'Wearables',
+    color: 'Obsidian',
+    inStock: true,
+    tag: 'FEATURED',
+    description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
+    image: sinnerTShirtImg,
+  },
   {
     id: 'shadow-crown-helm',
     title: 'SHADOW CROWN HELM',

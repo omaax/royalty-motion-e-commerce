@@ -20,8 +20,8 @@ export const ShopToolbar: React.FC<ShopToolbarProps> = ({
   onToggleSearch,
 }) => {
   return (
-    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
-      <div className="text-xs font-mono text-red-700 tracking-wider font-semibold leading-relaxed">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 pb-2 border-b border-black">
+      <div className="text-[10px] sm:text-xs font-mono text-red-700 tracking-wider font-semibold leading-tight">
         <div>Gear forged for the future.</div>
         <div>For those who move in silence and lead in power.</div>
       </div>

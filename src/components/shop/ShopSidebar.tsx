@@ -49,14 +49,14 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({ filters, onOpenJoinMod
   };
 
   return (
-    <aside className="order-2 lg:order-1 w-full lg:w-72 xl:w-80 shrink-0 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto border-t lg:border-t-0 border-gray-100 lg:border-r bg-white">
-      <div className="px-6 lg:px-8 pt-7 pb-2">
-        <h2 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-black uppercase">
+    <aside className="order-2 lg:order-1 w-full lg:w-72 xl:w-80 shrink-0 lg:h-full lg:overflow-y-auto border-t lg:border-t-0 border-gray-100 lg:border-r bg-white pb-4">
+      <div className="px-5 lg:px-7 pt-4 pb-1">
+        <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-black uppercase">
           SHOP
         </h2>
       </div>
 
-      <div className="px-6 lg:px-8 pt-4 space-y-6">
+      <div className="px-5 lg:px-7 pt-2 space-y-4 text-xs">
         <div className="flex items-center justify-between pb-2 border-b border-gray-200 text-xs font-mono tracking-[0.2em] font-bold uppercase">
           <span className="flex items-center gap-2">
             <SlidersHorizontal className="w-3.5 h-3.5" />

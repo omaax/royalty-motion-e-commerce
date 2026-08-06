@@ -8,9 +8,14 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ cartCount }) => {
   const location = useLocation();
+  const isShopPage = location.pathname === '/shop';
 
   return (
-    <div className="min-h-screen bg-white text-black font-jakarta selection:bg-black selection:text-white pb-20 relative flex flex-col">
+    <div
+      className={`bg-white text-black font-jakarta selection:bg-black selection:text-white relative flex flex-col ${
+        isShopPage ? 'lg:h-screen lg:overflow-hidden min-h-screen pb-10 lg:pb-0' : 'min-h-screen pb-20'
+      }`}
+    >
       {location.pathname !== '/' && (
         <SiteHeader activeNavTab={location.pathname} cartCount={cartCount} />
       )}
