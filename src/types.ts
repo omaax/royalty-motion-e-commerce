@@ -1,18 +1,39 @@
+export interface ProductMeasurement {
+  label: string;
+  value: string;
+}
+
+export interface ProductMeasurements {
+  sizeRange?: string;
+  sizes?: string[];
+  dimensions: ProductMeasurement[];
+}
+
 export interface ShopItem {
   id: string;
   title: string;
   price: number;
   category: Category;
-  color: ProductColor;
+  colors: ProductColor[];
   inStock: boolean;
   tag?: string;
   description?: string;
-  image?: string;
+  images: string[];
+  measurements?: ProductMeasurements;
+  collection?: CollectionId;
+}
+
+export interface CartLineOptions {
+  color?: string;
+  size?: string;
 }
 
 export interface CartItem {
+  key: string;
   item: ShopItem;
   quantity: number;
+  color?: string;
+  size?: string;
 }
 
 export interface CollectionItem {
@@ -35,6 +56,8 @@ export interface ToastMessage {
 }
 
 export type Category = 'Wearables' | 'Headgear' | 'Accessories' | 'Tech' | 'Limited Edition';
+
+export type CollectionId = 'series-01' | 'series-02' | 'series-03';
 
 export type ProductColor = 'Obsidian' | 'Graphite' | 'Silver' | 'Bronze' | 'White';
 

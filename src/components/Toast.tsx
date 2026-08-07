@@ -21,7 +21,7 @@ export const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
   if (!toast) return null;
 
   return (
-    <div className="fixed top-6 right-6 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+    <div className="fixed bottom-6 right-6 z-50 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="bg-black text-white px-4 py-3 rounded-md shadow-2xl flex items-center gap-3 border border-gray-800">
         <Check className="w-4 h-4 text-emerald-400 stroke-[2.5] flex-shrink-0" />
         <span className="font-jakarta text-xs font-medium tracking-wide uppercase">

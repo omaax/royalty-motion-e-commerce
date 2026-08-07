@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Check, X } from 'lucide-react';
+import { MotionButton } from '../MotionButton';
 
 interface JoinCircleModalProps {
   onClose: () => void;
@@ -62,12 +63,13 @@ export const JoinCircleModal: React.FC<JoinCircleModalProps> = ({ onClose }) => 
               onChange={(e) => setEmailInput(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 text-xs font-mono tracking-widest uppercase focus:outline-none focus:border-black text-center"
             />
-            <button
+            <MotionButton
               type="submit"
-              className="w-full py-3 bg-black text-white text-xs font-mono tracking-widest uppercase hover:bg-gray-800 transition-colors cursor-pointer"
+              variant="solid"
+              className="w-full font-mono text-xs tracking-widest uppercase py-3"
             >
-              JOIN THE CIRCLE →
-            </button>
+              <span>JOIN THE CIRCLE →</span>
+            </MotionButton>
           </form>
         )}
       </div>

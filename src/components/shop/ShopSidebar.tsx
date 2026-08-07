@@ -49,14 +49,14 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({ filters, onOpenJoinMod
   };
 
   return (
-    <aside className="order-2 lg:order-1 w-full lg:w-72 xl:w-80 shrink-0 lg:h-full lg:overflow-y-auto border-t lg:border-t-0 border-gray-100 lg:border-r bg-white pb-4">
-      <div className="px-5 lg:px-7 pt-4 pb-1">
+    <aside className="order-2 lg:order-1 w-full lg:w-72 xl:w-80 shrink-0 lg:h-full lg:overflow-y-auto border-t lg:border-t-0 border-gray-100 lg:border-r bg-white pb-2 lg:pb-8 flex flex-col">
+      <div className="px-5 lg:px-5 pt-4 pb-1">
         <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-black uppercase">
           SHOP
         </h2>
       </div>
 
-      <div className="px-5 lg:px-7 pt-2 space-y-4 text-xs">
+      <div className="px-5 pt-2 space-y-3 text-xs flex-1 flex flex-col">
         <div className="flex items-center justify-between pb-2 border-b border-gray-200 text-xs font-mono tracking-[0.2em] font-bold uppercase">
           <span className="flex items-center gap-2">
             <SlidersHorizontal className="w-3.5 h-3.5" />
@@ -119,7 +119,9 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({ filters, onOpenJoinMod
           <span>✦</span>
         </div>
 
-        <JoinCircleBox onOpen={onOpenJoinModal} />
+        <div className="mt-auto pt-6">
+          <JoinCircleBox onOpen={onOpenJoinModal} />
+        </div>
       </div>
     </aside>
   );

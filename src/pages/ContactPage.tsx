@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Mail, MapPin } from 'lucide-react';
+import { MotionButton } from '../components/MotionButton';
 
 export const ContactPage: React.FC = () => {
   return (
@@ -60,13 +61,14 @@ export const ContactPage: React.FC = () => {
               rows={5}
               className="w-full px-4 py-3 border border-gray-300 text-xs font-mono tracking-widest uppercase focus:outline-none focus:border-black resize-none"
             />
-            <button
+            <MotionButton
               type="submit"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white text-xs font-mono tracking-widest uppercase hover:bg-gray-800 transition-colors cursor-pointer"
+              variant="solid"
+              className="font-mono text-xs tracking-widest uppercase px-6 py-3"
             >
               <span>TRANSMIT</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </MotionButton>
           </form>
         </div>
       </main>

@@ -2,11 +2,13 @@ import React from 'react';
 import { ShoppingBag, Trash2, ChevronRight, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CartItem } from '../types';
+import { MotionButton } from '../components/MotionButton';
+import { COLOR_HEX } from '../constants/shop';
 
 interface CartPageProps {
   cartCount: number;
   cartItems: CartItem[];
-  onRemoveFromCart: (itemId: string) => void;
+  onRemoveFromCart: (key: string) => void;
   onCheckout: () => void;
 }
 
@@ -44,27 +46,27 @@ export const CartPage: React.FC<CartPageProps> = ({
             <p className="text-xs uppercase font-semibold tracking-widest">
               Your shopping bag is empty.
             </p>
-            <button
+            <MotionButton
               onClick={() => navigate('/shop')}
-              className="px-6 py-2 bg-black text-white text-xs font-mono tracking-widest uppercase hover:bg-gray-800 transition-colors cursor-pointer flex items-center gap-2"
+              className="font-mono text-xs tracking-widest uppercase px-6 py-2"
             >
               <span>CONTINUE SHOPPING</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </MotionButton>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-8">
             {/* Cart Items */}
             <div className="lg:col-span-8 space-y-4">
-              {cartItems.map(({ item, quantity }) => (
+              {cartItems.map(({ key, item, quantity, color, size }) => (
                 <div
-                  key={item.id}
+                  key={key}
                   className="p-4 border border-gray-200 rounded-md flex items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    {item.image && (
+                    {item.images[0] && (
                       <div className="w-16 h-16 bg-gray-50 border border-gray-100 rounded overflow-hidden shrink-0 flex items-center justify-center p-1">
-                        <img src={item.image} alt={item.title} className="w-full h-full object-contain" />
+                        <img src={item.images[0]} alt={item.title} className="w-full h-full object-contain" />
                       </div>
                     )}
                     <div className="min-w-0">
@@ -74,6 +76,19 @@ export const CartPage: React.FC<CartPageProps> = ({
                       <h3 className="font-orbitron font-bold text-xs tracking-wide uppercase text-black truncate">
                         {item.title}
                       </h3>
+                      {(color || size) && (
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {color ? (
+                            <span
+                              style={{ backgroundColor: COLOR_HEX[color as keyof typeof COLOR_HEX] ?? '#999' }}
+                              className="w-2.5 h-2.5 rounded-full inline-block border border-gray-300"
+                            />
+                          ) : null}
+                          <span className="text-[10px] text-gray-500 uppercase font-mono">
+                            {[color, size].filter(Boolean).join(' • ')}
+                          </span>
+                        </div>
+                      )}
                       <p className="text-[11px] text-gray-500 font-jakarta mt-0.5">
                         ${item.price.toLocaleString('en-US')} USD &times; {quantity}
                       </p>
@@ -84,7 +99,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                       ${(item.price * quantity).toLocaleString('en-US')}
                     </span>
                     <button
-                      onClick={() => onRemoveFromCart(item.id)}
+                      onClick={() => onRemoveFromCart(key)}
                       className="text-gray-400 hover:text-black p-1 transition-colors cursor-pointer"
                       aria-label="Remove item"
                     >
@@ -109,13 +124,14 @@ export const CartPage: React.FC<CartPageProps> = ({
                     ${totalCartPrice.toLocaleString('en-US')} USD
                   </span>
                 </div>
-                <button
+                <MotionButton
+                  variant="solid"
                   onClick={onCheckout}
-                  className="w-full bg-black text-white hover:bg-gray-900 py-3 rounded-md font-jakarta uppercase font-semibold text-xs tracking-[0.18em] flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  className="w-full font-jakarta uppercase font-semibold text-xs tracking-[0.18em] py-3"
                 >
                   <span>CHECKOUT NOW</span>
                   <ChevronRight className="w-4 h-4 stroke-[2]" />
-                </button>
+                </MotionButton>
                 <p className="text-[10px] text-center text-gray-400 uppercase font-semibold tracking-widest">
                   LGPSM &copy; 2026 &mdash; FUTURE FORWARD FASHION
                 </p>

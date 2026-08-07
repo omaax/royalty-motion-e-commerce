@@ -1,44 +1,81 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Heart, ShoppingBag } from 'lucide-react';
 import { RollingText } from './RollingText';
 
 interface NavBarProps {
   activeNavTab: string;
+  cartCount?: number;
+  wishlistCount?: number;
   className?: string;
 }
 
 const NAV_ITEMS: { label: string; path: string }[] = [
   { label: 'HOME', path: '/' },
   { label: 'SHOP', path: '/shop' },
+  { label: 'CATEGORIES', path: '/categories' },
   { label: 'COLLECTIONS', path: '/collections' },
-  { label: 'JOURNAL', path: '/journal' },
+  // { label: 'JOURNAL', path: '/journal' },
   { label: 'ABOUT', path: '/about' },
   { label: 'CONTACT', path: '/contact' },
 ];
 
-export const NavBar: React.FC<NavBarProps> = ({ activeNavTab, className = '' }) => {
+export const NavBar: React.FC<NavBarProps> = ({
+  activeNavTab,
+  cartCount = 0,
+  wishlistCount = 0,
+  className = '',
+}) => {
   const navigate = useNavigate();
 
   return (
-    <nav
-      className={`flex items-center gap-4 md:gap-6 text-md font-mono tracking-[0.22em] uppercase overflow-x-auto whitespace-nowrap ${className}`}
-    >
-      {NAV_ITEMS.map((item) => {
-        const isActive = activeNavTab === item.path;
-        return (
-          <button
-            key={item.path}
-            onClick={() => navigate(item.path)}
-            className={`relative pb-1 cursor-pointer whitespace-nowrap ${isActive ? 'font-bold' : ''
-              }`}
-          >
-            <RollingText>{item.label}</RollingText>
-            {isActive && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-1 rounded-full bg-black" />
-            )}
-          </button>
-        );
-      })}
-    </nav>
+    <div className={`flex items-center gap-4 sm:gap-6 lg:gap-8 ${className}`}>
+      <nav className="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-1 min-w-0 text-xs sm:text-sm lg:text-base font-mono tracking-[0.2em] sm:tracking-[0.24em] uppercase font-bold overflow-x-auto whitespace-nowrap scrollbar-hide">
+        {NAV_ITEMS.map((item) => {
+          const isActive = activeNavTab === item.path;
+          return (
+            <button
+              key={item.path}
+              onClick={() => navigate(item.path)}
+              className={`relative pb-2 cursor-pointer whitespace-nowrap group`}
+            >
+              <RollingText>{item.label}</RollingText>
+              <span
+                className={`absolute left-0 right-0 bottom-0 h-[3px] bg-black origin-left transition-transform duration-300 ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                  }`}
+              />
+            </button>
+          );
+        })}
+      </nav>
+
+      <div className="flex items-center gap-4 shrink-0">
+        <button
+          onClick={() => navigate('/wishlist')}
+          className="relative hover:opacity-60 transition-opacity cursor-pointer"
+          title="Wishlist"
+        >
+          <Heart className="w-5 h-5 stroke-[2]" />
+          {wishlistCount > 0 && (
+            <span className="absolute -top-1.5 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              {wishlistCount}
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={() => navigate('/cart')}
+          className="relative hover:opacity-60 transition-opacity cursor-pointer"
+          title="Shopping Bag"
+        >
+          <ShoppingBag className="w-5 h-5 stroke-[2]" />
+          {cartCount > 0 && (
+            <span className="absolute -top-1.5 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              {cartCount}
+            </span>
+          )}
+        </button>
+      </div>
+    </div>
   );
 };

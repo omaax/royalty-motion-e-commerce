@@ -1,20 +1,23 @@
 import { ShopItem, GridCols } from '../../types';
 import { ProductCard } from './ProductCard';
+import { MotionButton } from '../MotionButton';
 
 interface ProductGridProps {
   items: ShopItem[];
   gridCols: GridCols;
-  onQuickView: (item: ShopItem) => void;
   onAddToCart: (item: ShopItem) => void;
   onResetFilters: () => void;
+  wishlistIds?: string[];
+  onToggleWishlist?: (item: ShopItem) => void;
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({
   items,
   gridCols,
-  onQuickView,
   onAddToCart,
   onResetFilters,
+  wishlistIds,
+  onToggleWishlist,
 }) => {
   if (items.length === 0) {
     return (
@@ -22,12 +25,12 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <p className="font-mono text-sm uppercase text-gray-500">
           No products found matching your active filter criteria.
         </p>
-        <button
+        <MotionButton
           onClick={onResetFilters}
-          className="px-6 py-2 bg-black text-white text-xs font-mono tracking-widest uppercase hover:bg-gray-800 transition-colors"
+          className="font-mono text-xs tracking-widest uppercase px-6 py-2"
         >
-          Clear Filters
-        </button>
+          <span>Clear Filters</span>
+        </MotionButton>
       </div>
     );
   }
@@ -46,8 +49,9 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <ProductCard
           key={item.id}
           item={item}
-          onQuickView={onQuickView}
           onAddToCart={onAddToCart}
+          wished={wishlistIds?.includes(item.id)}
+          onToggleWishlist={onToggleWishlist}
         />
       ))}
     </div>

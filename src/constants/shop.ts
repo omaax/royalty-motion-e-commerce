@@ -12,6 +12,23 @@ export const CATEGORIES: Category[] = [
   'Limited Edition',
 ];
 
+export const CATEGORY_SLUGS: Record<Category, string> = {
+  Wearables: 'wearables',
+  Headgear: 'headgear',
+  Accessories: 'accessories',
+  Tech: 'tech',
+  'Limited Edition': 'limited-edition',
+};
+
+export const CATEGORY_BY_SLUG: Record<string, Category> = Object.fromEntries(
+  CATEGORIES.map((category) => [CATEGORY_SLUGS[category], category])
+) as Record<string, Category>;
+
+export const categoryToSlug = (category: Category): string => CATEGORY_SLUGS[category];
+
+export const slugToCategory = (slug: string): Category | null =>
+  CATEGORY_BY_SLUG[slug] ?? null;
+
 export const PRODUCT_COLORS: ProductColor[] = [
   'Obsidian',
   'Graphite',

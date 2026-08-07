@@ -1,22 +1,30 @@
-import { Plus, Sparkles } from 'lucide-react';
+import { Plus, Sparkles, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { ShopItem } from '../../types';
+import { COLOR_HEX } from '../../constants/shop';
 
 interface ProductCardProps {
   item: ShopItem;
-  onQuickView: (item: ShopItem) => void;
   onAddToCart: (item: ShopItem) => void;
+  wished?: boolean;
+  onToggleWishlist?: (item: ShopItem) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ item, onQuickView, onAddToCart }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wished, onToggleWishlist }) => {
+  const navigate = useNavigate();
+  const primaryImage = item.images[0];
+
+  const openProduct = () => navigate(`/product/${item.id}`);
+
   return (
     <div className="group flex flex-col justify-between space-y-2 relative h-full min-h-0">
       <div
-        onClick={() => onQuickView(item)}
+        onClick={openProduct}
         className="w-full h-48 sm:h-56 lg:h-auto lg:flex-1 lg:min-h-0 bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center p-2"
       >
-        {item.image ? (
+        {primaryImage ? (
           <img
-            src={item.image}
+            src={primaryImage}
             alt={item.title}
             className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
           />
@@ -49,23 +57,53 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onQuickView, onA
             OUT OF STOCK
           </span>
         )}
+
+        {onToggleWishlist && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWishlist(item);
+            }}
+            className={`absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all z-10 ${
+              wished
+                ? 'bg-black text-white'
+                : 'bg-white/90 text-black shadow-xs border border-gray-200 hover:border-black'
+            }`}
+            title={wished ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          >
+            <Heart
+              className={`w-3.5 h-3.5 ${wished ? 'fill-current' : ''}`}
+            />
+          </button>
+        )}
       </div>
 
       <div className="flex items-start justify-between gap-2 pt-1 shrink-0">
         <div className="space-y-0.5 flex-1 min-w-0">
           <h3
-            onClick={() => onQuickView(item)}
+            onClick={openProduct}
             className="font-mono text-xs font-bold tracking-widest text-black uppercase hover:underline cursor-pointer leading-snug truncate"
             title={item.title}
           >
             {item.title}
           </h3>
-          <div className="text-[10px] font-mono text-gray-400 uppercase tracking-widest truncate">
-            {item.category}
-          </div>
           <div className="font-mono text-xs font-bold text-black">
             ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>
+          {item.colors.length > 0 && (
+            <div className="flex items-center gap-1.5 pt-1">
+              {item.colors.map((color) => (
+                <span
+                  key={color}
+                  title={color}
+                  style={{ backgroundColor: COLOR_HEX[color] }}
+                  className={`w-3 h-3 rounded-full inline-block ${
+                    color === 'White' ? 'border border-gray-300' : 'border border-black/10'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
         <button

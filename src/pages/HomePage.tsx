@@ -1,18 +1,18 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'motion/react';
 import { ImageRevealBackground, BG_IMAGE_1 } from '../components/ImageRevealBackground';
-import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
+// import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
 import { NavBar } from '../components/NavBar';
-import { CartButton } from '../components/CartButton';
+import { MotionButton } from '../components/MotionButton';
 import crestRedImg from '@/assets/crest-red.png';
 
 interface HomePageProps {
   cartCount: number;
+  wishlistCount: number;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ cartCount }) => {
+export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,10 +21,14 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount }) => {
       {/* Interactive Desktop Spotlight Image Reveal Background */}
       <ImageRevealBackground />
 
-      {/* NavBar Overlay + Cart - pinned top-right on desktop, full-width scroll on mobile */}
-      <div className="absolute top-[var(--header-pt)] left-[var(--pad-x)] right-[var(--pad-x)] z-30 flex items-center gap-4 md:gap-6">
-        <NavBar activeNavTab={location.pathname} className="flex-1 justify-start lg:justify-end" />
-        <CartButton cartCount={cartCount} />
+      {/* NavBar - same position as the SiteHeader navbar on other pages */}
+      <div className="absolute top-4 left-6 right-6 lg:left-12 lg:right-12 z-30 flex items-center gap-4 md:gap-6">
+        <NavBar
+          activeNavTab={location.pathname}
+          cartCount={cartCount}
+          wishlistCount={wishlistCount}
+          className="pl-0 md:pl-24 lg:pl-40 pt-8 w-full"
+        />
       </div>
 
       {/* Main Hero Section (flex-1, z-10) */}
@@ -73,58 +77,18 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount }) => {
 
             {/* CTA Button */}
             <div className="pt-4">
-              <motion.button
+              <MotionButton
                 onClick={() => navigate('/shop')}
                 style={{
                   paddingInline: 'var(--btn-px)',
                   paddingBlock: 'var(--btn-py)',
                   fontSize: 'var(--body)',
                 }}
-                initial="initial"
-                whileHover="hover"
-                whileTap={{ scale: 0.97 }}
-                className="relative border border-gray-400 rounded-md font-jakarta uppercase tracking-[0.18em] font-semibold text-black overflow-hidden flex items-center cursor-pointer select-none"
+                className="font-jakarta uppercase tracking-[0.18em] font-semibold"
               >
-                {/* Sliding black background fill from left to right */}
-                <motion.div
-                  variants={{
-                    initial: { x: '-100%' },
-                    hover: { x: '0%' },
-                  }}
-                  transition={{
-                    type: 'tween',
-                    ease: [0.25, 1, 0.5, 1],
-                    duration: 0.35,
-                  }}
-                  className="absolute inset-0 bg-black pointer-events-none"
-                />
-
-                {/* Button Content (Text + Arrow) */}
-                <motion.span
-                  variants={{
-                    initial: { color: '#000000' },
-                    hover: { color: '#ffffff' },
-                  }}
-                  transition={{ duration: 0.25 }}
-                  className="relative z-10 flex items-center"
-                  style={{ gap: 'var(--btn-gap)' }}
-                >
-                  <span>SHOP NOW</span>
-                  <motion.div
-                    variants={{
-                      initial: { x: 0, y: 0 },
-                      hover: { x: 3, y: -3 },
-                    }}
-                    transition={{
-                      type: 'spring',
-                      stiffness: 400,
-                      damping: 25,
-                    }}
-                  >
-                    <ArrowUpRight className="w-4 h-4 stroke-[1.8]" />
-                  </motion.div>
-                </motion.span>
-              </motion.button>
+                <span>SHOP NOW</span>
+                <ArrowUpRight className="w-4 h-4 stroke-[1.8]" />
+              </MotionButton>
             </div>
           </div>
         </div>

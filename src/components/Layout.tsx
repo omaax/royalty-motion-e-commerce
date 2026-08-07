@@ -4,9 +4,10 @@ import { SiteHeader } from './SiteHeader';
 
 interface LayoutProps {
   cartCount: number;
+  wishlistCount: number;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ cartCount }) => {
+export const Layout: React.FC<LayoutProps> = ({ cartCount, wishlistCount }) => {
   const location = useLocation();
   const isShopPage = location.pathname === '/shop';
 
@@ -17,7 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({ cartCount }) => {
       }`}
     >
       {location.pathname !== '/' && (
-        <SiteHeader activeNavTab={location.pathname} cartCount={cartCount} />
+        <SiteHeader activeNavTab={location.pathname} cartCount={cartCount} wishlistCount={wishlistCount} />
       )}
       <Outlet />
     </div>

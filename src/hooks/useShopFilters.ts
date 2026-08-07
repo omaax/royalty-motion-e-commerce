@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ShopItem, SortOption } from '../types';
+import { ShopItem, SortOption, ProductColor } from '../types';
 import { SHOP_PRODUCTS } from '../data/shopData';
 import { PRICE_MIN, PRICE_MAX, DEFAULT_FILTERS } from '../constants/shop';
 
@@ -26,7 +26,7 @@ export function useShopFilters() {
       if (item.price < priceRange[0] || item.price > priceRange[1]) {
         return false;
       }
-      if (selectedColor && item.color !== selectedColor) {
+      if (selectedColor && !item.colors.includes(selectedColor as ProductColor)) {
         return false;
       }
       if (inStockOnly && !item.inStock) {
@@ -60,7 +60,9 @@ export function useShopFilters() {
   const colorCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const item of SHOP_PRODUCTS) {
-      counts[item.color] = (counts[item.color] ?? 0) + 1;
+      for (const color of item.colors) {
+        counts[color] = (counts[color] ?? 0) + 1;
+      }
     }
     return counts;
   }, []);

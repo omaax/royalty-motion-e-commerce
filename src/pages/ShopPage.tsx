@@ -6,17 +6,17 @@ import { ShopToolbar } from '../components/shop/ShopToolbar';
 import { SearchBar } from '../components/shop/SearchBar';
 import { ProductGrid } from '../components/shop/ProductGrid';
 import { Pagination } from '../components/shop/Pagination';
-import { QuickViewModal } from '../components/shop/QuickViewModal';
 import { JoinCircleModal } from '../components/shop/JoinCircleModal';
 
 interface ShopPageProps {
   onAddToCart: (item: ShopItem) => void;
+  wishlistIds: string[];
+  onToggleWishlist: (item: ShopItem) => void;
 }
 
-export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart }) => {
+export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, wishlistIds, onToggleWishlist }) => {
   const filters = useShopFilters();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedQuickViewItem, setSelectedQuickViewItem] = useState<ShopItem | null>(null);
   const [showJoinModal, setShowJoinModal] = useState(false);
 
   return (
@@ -47,9 +47,10 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart }) => {
               <ProductGrid
                 items={filters.visibleProducts}
                 gridCols={filters.gridCols}
-                onQuickView={setSelectedQuickViewItem}
                 onAddToCart={onAddToCart}
                 onResetFilters={filters.resetFilters}
+                wishlistIds={wishlistIds}
+                onToggleWishlist={onToggleWishlist}
               />
             </div>
           </div>
@@ -61,14 +62,6 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart }) => {
           />
         </main>
       </div>
-
-      {selectedQuickViewItem && (
-        <QuickViewModal
-          item={selectedQuickViewItem}
-          onClose={() => setSelectedQuickViewItem(null)}
-          onAddToCart={onAddToCart}
-        />
-      )}
 
       {showJoinModal && <JoinCircleModal onClose={() => setShowJoinModal(false)} />}
     </>
