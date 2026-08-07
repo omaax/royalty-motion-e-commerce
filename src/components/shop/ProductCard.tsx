@@ -2,6 +2,7 @@ import { Plus, Sparkles, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ShopItem } from '../../types';
 import { COLOR_HEX } from '../../constants/shop';
+import { MotionButton } from '../MotionButton';
 
 interface ProductCardProps {
   item: ShopItem;
@@ -106,13 +107,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
           )}
         </div>
 
-        <button
+        <MotionButton
           onClick={() => onAddToCart(item)}
-          className="w-8 h-8 rounded-full border border-gray-300 group-hover:border-black flex items-center justify-center hover:bg-black hover:text-white transition-all cursor-pointer flex-shrink-0"
+          className="rounded-full w-8 h-8 flex-shrink-0"
+          style={{ padding: 0 }}
           title="Add to Shopping Bag"
         >
           <Plus className="w-4 h-4 stroke-[1.5]" />
-        </button>
+        </MotionButton>
       </div>
     </div>
   );

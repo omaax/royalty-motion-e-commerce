@@ -49,7 +49,7 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({ filters, onOpenJoinMod
   };
 
   return (
-    <aside className="order-2 lg:order-1 w-full lg:w-72 xl:w-80 shrink-0 lg:h-full lg:overflow-y-auto border-t lg:border-t-0 border-gray-100 lg:border-r bg-white pb-2 lg:pb-8 flex flex-col">
+    <aside className="order-2 lg:order-1 w-full lg:w-72 xl:w-80 shrink-0 lg:h-full lg:min-h-[44rem] lg:overflow-y-auto border-t lg:border-t-0 border-gray-100 lg:border-r bg-white pb-2 lg:pb-8 flex flex-col">
       <div className="px-5 lg:px-5 pt-4 pb-1">
         <h2 className="font-serif text-3xl md:text-4xl font-bold tracking-tight text-black uppercase">
           SHOP

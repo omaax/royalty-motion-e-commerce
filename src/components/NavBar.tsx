@@ -15,9 +15,6 @@ const NAV_ITEMS: { label: string; path: string }[] = [
   { label: 'SHOP', path: '/shop' },
   { label: 'CATEGORIES', path: '/categories' },
   { label: 'COLLECTIONS', path: '/collections' },
-  // { label: 'JOURNAL', path: '/journal' },
-  { label: 'ABOUT', path: '/about' },
-  { label: 'CONTACT', path: '/contact' },
 ];
 
 export const NavBar: React.FC<NavBarProps> = ({
