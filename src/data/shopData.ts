@@ -6,7 +6,7 @@ import HiddenInPlainSight2 from '@/assets/products/Hidden-in-Plain Sight-2.png';
 import HiddenInPlainSight3 from '@/assets/products/Hidden-in-Plain Sight-3.png';
 import masoueradeWhite from '@/assets/products/masouerade-white.png';
 import masoueradeBlack from '@/assets/products/masouerade-black.png';
-import ancientTShirtWhite from '@/assets/products/ANCIENT-tshirt-white.png';
+import ancientTShirtWhite from '@/assets/products/ancient-tshirt-white.png';
 import masqueradeFront from '@/assets/products/masquerade-front.png';
 import ANCIENT from '@/assets/products/ANCIENT.png';
 import ANCIENT2 from '@/assets/products/ANCIENT-2.png';
