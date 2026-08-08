@@ -17,7 +17,7 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount }) 
   const location = useLocation();
 
   return (
-    <div className="relative flex-1 flex flex-col justify-between overflow-hidden">
+    <div className="relative flex-1 flex flex-col justify-between overflow-y-auto lg:overflow-hidden">
       {/* Interactive Desktop Spotlight Image Reveal Background */}
       <ImageRevealBackground />
 
@@ -94,7 +94,7 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount }) 
         </div>
 
         {/* Mobile static image section (below hero for < lg viewports) */}
-        <div className="mt-12 lg:hidden w-full">
+        <div className="mt-12 lg:hidden w-full shrink-0">
           <div className="border border-gray-200 rounded-lg overflow-hidden aspect-[4/5] sm:aspect-[16/9] relative">
             <img
               src={BG_IMAGE_1}

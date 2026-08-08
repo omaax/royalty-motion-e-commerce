@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
 import { Instagram, Twitter, Youtube } from 'lucide-react';
 import crestImg from '@/assets/crest.png';
 import { MotionButton } from './MotionButton';
@@ -40,10 +41,22 @@ const SOCIALS = [
 
 export const SiteFooter: React.FC = () => {
   const navigate = useNavigate();
+  const [openColumn, setOpenColumn] = useState<string | null>('EXPLORE');
+  const [isDesktop, setIsDesktop] = useState<boolean>(() =>
+    typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false,
+  );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(min-width: 768px)');
+    const update = () => setIsDesktop(mq.matches);
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
 
   return (
     <footer className="px-6 lg:px-12 pt-10 pb-8 bg-white border-t border-black relative z-40 shrink-0">
-      <div className="flex flex-col md:flex-row justify-between gap-8">
+      <div className="flex flex-col items-start md:flex-row md:items-stretch justify-between gap-8">
         {/* Brand Block */}
         <div className="flex items-center gap-4">
           <button
@@ -61,24 +74,48 @@ export const SiteFooter: React.FC = () => {
         </div>
 
         {/* Link Columns */}
-        <div className="flex gap-12 md:gap-16">
-          {FOOTER_COLUMNS.map((column) => (
-            <nav key={column.title} className="flex flex-col items-start gap-3">
-              <h4 className="text-[10px] font-mono tracking-[0.25em] uppercase font-bold text-gray-400">
-                {column.title}
-              </h4>
-              {column.links.map((link) => (
+        <div className="flex flex-col w-full md:w-auto md:flex-row md:flex-wrap gap-x-12 gap-y-8 md:gap-x-16">
+          {FOOTER_COLUMNS.map((column) => {
+            const isOpen = openColumn === column.title;
+            return (
+              <nav key={column.title} className="flex flex-col items-start gap-3 w-full md:w-auto border-t border-black/10 md:border-0 pt-3 md:pt-0">
                 <button
-                  key={link.label}
-                  onClick={() => link.path && navigate(link.path)}
-                  className="text-xs font-mono tracking-[0.2em] uppercase font-bold cursor-pointer group relative pb-1"
+                  type="button"
+                  onClick={() => setOpenColumn(isOpen ? null : column.title)}
+                  className="flex items-center justify-between w-full md:pointer-events-none md:cursor-default cursor-pointer select-none"
+                  aria-expanded={isOpen}
                 >
-                  <span className="group-hover:opacity-60 transition-opacity">{link.label}</span>
-                  <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                  <h4 className="text-[10px] font-mono tracking-[0.25em] uppercase font-bold text-gray-400">
+                    {column.title}
+                  </h4>
+                  <span className="text-sm text-gray-400 md:hidden">{isOpen ? '−' : '+'}</span>
                 </button>
-              ))}
-            </nav>
-          ))}
+                <AnimatePresence initial={false}>
+                  {(isOpen || isDesktop) && (
+                    <motion.div
+                      key="links"
+                      initial={isDesktop ? false : { height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={isDesktop ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
+                      className="overflow-hidden flex flex-col gap-3 pt-1 md:pt-0"
+                    >
+                      {column.links.map((link) => (
+                        <button
+                          key={link.label}
+                          onClick={() => link.path && navigate(link.path)}
+                          className="text-left text-xs font-mono tracking-[0.2em] uppercase font-bold cursor-pointer group relative pb-1 whitespace-nowrap"
+                        >
+                          <span className="group-hover:opacity-60 transition-opacity">{link.label}</span>
+                          <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </nav>
+            );
+          })}
         </div>
 
         {/* Contact + Socials */}

@@ -26,8 +26,8 @@ export const NavBar: React.FC<NavBarProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className={`flex items-center gap-4 sm:gap-6 lg:gap-8 ${className}`}>
-      <nav className="flex items-center gap-4 sm:gap-6 lg:gap-8 flex-1 min-w-0 text-xs sm:text-sm lg:text-base font-mono tracking-[0.2em] sm:tracking-[0.24em] uppercase font-bold overflow-x-auto whitespace-nowrap scrollbar-hide">
+    <div className={`flex flex-col md:flex-row md:items-center gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-2 md:gap-y-0 ${className}`}>
+      <nav className="flex items-center gap-4 sm:gap-6 lg:gap-8 w-full md:w-auto md:flex-1 min-w-0 text-xs sm:text-sm lg:text-base font-mono tracking-[0.2em] sm:tracking-[0.24em] uppercase font-bold overflow-x-auto whitespace-nowrap scrollbar-hide">
         {NAV_ITEMS.map((item) => {
           const isActive = activeNavTab === item.path;
           return (
@@ -46,15 +46,15 @@ export const NavBar: React.FC<NavBarProps> = ({
         })}
       </nav>
 
-      <div className="flex items-center gap-4 shrink-0">
+      <div className="flex items-center justify-end md:justify-start gap-4 w-full md:w-auto md:shrink-0">
         <button
           onClick={() => navigate('/wishlist')}
-          className="relative hover:opacity-60 transition-opacity cursor-pointer"
+          className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
           title="Wishlist"
         >
           <Heart className="w-5 h-5 stroke-[2]" />
           {wishlistCount > 0 && (
-            <span className="absolute -top-1.5 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+            <span className="absolute top-0 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
               {wishlistCount}
             </span>
           )}
@@ -62,12 +62,12 @@ export const NavBar: React.FC<NavBarProps> = ({
 
         <button
           onClick={() => navigate('/cart')}
-          className="relative hover:opacity-60 transition-opacity cursor-pointer"
+          className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
           title="Shopping Bag"
         >
           <ShoppingBag className="w-5 h-5 stroke-[2]" />
           {cartCount > 0 && (
-            <span className="absolute -top-1.5 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+            <span className="absolute top-0 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
               {cartCount}
             </span>
           )}

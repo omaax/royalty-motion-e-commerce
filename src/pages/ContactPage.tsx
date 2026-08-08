@@ -8,7 +8,7 @@ export const ContactPage: React.FC = () => {
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
           <div className="flex flex-col md:flex-row md:items-baseline gap-6">
-            <h2 className="font-serif text-5xl md:text-6xl font-bold tracking-tight text-black uppercase">
+            <h2 className="font-serif text-3xl md:text-6xl font-bold tracking-tight text-black uppercase">
               CONTACT
             </h2>
             <div className="text-xs font-mono text-red-700 tracking-wider font-semibold leading-relaxed">

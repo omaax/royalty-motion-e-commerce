@@ -53,7 +53,7 @@ export const ShopToolbar: React.FC<ShopToolbarProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
+        <div className="hidden md:flex items-center gap-2 border-l border-gray-200 pl-4">
           <button
             onClick={() => onGridCols(4)}
             className={`p-1 hover:opacity-80 transition-opacity ${gridCols === 4 ? 'text-black font-bold' : 'text-gray-300'}`}

@@ -70,7 +70,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
           <div className="text-[10px] font-mono tracking-widest uppercase text-gray-400">
             {collection.code}
           </div>
-          <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-black uppercase">
+          <h1 className="font-serif text-3xl md:text-5xl font-bold tracking-tight text-black uppercase">
             {collection.title}
           </h1>
         </div>

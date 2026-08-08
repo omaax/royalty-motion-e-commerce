@@ -46,13 +46,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
           </div>
         )}
 
-        {item.tag && (
-          <span className="absolute top-3 right-3 bg-white text-black text-[9px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-xs border border-gray-100">
-            <span className="w-1.5 h-1.5 rounded-full bg-black inline-block"></span>
-            {item.tag}
-          </span>
-        )}
-
         {!item.inStock && (
           <span className="absolute bottom-3 left-3 bg-red-700 text-white text-[9px] font-mono tracking-widest uppercase px-2 py-0.5">
             OUT OF STOCK
@@ -60,22 +53,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
         )}
 
         {onToggleWishlist && (
-          <button
+          <MotionButton
+            variant={wished ? 'solid' : 'ghost'}
             onClick={(e) => {
               e.stopPropagation();
               onToggleWishlist(item);
             }}
-            className={`absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all z-10 ${
-              wished
-                ? 'bg-black text-white'
-                : 'bg-white/90 text-black shadow-xs border border-gray-200 hover:border-black'
-            }`}
             title={wished ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            className={`absolute top-3 left-3 w-7 h-7 p-0 rounded-full justify-center items-center z-10 ${wished ? '' : 'bg-white'}`}
           >
             <Heart
               className={`w-3.5 h-3.5 ${wished ? 'fill-current' : ''}`}
             />
-          </button>
+          </MotionButton>
         )}
       </div>
 

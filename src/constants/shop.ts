@@ -8,7 +8,6 @@ export const CATEGORIES: Category[] = [
   'Wearables',
   'Headgear',
   'Accessories',
-  'Tech',
   'Limited Edition',
 ];
 
@@ -16,7 +15,6 @@ export const CATEGORY_SLUGS: Record<Category, string> = {
   Wearables: 'wearables',
   Headgear: 'headgear',
   Accessories: 'accessories',
-  Tech: 'tech',
   'Limited Edition': 'limited-edition',
 };
 
@@ -30,19 +28,21 @@ export const slugToCategory = (slug: string): Category | null =>
   CATEGORY_BY_SLUG[slug] ?? null;
 
 export const PRODUCT_COLORS: ProductColor[] = [
-  'Obsidian',
-  'Graphite',
-  'Silver',
-  'Bronze',
+  'Black',
   'White',
+  'Gray',
+  'Red',
+  'Blue',
+  'Green',
 ];
 
 export const COLOR_HEX: Record<ProductColor, string> = {
-  Obsidian: '#121212',
-  Graphite: '#4B5563',
-  Silver: '#CBD5E1',
-  Bronze: '#854D0E',
+  Black: '#111111',
   White: '#FFFFFF',
+  Gray: '#9CA3AF',
+  Red: '#DC2626',
+  Blue: '#2563EB',
+  Green: '#16A34A',
 };
 
 export const DEFAULT_FILTERS = {

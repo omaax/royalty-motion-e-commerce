@@ -14,13 +14,13 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount,
   const navigate = useNavigate();
 
   return (
-    <header className="px-6 lg:px-12 relative bg-white z-40 shrink-0 pb-4 pt-4">
+    <header className="px-6 lg:px-12 relative bg-white z-40 shrink-0 pb-4">
       {/* Center Main Nav Tabs */}
       <NavBar
         activeNavTab={activeNavTab}
         cartCount={cartCount}
         wishlistCount={wishlistCount}
-        className="pl-0 md:pl-24 lg:pl-40 pt-8 -mb-10"
+        className="pl-0 md:pl-24 lg:pl-40 pt-8 -mb-5 relative z-30"
       />
 
       <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
@@ -46,7 +46,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount,
             <img
               src={honorLogoImg}
               alt="HONOR"
-              className="h-20 md:h-28 lg:h-32 scale-[2.6] md:scale-[3.4] lg:scale-[4.0] translate-y-4 md:translate-y-8 lg:translate-y-11 object-contain select-none origin-center transform pointer-events-none transition-transform duration-300"
+              className="h-20 md:h-28 lg:h-32 scale-[2.6] md:scale-[3.4] lg:scale-[4.0] translate-y-8 md:translate-y-8 lg:translate-y-11 object-contain select-none origin-center transform pointer-events-none transition-transform duration-300"
             />
           </div>
         </div>
