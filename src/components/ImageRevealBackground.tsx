@@ -3,7 +3,7 @@ import { useMotionValue, useSpring } from 'motion/react';
 import bgArmorCutout from '@/assets/bg-armor-cutout.png';
 import bgCloakCutout from '@/assets/bg-colored-armor-cutout.png';
 
-// High-resolution fashion editorial images for LGPSM reveal experience
+// High-resolution fashion editorial images for ROYALTY reveal experience
 export const BG_IMAGE_1 = bgArmorCutout;
 export const BG_IMAGE_2 = bgCloakCutout;
 

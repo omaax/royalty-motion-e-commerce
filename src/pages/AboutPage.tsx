@@ -1,4 +1,5 @@
 import React from 'react';
+import { APP_NAME, APP_YEAR } from '../constants/branding';
 
 export const AboutPage: React.FC = () => {
   return (
@@ -19,14 +20,14 @@ export const AboutPage: React.FC = () => {
         {/* Manifesto */}
         <div className="max-w-3xl pt-12 space-y-6">
           <p className="font-mono text-xs tracking-widest uppercase text-gray-500">
-            LGPSM &mdash; EST. 2026
+            {APP_NAME} &mdash; EST. {APP_YEAR}
           </p>
           <p className="font-serif text-2xl md:text-3xl font-bold leading-snug uppercase text-black">
             Future-forward fashion engineered for those who move in silence and lead in power.
           </p>
           <div className="space-y-4 text-sm text-gray-600 font-jakarta leading-relaxed">
             <p>
-              LGPSM forges garments, headgear, and tech for the modern operative &mdash;
+              {APP_NAME} forges garments, headgear, and tech for the modern operative &mdash;
               pieces built from recycled polymers, titanium-infused ceramics, and
               weather-sealed fabrics designed to outlast the season.
             </p>

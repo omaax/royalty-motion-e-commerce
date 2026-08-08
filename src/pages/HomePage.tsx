@@ -5,6 +5,7 @@ import { ImageRevealBackground, BG_IMAGE_1 } from '../components/ImageRevealBack
 // import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
 import { NavBar } from '../components/NavBar';
 import { MotionButton } from '../components/MotionButton';
+import { APP_NAME, APP_TAGLINE } from '../constants/branding';
 import crestRedImg from '@/assets/crest-red.png';
 
 interface HomePageProps {
@@ -98,7 +99,7 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount }) 
           <div className="border border-gray-200 rounded-lg overflow-hidden aspect-[4/5] sm:aspect-[16/9] relative">
             <img
               src={BG_IMAGE_1}
-              alt="LGPSM Future Forward Fashion"
+              alt={`${APP_NAME} ${APP_TAGLINE}`}
               className="w-full h-full object-cover bg-white"
               referrerPolicy="no-referrer"
             />

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import crestImg from '@/assets/crest.png';
 import honorLogoImg from '@/assets/honor-logo.png';
+import { APP_NAME } from '../constants/branding';
 import { NavBar } from './NavBar';
 
 interface SiteHeaderProps {
@@ -45,7 +46,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount,
           <div className="relative text-center my-1 md:my-0 self-center flex items-center justify-center">
             <img
               src={honorLogoImg}
-              alt="HONOR"
+              alt={APP_NAME}
               className="h-20 md:h-28 lg:h-32 scale-[2.6] md:scale-[3.4] lg:scale-[4.0] translate-y-8 md:translate-y-8 lg:translate-y-11 object-contain select-none origin-center transform pointer-events-none transition-transform duration-300"
             />
           </div>

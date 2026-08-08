@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { CartItem } from '../types';
 import { MotionButton } from '../components/MotionButton';
 import { COLOR_HEX } from '../constants/shop';
+import { APP_NAME, APP_TAGLINE, APP_YEAR } from '../constants/branding';
 
 interface CartPageProps {
   cartCount: number;
@@ -133,7 +134,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                   <ChevronRight className="w-4 h-4 stroke-[2]" />
                 </MotionButton>
                 <p className="text-[10px] text-center text-gray-400 uppercase font-semibold tracking-widest">
-                  LGPSM &copy; 2026 &mdash; FUTURE FORWARD FASHION
+                  {APP_NAME} &copy; {APP_YEAR} &mdash; {APP_TAGLINE}
                 </p>
               </div>
             </aside>

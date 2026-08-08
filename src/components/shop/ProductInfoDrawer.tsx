@@ -43,11 +43,6 @@ const CARE_ROWS: Record<Category, InfoRow[]> = {
     { label: 'Finish', value: 'Hand-burnished' },
     { label: 'Care', value: 'Polish with a microfibre cloth.' },
   ],
-  Tech: [
-    { label: 'Shell', value: 'Aerospace silver-alloy housing' },
-    { label: 'Core', value: 'Sealed quantum processing module' },
-    { label: 'Care', value: 'Keep dry. Clean with a lint-free cloth.' },
-  ],
   'Limited Edition': [
     { label: 'Construction', value: 'Hand-finished, numbered piece' },
     { label: 'Case', value: 'Registered archival presentation case' },

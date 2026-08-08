@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { Instagram, Twitter, Youtube } from 'lucide-react';
 import crestImg from '@/assets/crest.png';
+import { APP_EMAIL, APP_NAME, APP_TAGLINE, APP_YEAR } from '../constants/branding';
 import { MotionButton } from './MotionButton';
 
 const FOOTER_COLUMNS: { title: string; links: { label: string; path?: string }[] }[] = [
@@ -121,10 +122,10 @@ export const SiteFooter: React.FC = () => {
         {/* Contact + Socials */}
         <div className="flex flex-col items-center md:items-end justify-between gap-4 md:max-w-xs">
           <a
-            href="mailto:hello@honor.example"
+            href={`mailto:${APP_EMAIL}`}
             className="font-jakarta text-sm text-gray-700 hover:text-black transition-colors font-normal"
           >
-            hello@honor.example
+            {APP_EMAIL}
           </a>
           <div className="flex items-center gap-3">
             {SOCIALS.map(({ label, icon: Icon }) => (
@@ -144,7 +145,7 @@ export const SiteFooter: React.FC = () => {
       {/* Bottom Bar */}
       <div className="mt-10 pt-4 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div className="text-[9px] font-mono tracking-[0.2em] uppercase font-bold">
-          © 2026 HONOR — CLASSIC FORWARD FASHION
+          © {APP_YEAR} {APP_NAME} — {APP_TAGLINE}
         </div>
       </div>
     </footer>
