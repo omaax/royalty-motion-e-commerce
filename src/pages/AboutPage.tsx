@@ -1,4 +1,5 @@
 import React from 'react';
+import { APP_NAME, APP_YEAR } from '../constants/branding';
 
 export const AboutPage: React.FC = () => {
   return (
@@ -6,7 +7,7 @@ export const AboutPage: React.FC = () => {
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
           <div className="flex flex-col md:flex-row md:items-baseline gap-6">
-            <h2 className="font-serif text-5xl md:text-6xl font-bold tracking-tight text-black uppercase">
+            <h2 className="font-serif text-3xl md:text-6xl font-bold tracking-tight text-black uppercase">
               ABOUT
             </h2>
             <div className="text-xs font-mono text-red-700 tracking-wider font-semibold leading-relaxed">
@@ -19,14 +20,14 @@ export const AboutPage: React.FC = () => {
         {/* Manifesto */}
         <div className="max-w-3xl pt-12 space-y-6">
           <p className="font-mono text-xs tracking-widest uppercase text-gray-500">
-            LGPSM &mdash; EST. 2026
+            {APP_NAME} &mdash; EST. {APP_YEAR}
           </p>
           <p className="font-serif text-2xl md:text-3xl font-bold leading-snug uppercase text-black">
             Future-forward fashion engineered for those who move in silence and lead in power.
           </p>
           <div className="space-y-4 text-sm text-gray-600 font-jakarta leading-relaxed">
             <p>
-              LGPSM forges garments, headgear, and tech for the modern operative &mdash;
+              {APP_NAME} forges garments, headgear, and tech for the modern operative &mdash;
               pieces built from recycled polymers, titanium-infused ceramics, and
               weather-sealed fabrics designed to outlast the season.
             </p>

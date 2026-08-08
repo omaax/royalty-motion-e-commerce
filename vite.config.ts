@@ -2,10 +2,19 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
+import { APP_NAME, APP_TAGLINE } from './src/constants/branding';
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: 'inject-app-title',
+        transformIndexHtml: (html) =>
+          html.replace(/<title>.*?<\/title>/, `<title>${APP_NAME} — ${APP_TAGLINE}</title>`),
+      },
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ShopItem, SortOption, ProductColor } from '../types';
 import { SHOP_PRODUCTS } from '../data/shopData';
 import { PRICE_MIN, PRICE_MAX, DEFAULT_FILTERS } from '../constants/shop';
 
-const PAGE_SIZE = 8;
+const INITIAL_VISIBLE = 8;
+const LOAD_MORE_STEP = 8;
 
 export function useShopFilters() {
   const [selectedCategory, setSelectedCategory] = useState<string>(DEFAULT_FILTERS.selectedCategory);
@@ -13,7 +14,7 @@ export function useShopFilters() {
   const [sortBy, setSortBy] = useState<SortOption>(DEFAULT_FILTERS.sortBy);
   const [searchQuery, setSearchQuery] = useState<string>(DEFAULT_FILTERS.searchQuery);
   const [gridCols, setGridCols] = useState<4 | 2 | 1>(4);
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [visibleCount, setVisibleCount] = useState<number>(INITIAL_VISIBLE);
   const [collapseCategory, setCollapseCategory] = useState(false);
   const [collapsePrice, setCollapsePrice] = useState(false);
   const [collapseColor, setCollapseColor] = useState(false);
@@ -75,18 +76,19 @@ export function useShopFilters() {
     inStockOnly ||
     searchQuery.trim() !== '';
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const hasMore = visibleCount < filteredProducts.length;
 
   useEffect(() => {
-    if (currentPage > totalPages) {
-      setCurrentPage(totalPages);
-    }
-  }, [currentPage, totalPages]);
+    setVisibleCount(INITIAL_VISIBLE);
+  }, [selectedCategory, priceRange, selectedColor, inStockOnly, sortBy, searchQuery]);
 
   const visibleProducts = useMemo(() => {
-    const start = (currentPage - 1) * PAGE_SIZE;
-    return filteredProducts.slice(start, start + PAGE_SIZE);
-  }, [filteredProducts, currentPage]);
+    return filteredProducts.slice(0, visibleCount);
+  }, [filteredProducts, visibleCount]);
+
+  const loadMore = useCallback(() => {
+    setVisibleCount((count) => Math.min(count + LOAD_MORE_STEP, filteredProducts.length));
+  }, [filteredProducts.length]);
 
   const resetFilters = () => {
     setSelectedCategory(DEFAULT_FILTERS.selectedCategory);
@@ -96,7 +98,7 @@ export function useShopFilters() {
     setSearchQuery(DEFAULT_FILTERS.searchQuery);
   };
 
-  const resetPage = () => setCurrentPage(1);
+  const resetPage = () => setVisibleCount(INITIAL_VISIBLE);
 
   return {
     filteredProducts,
@@ -119,16 +121,15 @@ export function useShopFilters() {
     setSearchQuery,
     gridCols,
     setGridCols,
-    currentPage,
-    setCurrentPage,
+    visibleCount,
+    hasMore,
+    loadMore,
     collapseCategory,
     setCollapseCategory,
     collapsePrice,
     setCollapsePrice,
     collapseColor,
     setCollapseColor,
-    totalPages,
     visibleProducts,
-    pageSize: PAGE_SIZE,
   };
 }

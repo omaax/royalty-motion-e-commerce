@@ -63,7 +63,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
       </button>
 
       <div className="mb-8">
-        <h1 className="font-serif text-3xl md:text-4xl font-bold uppercase tracking-wide">
+        <h1 className="font-serif text-2xl md:text-4xl font-bold uppercase tracking-wide">
           {category}
         </h1>
         <p className="mt-2 text-[11px] font-mono uppercase tracking-widest text-gray-400">

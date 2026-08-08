@@ -55,11 +55,11 @@ export interface ToastMessage {
   text: string;
 }
 
-export type Category = 'Wearables' | 'Headgear' | 'Accessories' | 'Tech' | 'Limited Edition';
+export type Category = 'Wearables' | 'Headgear' | 'Accessories' | 'Limited Edition';
 
 export type CollectionId = 'series-01' | 'series-02' | 'series-03';
 
-export type ProductColor = 'Obsidian' | 'Graphite' | 'Silver' | 'Bronze' | 'White';
+export type ProductColor = 'Black' | 'White' | 'Gray' | 'Red' | 'Blue' | 'Green';
 
 export type SortOption = 'featured' | 'price-low' | 'price-high' | 'newest';
 

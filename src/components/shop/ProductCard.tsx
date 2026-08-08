@@ -2,6 +2,7 @@ import { Plus, Sparkles, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { ShopItem } from '../../types';
 import { COLOR_HEX } from '../../constants/shop';
+import { MotionButton } from '../MotionButton';
 
 interface ProductCardProps {
   item: ShopItem;
@@ -45,13 +46,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
           </div>
         )}
 
-        {item.tag && (
-          <span className="absolute top-3 right-3 bg-white text-black text-[9px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-xs border border-gray-100">
-            <span className="w-1.5 h-1.5 rounded-full bg-black inline-block"></span>
-            {item.tag}
-          </span>
-        )}
-
         {!item.inStock && (
           <span className="absolute bottom-3 left-3 bg-red-700 text-white text-[9px] font-mono tracking-widest uppercase px-2 py-0.5">
             OUT OF STOCK
@@ -59,22 +53,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
         )}
 
         {onToggleWishlist && (
-          <button
+          <MotionButton
+            variant={wished ? 'solid' : 'ghost'}
             onClick={(e) => {
               e.stopPropagation();
               onToggleWishlist(item);
             }}
-            className={`absolute top-3 left-3 w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all z-10 ${
-              wished
-                ? 'bg-black text-white'
-                : 'bg-white/90 text-black shadow-xs border border-gray-200 hover:border-black'
-            }`}
             title={wished ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            className={`absolute top-3 left-3 w-7 h-7 p-0 rounded-full justify-center items-center z-10 ${wished ? '' : 'bg-white'}`}
           >
             <Heart
               className={`w-3.5 h-3.5 ${wished ? 'fill-current' : ''}`}
             />
-          </button>
+          </MotionButton>
         )}
       </div>
 
@@ -106,13 +97,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
           )}
         </div>
 
-        <button
+        <MotionButton
           onClick={() => onAddToCart(item)}
-          className="w-8 h-8 rounded-full border border-gray-300 group-hover:border-black flex items-center justify-center hover:bg-black hover:text-white transition-all cursor-pointer flex-shrink-0"
+          className="rounded-full w-8 h-8 flex-shrink-0"
+          style={{ padding: 0 }}
           title="Add to Shopping Bag"
         >
           <Plus className="w-4 h-4 stroke-[1.5]" />
-        </button>
+        </MotionButton>
       </div>
     </div>
   );

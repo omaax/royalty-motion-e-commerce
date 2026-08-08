@@ -3,11 +3,12 @@ import { useMotionValue, useSpring } from 'motion/react';
 import bgArmorCutout from '@/assets/bg-armor-cutout.png';
 import bgCloakCutout from '@/assets/bg-colored-armor-cutout.png';
 
-// High-resolution fashion editorial images for LGPSM reveal experience
+// High-resolution fashion editorial images for ROYALTY reveal experience
 export const BG_IMAGE_1 = bgArmorCutout;
 export const BG_IMAGE_2 = bgCloakCutout;
 
 // Circular spotlight mask matching the original soft radial falloff.
+const CHARACTER_SIZE = 'auto min(100vh, 1200px)';
 const circleMask = (radius: number) =>
   `radial-gradient(circle ${radius}px at center, #000 0%, #000 40%, rgba(0,0,0,0.75) 60%, rgba(0,0,0,0.4) 75%, rgba(0,0,0,0.12) 88%, transparent 100%)`;
 
@@ -169,18 +170,20 @@ export const ImageRevealBackground: React.FC = () => {
 
       {/* 1. Base Layer (Character - Pure White Armor Cutout) */}
       <div
-        className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-opacity duration-300 pointer-events-none z-10"
+        className="absolute inset-0 bg-contain bg-bottom bg-no-repeat transition-opacity duration-300 pointer-events-none z-40"
         style={{
           backgroundImage: `url(${bgImages.base})`,
+          backgroundSize: CHARACTER_SIZE,
         }}
       />
 
       {/* 2. Reveal Layer (Character - Crimson Floral Cloak Cutout with Spotlight Mask) */}
       <div
         ref={revealRef}
-        className="absolute inset-0 bg-contain bg-center bg-no-repeat pointer-events-none z-20"
+        className="absolute inset-0 bg-contain bg-bottom bg-no-repeat pointer-events-none z-50"
         style={{
           backgroundImage: `url(${bgImages.reveal})`,
+          backgroundSize: CHARACTER_SIZE,
           WebkitMaskImage: circleMask(radius),
           WebkitMaskSize: `${radius * 2}px ${radius * 2}px`,
           WebkitMaskRepeat: 'no-repeat',

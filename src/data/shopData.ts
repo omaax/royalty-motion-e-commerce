@@ -7,6 +7,10 @@ import HiddenInPlainSight3 from '@/assets/products/Hidden-in-Plain Sight-3.png';
 import masoueradeWhite from '@/assets/products/masouerade-white.png';
 import masoueradeBlack from '@/assets/products/masouerade-black.png';
 import ancientTShirtWhite from '@/assets/products/ANCIENT-tshirt-white.png';
+import masqueradeFront from '@/assets/products/masquerade-front.png';
+import ANCIENT from '@/assets/products/ANCIENT.png';
+import ANCIENT2 from '@/assets/products/ANCIENT-2.png';
+
 
 export const SHOP_PRODUCTS: ShopItem[] = [
   {
@@ -15,9 +19,8 @@ export const SHOP_PRODUCTS: ShopItem[] = [
     price: 750.0,
     category: 'Wearables',
     collection: 'series-01',
-    colors: ['Obsidian', 'Graphite', 'White'],
+    colors: ['Black', 'Gray', 'White'],
     inStock: true,
-    tag: 'FEATURED',
     description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
     images: [sinnerTShirtImg],
     measurements: {
@@ -37,9 +40,8 @@ export const SHOP_PRODUCTS: ShopItem[] = [
     price: 750.0,
     category: 'Wearables',
     collection: 'series-01',
-    colors: ['Obsidian', 'Graphite', 'White'],
+    colors: ['Black', 'Gray', 'White'],
     inStock: true,
-    tag: 'FEATURED',
     description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
     images: [HiddenInPlainSight1, HiddenInPlainSight2, HiddenInPlainSight3,],
     measurements: {
@@ -59,9 +61,8 @@ export const SHOP_PRODUCTS: ShopItem[] = [
     price: 750.0,
     category: 'Wearables',
     collection: 'series-02',
-    colors: ['Obsidian', 'Bronze'],
-    inStock: true,
-    tag: 'FEATURED',
+    colors: ['Black', 'Red'],
+    inStock: false,
     description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
     images: [ancientTShirtImg],
     measurements: {
@@ -81,7 +82,7 @@ export const SHOP_PRODUCTS: ShopItem[] = [
     price: 750.0,
     category: 'Wearables',
     collection: 'series-02',
-    colors: ['Obsidian', 'Bronze'],
+    colors: ['Black', 'Red'],
     inStock: true,
     tag: 'Limited Edition',
     description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
@@ -103,7 +104,7 @@ export const SHOP_PRODUCTS: ShopItem[] = [
     price: 750.0,
     category: 'Wearables',
     collection: 'series-03',
-    colors: ['Obsidian', 'Bronze'],
+    colors: ['Black', 'Red'],
     inStock: true,
     tag: 'New',
     description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
@@ -127,9 +128,71 @@ export const SHOP_PRODUCTS: ShopItem[] = [
     collection: 'series-03',
     colors: ['White'],
     inStock: false,
-    tag: 'FEATURED',
     description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
     images: [ancientTShirtWhite],
+    measurements: {
+      sizeRange: 'S—XXL',
+      sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+      dimensions: [
+        { label: 'Chest', value: '48 – 56 cm' },
+        { label: 'Length', value: '71 cm' },
+        { label: 'Shoulder', value: '44 cm' },
+        { label: 'Sleeve', value: '22 cm' },
+      ],
+    },
+  },
+  {
+    id: 'masquerade-front',
+    title: 'MASQUERADE',
+    price: 750.0,
+    category: 'Wearables',
+    collection: 'series-02',
+    colors: ['Black'],
+    inStock: true,
+    description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
+    images: [masqueradeFront],
+    measurements: {
+      sizeRange: 'S—XXL',
+      sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+      dimensions: [
+        { label: 'Chest', value: '48 – 56 cm' },
+        { label: 'Length', value: '71 cm' },
+        { label: 'Shoulder', value: '44 cm' },
+        { label: 'Sleeve', value: '22 cm' },
+      ],
+    },
+  },
+  {
+    id: 'ANCIENT',
+    title: 'ANCIENT',
+    price: 750.0,
+    category: 'Wearables',
+    collection: 'series-02',
+    colors: ['Black'],
+    inStock: true,
+    description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
+    images: [ANCIENT2,],
+    measurements: {
+      sizeRange: 'S—XXL',
+      sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+      dimensions: [
+        { label: 'Chest', value: '48 – 56 cm' },
+        { label: 'Length', value: '71 cm' },
+        { label: 'Shoulder', value: '44 cm' },
+        { label: 'Sleeve', value: '22 cm' },
+      ],
+    },
+  },
+  {
+    id: 'ANCIENT-2',
+    title: 'ANCIENT',
+    price: 750.0,
+    category: 'Wearables',
+    collection: 'series-02',
+    colors: ['Black'],
+    inStock: true,
+    description: 'Precision 3D sculpted ceremonial headpiece forged from titanium-infused ceramic polymer with integrated neural interface dampeners.',
+    images: [ANCIENT],
     measurements: {
       sizeRange: 'S—XXL',
       sizes: ['S', 'M', 'L', 'XL', 'XXL'],

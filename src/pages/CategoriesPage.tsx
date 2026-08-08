@@ -18,7 +18,7 @@ export const CategoriesPage: React.FC = () => {
   return (
     <main className="px-6 lg:px-12 pt-10">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
-        <h2 className="font-serif text-5xl md:text-6xl font-bold tracking-tight text-black uppercase">
+        <h2 className="font-serif text-3xl md:text-6xl font-bold tracking-tight text-black uppercase">
           CATEGORIES
         </h2>
         <div className="text-xs font-mono tracking-widest uppercase text-gray-500">

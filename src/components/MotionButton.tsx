@@ -5,7 +5,7 @@ type MotionButtonVariant = 'ghost' | 'solid';
 
 interface MotionButtonProps {
   variant?: MotionButtonVariant;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
   type?: 'button' | 'submit';
   className?: string;
@@ -32,7 +32,7 @@ const VARIANT_STYLES: Record<
 
 export const MotionButton: React.FC<MotionButtonProps> = ({
   variant = 'ghost',
-  onClick,
+  onClick: onButtonClick,
   disabled = false,
   type = 'button',
   className = '',
@@ -41,8 +41,15 @@ export const MotionButton: React.FC<MotionButtonProps> = ({
   children,
 }) => {
   const styles = VARIANT_STYLES[variant];
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (disabled) return;
+    onButtonClick?.(e);
+  };
+
   const hasRounded = /(^|\s)rounded(-\S+)?(\s|$)/.test(className);
   const roundedClass = hasRounded ? '' : 'rounded-md';
+  const hasPosition = /(^|\s)(absolute|fixed|sticky)(\s|$)/.test(className);
+  const positionClass = hasPosition ? '' : 'relative';
 
   return (
     <motion.button
@@ -54,7 +61,7 @@ export const MotionButton: React.FC<MotionButtonProps> = ({
       whileHover="hover"
       whileTap={{ scale: 0.97 }}
       style={style}
-      className={`relative overflow-hidden inline-flex self-start items-center justify-center select-none cursor-pointer ${roundedClass} disabled:opacity-50 disabled:cursor-not-allowed ${styles.base} ${className}`}
+      className={`${positionClass} overflow-hidden inline-flex self-start items-center justify-center select-none cursor-pointer ${roundedClass} disabled:opacity-50 disabled:cursor-not-allowed ${styles.base} ${className}`}
     >
       <motion.div
         variants={{ initial: { x: '-100%' }, hover: { x: '0%' } }}

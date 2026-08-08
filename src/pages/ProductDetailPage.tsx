@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Sparkles, Heart } from 'lucide-react';
+import { motion } from 'motion/react';
 import { ShopItem, CartLineOptions } from '../types';
 import { SHOP_PRODUCTS } from '../data/shopData';
 import { COLOR_HEX, categoryToSlug } from '../constants/shop';
@@ -111,11 +112,33 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
                 <Sparkles className="w-14 h-14 stroke-[1.2]" />
               </div>
             )}
-            {item.tag && (
-              <span className="absolute top-4 left-4 bg-black text-white text-[9px] font-mono tracking-widest uppercase px-2.5 py-1 rounded-full">
-                {item.tag}
+            <motion.button
+              onClick={() => onToggleWishlist(item)}
+              initial="initial"
+              whileHover="hover"
+              whileTap={{ scale: 0.97 }}
+              className={`group absolute top-4 right-4 w-10 h-10 rounded-full overflow-hidden flex items-center justify-center cursor-pointer select-none z-10 ${
+                wished
+                  ? 'bg-black text-white'
+                  : 'bg-white/90 text-black shadow-xs border border-gray-200'
+              }`}
+              title={wished ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            >
+              <motion.div
+                variants={{ initial: { x: '-100%' }, hover: { x: '0%' } }}
+                transition={{ type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }}
+                className={`absolute inset-0 ${wished ? 'bg-white' : 'bg-black'} pointer-events-none`}
+              />
+              <span
+                className={`relative z-10 flex items-center justify-center transition-colors duration-200 ${
+                  wished
+                    ? 'text-white group-hover:text-black'
+                    : 'text-black group-hover:text-white'
+                }`}
+              >
+                <Heart className={`w-4 h-4 ${wished ? 'fill-current' : ''}`} />
               </span>
-            )}
+            </motion.button>
             {!item.inStock && (
               <span className="absolute bottom-4 left-4 bg-red-700 text-white text-[9px] font-mono tracking-widest uppercase px-2 py-0.5">
                 OUT OF STOCK
@@ -185,7 +208,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
               )}
             </div>
 
-            <h2 className="font-serif text-3xl md:text-4xl font-bold uppercase tracking-wide">
+            <h2 className="font-serif text-2xl md:text-4xl font-bold uppercase tracking-wide">
               {item.title}
             </h2>
 
@@ -280,16 +303,6 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             >
               <Plus className="w-4 h-4 stroke-[1.5]" />
               <span>Add To Bag</span>
-            </MotionButton>
-
-            <MotionButton
-              variant="ghost"
-              onClick={() => onToggleWishlist(item)}
-              className="font-mono text-xs uppercase tracking-widest px-4 py-3"
-              title={wished ? 'Remove from Wishlist' : 'Add to Wishlist'}
-            >
-              <Heart className={`w-4 h-4 ${wished ? 'fill-current' : ''}`} />
-              <span>{wished ? 'Wishlisted' : 'Wishlist'}</span>
             </MotionButton>
           </div>
 
