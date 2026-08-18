@@ -56,7 +56,7 @@ export const SiteFooter: React.FC = () => {
   }, []);
 
   return (
-    <footer className="px-6 lg:px-12 pt-10 pb-8 bg-white border-t border-black relative z-40 shrink-0">
+    <footer className="px-6 lg:px-12 pt-6 pb-5 bg-white border-t border-black relative z-40 shrink-0">
       <div className="flex flex-col items-start md:flex-row md:items-stretch justify-between gap-8">
         {/* Brand Block */}
         <div className="flex items-center gap-4">
@@ -107,8 +107,10 @@ export const SiteFooter: React.FC = () => {
                           onClick={() => link.path && navigate(link.path)}
                           className="text-left text-xs font-mono tracking-[0.2em] uppercase font-bold cursor-pointer group relative pb-1 whitespace-nowrap"
                         >
-                          <span className="group-hover:opacity-60 transition-opacity">{link.label}</span>
-                          <span className="absolute left-0 right-0 bottom-0 h-[2px] bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                          <span className="relative inline-block">
+                            {link.label}
+                            <span className="absolute left-0 right-0 bottom-[-4px] h-[2px] bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                          </span>
                         </button>
                       ))}
                     </motion.div>
@@ -143,7 +145,7 @@ export const SiteFooter: React.FC = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="mt-10 pt-4 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div className="mt-5 pt-3 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div className="text-[9px] font-mono tracking-[0.2em] uppercase font-bold">
           © {APP_YEAR} {APP_NAME} — {APP_TAGLINE}
         </div>

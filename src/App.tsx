@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
@@ -14,12 +14,52 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CategoryPage } from './pages/CategoryPage';
 import { WishlistPage } from './pages/WishlistPage';
 import { Toast } from './components/Toast';
-import { ShopItem, CartItem, CartLineOptions, ToastMessage } from './types';
+import { ShopItem, CartItem, CartLineOptions, Order, UserProfile, ToastMessage } from './types';
+import { ProfileLayout } from './components/profile/ProfileLayout';
+import { ProfilePage } from './pages/ProfilePage';
+import { OrderHistoryPage } from './pages/OrderHistoryPage';
+
+const ORDERS_STORAGE_KEY = 'cff.orders';
+const PROFILE_STORAGE_KEY = 'cff.profile';
+
+const loadOrders = (): Order[] => {
+  try {
+    const raw = localStorage.getItem(ORDERS_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Order[]) : [];
+  } catch {
+    return [];
+  }
+};
+
+const DEFAULT_PROFILE: UserProfile = {
+  name: 'Guest Member',
+  email: 'shopper@classicforward.com',
+  address: '',
+};
+
+const loadProfile = (): UserProfile => {
+  try {
+    const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+    return raw ? { ...DEFAULT_PROFILE, ...(JSON.parse(raw) as Partial<UserProfile>) } : DEFAULT_PROFILE;
+  } catch {
+    return DEFAULT_PROFILE;
+  }
+};
 
 export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlistItems, setWishlistItems] = useState<ShopItem[]>([]);
   const [toast, setToast] = useState<ToastMessage | null>(null);
+  const [orders, setOrders] = useState<Order[]>(loadOrders);
+  const [profile, setProfile] = useState<UserProfile>(loadProfile);
+
+  useEffect(() => {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+  }, [orders]);
+
+  useEffect(() => {
+    localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
+  }, [profile]);
 
   const handleAddToCart = (item: ShopItem, options?: CartLineOptions) => {
     const color = options?.color ?? item.colors[0];
@@ -61,11 +101,28 @@ export default function App() {
   };
 
   const handleCheckout = () => {
+    if (cartItems.length === 0) return;
+    const order: Order = {
+      id: `CF-${Date.now().toString().slice(-6)}`,
+      placedAt: new Date().toISOString(),
+      items: cartItems,
+      total: cartItems.reduce((acc, c) => acc + c.item.price * c.quantity, 0),
+      status: 'Processing',
+    };
+    setOrders((prev) => [order, ...prev]);
     setToast({
       id: Date.now().toString(),
-      text: 'Order submitted successfully!',
+      text: `Order ${order.id} submitted successfully!`,
     });
     setCartItems([]);
+  };
+
+  const handleUpdateProfile = (updates: Partial<UserProfile>) => {
+    setProfile((prev) => ({ ...prev, ...updates }));
+    setToast({
+      id: Date.now().toString(),
+      text: 'Profile updated successfully!',
+    });
   };
 
   const totalCartCount = cartItems.reduce((acc, c) => acc + c.quantity, 0);
@@ -140,6 +197,20 @@ export default function App() {
           />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/profile" element={<ProfileLayout profile={profile} />}>
+            <Route
+              index
+              element={
+                <ProfilePage
+                  profile={profile}
+                  onUpdateProfile={handleUpdateProfile}
+                  orders={orders}
+                  wishlistCount={totalWishlistCount}
+                />
+              }
+            />
+            <Route path="orders" element={<OrderHistoryPage orders={orders} />} />
+          </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

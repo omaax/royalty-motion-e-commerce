@@ -72,13 +72,9 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, wishlistIds, on
                 className="h-16 flex items-center justify-center"
                 aria-hidden
               >
-                {filters.hasMore ? (
+                {filters.hasMore && (
                   <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-gray-400 animate-pulse">
                     loading more...
-                  </span>
-                ) : (
-                  <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-gray-300">
-                    end of collection
                   </span>
                 )}
               </div>

@@ -50,6 +50,22 @@ export interface JournalItem {
   readTime: string;
 }
 
+export type OrderStatus = 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+
+export interface UserProfile {
+  name: string;
+  email: string;
+  address: string;
+}
+
+export interface Order {
+  id: string;
+  placedAt: string;
+  items: CartItem[];
+  total: number;
+  status: OrderStatus;
+}
+
 export interface ToastMessage {
   id: string;
   text: string;

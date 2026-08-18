@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, ShoppingBag } from 'lucide-react';
+import { Heart, ShoppingBag, UserRound } from 'lucide-react';
 import { RollingText } from './RollingText';
 
 interface NavBarProps {
@@ -47,6 +47,14 @@ export const NavBar: React.FC<NavBarProps> = ({
       </nav>
 
       <div className="flex items-center justify-end md:justify-start gap-4 w-full md:w-auto md:shrink-0">
+        <button
+          onClick={() => navigate('/profile')}
+          className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
+          title="Profile"
+        >
+          <UserRound className="w-5 h-5 stroke-[2]" />
+        </button>
+
         <button
           onClick={() => navigate('/wishlist')}
           className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
