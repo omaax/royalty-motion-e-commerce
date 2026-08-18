@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Trash2, ChevronRight, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Trash2, ChevronRight, ArrowRight, Minus, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CartItem } from '../types';
 import { MotionButton } from '../components/MotionButton';
@@ -10,6 +10,7 @@ interface CartPageProps {
   cartCount: number;
   cartItems: CartItem[];
   onRemoveFromCart: (key: string) => void;
+  onUpdateQuantity: (key: string, delta: number) => void;
   onCheckout: () => void;
 }
 
@@ -17,6 +18,7 @@ export const CartPage: React.FC<CartPageProps> = ({
   cartCount,
   cartItems,
   onRemoveFromCart,
+  onUpdateQuantity,
   onCheckout,
 }) => {
   const navigate = useNavigate();
@@ -91,8 +93,27 @@ export const CartPage: React.FC<CartPageProps> = ({
                         </div>
                       )}
                       <p className="text-[11px] text-gray-500 font-jakarta mt-0.5">
-                        ${item.price.toLocaleString('en-US')} USD &times; {quantity}
+                        ${item.price.toLocaleString('en-US')} USD
                       </p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <button
+                          onClick={() => onUpdateQuantity(key, -1)}
+                          className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-black hover:text-black transition-colors cursor-pointer"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-3 h-3 stroke-[2]" />
+                        </button>
+                        <span className="font-mono text-xs font-bold min-w-6 text-center">
+                          {quantity}
+                        </span>
+                        <button
+                          onClick={() => onUpdateQuantity(key, 1)}
+                          className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-black hover:text-black transition-colors cursor-pointer"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3 h-3 stroke-[2]" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 shrink-0">

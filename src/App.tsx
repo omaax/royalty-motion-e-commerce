@@ -18,9 +18,12 @@ import { ShopItem, CartItem, CartLineOptions, Order, UserProfile, ToastMessage }
 import { ProfileLayout } from './components/profile/ProfileLayout';
 import { ProfilePage } from './pages/ProfilePage';
 import { OrderHistoryPage } from './pages/OrderHistoryPage';
+import { LoginPage } from './pages/auth/LoginPage';
+import { SignupPage } from './pages/auth/SignupPage';
 
 const ORDERS_STORAGE_KEY = 'cff.orders';
 const PROFILE_STORAGE_KEY = 'cff.profile';
+const USER_STORAGE_KEY = 'cff.user';
 
 const loadOrders = (): Order[] => {
   try {
@@ -46,12 +49,22 @@ const loadProfile = (): UserProfile => {
   }
 };
 
+const loadUser = (): UserProfile | null => {
+  try {
+    const raw = localStorage.getItem(USER_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as UserProfile) : null;
+  } catch {
+    return null;
+  }
+};
+
 export default function App() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlistItems, setWishlistItems] = useState<ShopItem[]>([]);
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [orders, setOrders] = useState<Order[]>(loadOrders);
   const [profile, setProfile] = useState<UserProfile>(loadProfile);
+  const [user, setUser] = useState<UserProfile | null>(loadUser);
 
   useEffect(() => {
     localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
@@ -60,6 +73,11 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(profile));
   }, [profile]);
+
+  useEffect(() => {
+    if (user) localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    else localStorage.removeItem(USER_STORAGE_KEY);
+  }, [user]);
 
   const handleAddToCart = (item: ShopItem, options?: CartLineOptions) => {
     const color = options?.color ?? item.colors[0];
@@ -85,6 +103,14 @@ export default function App() {
 
   const handleRemoveFromCart = (key: string) => {
     setCartItems((prev) => prev.filter((c) => c.key !== key));
+  };
+
+  const handleUpdateQuantity = (key: string, delta: number) => {
+    setCartItems((prev) =>
+      prev
+        .map((c) => (c.key === key ? { ...c, quantity: c.quantity + delta } : c))
+        .filter((c) => c.quantity > 0)
+    );
   };
 
   const handleToggleWishlist = (item: ShopItem) => {
@@ -125,6 +151,27 @@ export default function App() {
     });
   };
 
+  const handleLogin = (session: UserProfile) => {
+    setUser(session);
+    setProfile((prev) => ({
+      ...prev,
+      name: session.name || prev.name,
+      email: session.email,
+    }));
+    setToast({
+      id: Date.now().toString(),
+      text: `Welcome, ${session.name || session.email}. Access granted!`,
+    });
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    setToast({
+      id: Date.now().toString(),
+      text: 'You have been signed out.',
+    });
+  };
+
   const totalCartCount = cartItems.reduce((acc, c) => acc + c.quantity, 0);
   const totalWishlistCount = wishlistItems.length;
 
@@ -133,11 +180,11 @@ export default function App() {
   return (
     <>
       <Routes>
-        <Route element={<Layout cartCount={totalCartCount} wishlistCount={totalWishlistCount} />}>
+        <Route element={<Layout cartCount={totalCartCount} wishlistCount={totalWishlistCount} isLoggedIn={!!user} onLogout={handleLogout} />}>
           <Route
             path="/"
             element={
-              <HomePage cartCount={totalCartCount} wishlistCount={totalWishlistCount} />
+              <HomePage cartCount={totalCartCount} wishlistCount={totalWishlistCount} isLoggedIn={!!user} onLogout={handleLogout} />
             }
           />
           <Route
@@ -171,6 +218,7 @@ export default function App() {
                 cartCount={totalCartCount}
                 cartItems={cartItems}
                 onRemoveFromCart={handleRemoveFromCart}
+                onUpdateQuantity={handleUpdateQuantity}
                 onCheckout={handleCheckout}
               />
             }
@@ -198,21 +246,25 @@ export default function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/profile" element={<ProfileLayout profile={profile} />}>
-            <Route
-              index
-              element={
-                <ProfilePage
-                  profile={profile}
-                  onUpdateProfile={handleUpdateProfile}
-                  orders={orders}
-                  wishlistCount={totalWishlistCount}
-                />
-              }
-            />
+<Route
+            index
+            element={
+              <ProfilePage
+                profile={profile}
+                onUpdateProfile={handleUpdateProfile}
+                onLogout={handleLogout}
+                orders={orders}
+                wishlistCount={totalWishlistCount}
+              />
+            }
+          />
             <Route path="orders" element={<OrderHistoryPage orders={orders} />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
+
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/signup" element={<SignupPage onLogin={handleLogin} />} />
       </Routes>
 
       <Toast toast={toast} onDismiss={() => setToast(null)} />

@@ -1,12 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, ShoppingBag, UserRound } from 'lucide-react';
+import { Heart, LogOut, ShoppingBag, UserRound } from 'lucide-react';
 import { RollingText } from './RollingText';
 
 interface NavBarProps {
   activeNavTab: string;
   cartCount?: number;
   wishlistCount?: number;
+  isLoggedIn?: boolean;
+  onLogout?: () => void;
   className?: string;
 }
 
@@ -21,9 +23,16 @@ export const NavBar: React.FC<NavBarProps> = ({
   activeNavTab,
   cartCount = 0,
   wishlistCount = 0,
+  isLoggedIn = false,
+  onLogout,
   className = '',
 }) => {
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout?.();
+    navigate('/login');
+  };
 
   return (
     <div className={`flex flex-col md:flex-row md:items-center gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-2 md:gap-y-0 ${className}`}>
@@ -54,6 +63,16 @@ export const NavBar: React.FC<NavBarProps> = ({
         >
           <UserRound className="w-5 h-5 stroke-[2]" />
         </button>
+
+        {isLoggedIn && (
+          <button
+            onClick={handleLogout}
+            className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
+            title="Log out"
+          >
+            <LogOut className="w-5 h-5 stroke-[2]" />
+          </button>
+        )}
 
         <button
           onClick={() => navigate('/wishlist')}

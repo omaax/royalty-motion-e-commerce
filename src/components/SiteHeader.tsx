@@ -9,9 +9,11 @@ interface SiteHeaderProps {
   activeNavTab: string;
   cartCount: number;
   wishlistCount: number;
+  isLoggedIn: boolean;
+  onLogout: () => void;
 }
 
-export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount, wishlistCount }) => {
+export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount, wishlistCount, isLoggedIn, onLogout }) => {
   const navigate = useNavigate();
 
   return (
@@ -21,6 +23,8 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount,
         activeNavTab={activeNavTab}
         cartCount={cartCount}
         wishlistCount={wishlistCount}
+        isLoggedIn={isLoggedIn}
+        onLogout={onLogout}
         className="pl-0 md:pl-24 lg:pl-40 pt-8 -mb-5 relative z-30"
       />
 

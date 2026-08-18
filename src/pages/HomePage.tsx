@@ -11,9 +11,11 @@ import crestRedImg from '@/assets/crest-red.png';
 interface HomePageProps {
   cartCount: number;
   wishlistCount: number;
+  isLoggedIn: boolean;
+  onLogout: () => void;
 }
 
-export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount }) => {
+export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, isLoggedIn, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -28,6 +30,8 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount }) 
           activeNavTab={location.pathname}
           cartCount={cartCount}
           wishlistCount={wishlistCount}
+          isLoggedIn={isLoggedIn}
+          onLogout={onLogout}
           className="pl-0 md:pl-24 lg:pl-40 pt-8 w-full"
         />
       </div>

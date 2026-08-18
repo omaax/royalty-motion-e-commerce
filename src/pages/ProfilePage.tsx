@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { Camera, Check, X, MapPin, PackageCheck, Wallet, Heart } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Camera, Check, LogOut, X, MapPin, PackageCheck, Wallet, Heart } from 'lucide-react';
 import { Order, UserProfile } from '../types';
 import { MotionButton } from '../components/MotionButton';
 
 interface ProfilePageProps {
   profile: UserProfile;
   onUpdateProfile: (updates: Partial<UserProfile>) => void;
+  onLogout: () => void;
   orders: Order[];
   wishlistCount: number;
 }
@@ -13,11 +15,18 @@ interface ProfilePageProps {
 export const ProfilePage: React.FC<ProfilePageProps> = ({
   profile,
   onUpdateProfile,
+  onLogout,
   orders,
   wishlistCount,
 }) => {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState<UserProfile>(profile);
+
+  const handleLogout = () => {
+    onLogout();
+    navigate('/login');
+  };
 
   const startEditing = () => {
     setDraft(profile);
@@ -133,6 +142,20 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
         <p className="text-xs font-jakarta font-semibold text-gray-700 uppercase tracking-wide">
           {profile.address || '— Not set — Add a default shipping address to speed up checkout.'}
         </p>
+      </section>
+
+      <section className="border-t border-gray-200 pt-6 flex items-center justify-between gap-4">
+        <div className="text-[10px] font-mono tracking-[0.2em] uppercase font-bold text-gray-400">
+          Signed in as {profile.email}
+        </div>
+        <MotionButton
+          variant="ghost"
+          onClick={handleLogout}
+          className="font-mono text-[10px] tracking-widest uppercase px-4 py-2"
+        >
+          <span>SIGN OUT</span>
+          <LogOut className="w-3.5 h-3.5" />
+        </MotionButton>
       </section>
     </div>
   );

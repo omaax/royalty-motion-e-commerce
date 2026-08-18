@@ -16,17 +16,17 @@ interface MotionButtonProps {
 
 const VARIANT_STYLES: Record<
   MotionButtonVariant,
-  { base: string; fill: string; content: { initial: string; hover: string } }
+  { base: string; fill: string; hoverText: string }
 > = {
   ghost: {
     base: 'border border-gray-400 text-black',
     fill: 'bg-black',
-    content: { initial: '#000000', hover: '#ffffff' },
+    hoverText: 'group-hover/btn:text-white',
   },
   solid: {
     base: 'border border-black bg-black text-white',
     fill: 'bg-white',
-    content: { initial: '#ffffff', hover: '#000000' },
+    hoverText: 'group-hover/btn:text-black',
   },
 };
 
@@ -57,28 +57,19 @@ export const MotionButton: React.FC<MotionButtonProps> = ({
       onClick={onClick}
       disabled={disabled}
       title={title}
-      initial="initial"
-      whileHover="hover"
       whileTap={{ scale: 0.97 }}
       style={style}
-      className={`${positionClass} overflow-hidden inline-flex self-start items-center justify-center select-none cursor-pointer ${roundedClass} disabled:opacity-50 disabled:cursor-not-allowed ${styles.base} ${className}`}
+      className={`${positionClass} group/btn overflow-hidden inline-flex self-start items-center justify-center select-none cursor-pointer ${roundedClass} disabled:opacity-50 disabled:cursor-not-allowed ${styles.base} ${className}`}
     >
-      <motion.div
-        variants={{ initial: { x: '-100%' }, hover: { x: '0%' } }}
-        transition={{ type: 'tween', ease: [0.25, 1, 0.5, 1], duration: 0.35 }}
-        className={`absolute inset-0 ${styles.fill} pointer-events-none`}
+      <span
+        aria-hidden
+        className={`absolute inset-0 ${styles.fill} translate-x-[-101%] group-hover/btn:translate-x-0 transition-transform duration-500 ease-[cubic-bezier(0.25,1,0.5,1)] pointer-events-none`}
       />
-      <motion.span
-        key={variant}
-        variants={{
-          initial: { color: styles.content.initial },
-          hover: { color: styles.content.hover },
-        }}
-        transition={{ duration: 0.25 }}
-        className="relative z-10 flex items-center gap-2"
+      <span
+        className={`relative z-10 flex items-center gap-2 transition-colors duration-300 ${styles.hoverText}`}
       >
         {children}
-      </motion.span>
+      </span>
     </motion.button>
   );
 };
