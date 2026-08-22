@@ -1,10 +1,8 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { JOURNAL_ITEMS } from '../data/pageData';
 
 export const JournalPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <main className="px-6 lg:px-12 pt-10">
         {/* Page Header */}
@@ -26,9 +24,9 @@ export const JournalPage: React.FC = () => {
         {/* Latest Dispatches */}
         <div className="divide-y divide-gray-100 pt-6">
           {JOURNAL_ITEMS.map((item, index) => (
-            <div
+            <Link
               key={item.id}
-              onClick={() => navigate('/shop')}
+              to="/shop"
               className="py-8 group flex flex-col md:flex-row md:items-center gap-4 cursor-pointer"
             >
               <span className="font-mono text-[10px] tracking-widest text-gray-400 uppercase md:w-16">
@@ -47,7 +45,7 @@ export const JournalPage: React.FC = () => {
               <span className="text-gray-300 group-hover:text-black transition-colors text-xl">
                 →
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       </main>

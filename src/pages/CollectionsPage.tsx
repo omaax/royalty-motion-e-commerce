@@ -1,12 +1,10 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { COLLECTION_ITEMS } from '../data/pageData';
 import { COLLECTION_PRODUCTS } from '../data/shopData';
 
 export const CollectionsPage: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <main className="px-6 lg:px-12 pt-10">
         {/* Page Header */}
@@ -30,10 +28,10 @@ export const CollectionsPage: React.FC = () => {
           {COLLECTION_ITEMS.map((item) => {
             const count = COLLECTION_PRODUCTS[item.id]?.length ?? 0;
             return (
-              <div
+              <Link
                 key={item.id}
+                to={`/collections/${item.id}`}
                 className="relative p-6 border border-gray-200 hover:border-black transition-colors group space-y-4 flex flex-col justify-between cursor-pointer"
-                onClick={() => navigate(`/collections/${item.id}`)}
               >
                 <div className="flex items-center justify-between text-[10px] font-mono tracking-widest uppercase text-gray-400">
                   <span>{item.code}</span>
@@ -50,17 +48,11 @@ export const CollectionsPage: React.FC = () => {
                     {count} {count === 1 ? 'PRODUCT' : 'PRODUCTS'}
                   </p>
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/collections/${item.id}`);
-                  }}
-                  className="text-left text-[10px] font-mono font-bold tracking-widest text-black flex items-center gap-1.5 uppercase transition-colors cursor-pointer pt-2 border-t border-gray-100"
-                >
+                <span className="flex items-center gap-1.5 text-left text-[10px] font-mono font-bold tracking-widest text-black uppercase transition-colors pt-2 border-t border-gray-100">
                   <span>EXPLORE THE LINE</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
+                </span>
+              </Link>
             );
           })}
         </div>

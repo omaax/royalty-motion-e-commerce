@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Heart, LogOut, ShoppingBag, UserRound } from 'lucide-react';
 import { RollingText } from './RollingText';
 
@@ -40,9 +40,9 @@ export const NavBar: React.FC<NavBarProps> = ({
         {NAV_ITEMS.map((item) => {
           const isActive = activeNavTab === item.path;
           return (
-            <button
+            <Link
               key={item.path}
-              onClick={() => navigate(item.path)}
+              to={item.path}
               className={`relative pb-2 cursor-pointer whitespace-nowrap group`}
             >
               <RollingText>{item.label}</RollingText>
@@ -50,19 +50,19 @@ export const NavBar: React.FC<NavBarProps> = ({
                 className={`absolute left-0 right-0 bottom-0 h-[3px] bg-black origin-left transition-transform duration-300 ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                   }`}
               />
-            </button>
+            </Link>
           );
         })}
       </nav>
 
       <div className="flex items-center justify-end md:justify-start gap-4 w-full md:w-auto md:shrink-0">
-        <button
-          onClick={() => navigate('/profile')}
+        <Link
+          to="/profile"
           className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
           title="Profile"
         >
           <UserRound className="w-5 h-5 stroke-[2]" />
-        </button>
+        </Link>
 
         {isLoggedIn && (
           <button
@@ -74,8 +74,8 @@ export const NavBar: React.FC<NavBarProps> = ({
           </button>
         )}
 
-        <button
-          onClick={() => navigate('/wishlist')}
+        <Link
+          to="/wishlist"
           className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
           title="Wishlist"
         >
@@ -85,10 +85,10 @@ export const NavBar: React.FC<NavBarProps> = ({
               {wishlistCount}
             </span>
           )}
-        </button>
+        </Link>
 
-        <button
-          onClick={() => navigate('/cart')}
+        <Link
+          to="/cart"
           className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
           title="Shopping Bag"
         >
@@ -98,7 +98,7 @@ export const NavBar: React.FC<NavBarProps> = ({
               {cartCount}
             </span>
           )}
-        </button>
+        </Link>
       </div>
     </div>
   );

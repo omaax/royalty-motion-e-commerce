@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import crestImg from '@/assets/crest.png';
 import honorLogoImg from '@/assets/honor-logo.png';
 import { APP_NAME } from '../constants/branding';
@@ -14,8 +14,6 @@ interface SiteHeaderProps {
 }
 
 export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount, wishlistCount, isLoggedIn, onLogout }) => {
-  const navigate = useNavigate();
-
   return (
     <header className="px-6 lg:px-12 relative bg-white z-40 shrink-0 pb-4">
       {/* Center Main Nav Tabs */}
@@ -31,13 +29,13 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({ activeNavTab, cartCount,
       <div className="flex flex-col md:flex-row items-center justify-between gap-3 md:gap-0">
         {/* Top Left Crest Logo & Motto (Stacked) */}
         <div className="hidden sm:flex flex-col items-center gap-2">
-          <button
-            onClick={() => navigate('/')}
+          <Link
+            to="/"
             className="w-30 h-30 md:w-35 md:h-35 rounded-full border border-black flex items-center justify-center p-1 overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 shadow-sm"
             title="Home"
           >
             <img src={crestImg} alt="Guild Crest" className="w-full h-full object-cover" />
-          </button>
+          </Link>
           <div className="text-[9px] text-center font-mono tracking-widest uppercase leading-tight font-bold hidden sm:block">
             <div>STRENGTH IN SILENCE</div>
             <div>CROWN OF SHADOWS</div>

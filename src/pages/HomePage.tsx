@@ -1,10 +1,10 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ImageRevealBackground, BG_IMAGE_1 } from '../components/ImageRevealBackground';
 // import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
 import { NavBar } from '../components/NavBar';
-import { MotionButton } from '../components/MotionButton';
+import { MotionLink } from '../components/MotionButton';
 import { APP_NAME, APP_TAGLINE } from '../constants/branding';
 import crestRedImg from '@/assets/crest-red.png';
 
@@ -16,7 +16,6 @@ interface HomePageProps {
 }
 
 export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, isLoggedIn, onLogout }) => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   return (
@@ -82,8 +81,8 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
 
             {/* CTA Button */}
             <div className="pt-4">
-              <MotionButton
-                onClick={() => navigate('/shop')}
+              <MotionLink
+                to="/shop"
                 style={{
                   paddingInline: 'var(--btn-px)',
                   paddingBlock: 'var(--btn-py)',
@@ -93,7 +92,7 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
               >
                 <span>SHOP NOW</span>
                 <ArrowUpRight className="w-4 h-4 stroke-[1.8]" />
-              </MotionButton>
+              </MotionLink>
             </div>
           </div>
         </div>

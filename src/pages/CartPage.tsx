@@ -1,8 +1,7 @@
 import React from 'react';
 import { ShoppingBag, Trash2, ChevronRight, ArrowRight, Minus, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { CartItem } from '../types';
-import { MotionButton } from '../components/MotionButton';
+import { MotionButton, MotionLink } from '../components/MotionButton';
 import { COLOR_HEX } from '../constants/shop';
 import { APP_NAME, APP_TAGLINE, APP_YEAR } from '../constants/branding';
 
@@ -21,8 +20,6 @@ export const CartPage: React.FC<CartPageProps> = ({
   onUpdateQuantity,
   onCheckout,
 }) => {
-  const navigate = useNavigate();
-
   const totalCartPrice = cartItems.reduce(
     (acc, c) => acc + c.item.price * c.quantity,
     0
@@ -49,13 +46,13 @@ export const CartPage: React.FC<CartPageProps> = ({
             <p className="text-xs uppercase font-semibold tracking-widest">
               Your shopping bag is empty.
             </p>
-            <MotionButton
-              onClick={() => navigate('/shop')}
+            <MotionLink
+              to="/shop"
               className="font-mono text-xs tracking-widest uppercase px-6 py-2"
             >
               <span>CONTINUE SHOPPING</span>
               <ArrowRight className="w-4 h-4" />
-            </MotionButton>
+            </MotionLink>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-8">

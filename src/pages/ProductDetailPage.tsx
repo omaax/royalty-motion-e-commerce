@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Sparkles, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
 import { ShopItem, CartLineOptions } from '../types';
@@ -17,7 +17,6 @@ interface ProductDetailPageProps {
 
 export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCart, wishlistIds, onToggleWishlist }) => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
 
   const item = useMemo(
     () => SHOP_PRODUCTS.find((p) => p.id === id) ?? null,
@@ -72,13 +71,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
           <p className="font-mono text-sm uppercase text-gray-500">
             Product not found.
           </p>
-          <button
-            onClick={() => navigate('/shop')}
+          <Link
+            to="/shop"
             className="px-6 py-2 bg-black text-white text-xs font-mono tracking-widest uppercase hover:bg-gray-800 transition-colors cursor-pointer flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>BACK TO SHOP</span>
-          </button>
+          </Link>
         </div>
       </main>
     );
@@ -89,13 +88,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
 
   return (
     <main className="px-6 lg:px-12 pt-8 pb-16">
-      <button
-        onClick={() => navigate('/shop')}
+      <Link
+        to="/shop"
         className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors cursor-pointer mb-6"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Back to Shop</span>
-      </button>
+      </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         {/* Gallery */}
@@ -193,13 +192,13 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
         <div className="flex flex-col">
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-[10px] font-mono tracking-widest text-gray-500 uppercase">
-              <button
-                onClick={() => navigate(`/category/${categoryToSlug(item.category)}`)}
+              <Link
+                to={`/category/${categoryToSlug(item.category)}`}
                 className="cursor-pointer hover:text-black transition-colors"
                 title={`View all ${item.category}`}
               >
                 {item.category}
-              </button>
+              </Link>
               {item.colors.length > 0 && (
                 <>
                   <span className="text-gray-300">/</span>

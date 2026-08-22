@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { Instagram, Twitter, Youtube } from 'lucide-react';
 import crestImg from '@/assets/crest.png';
@@ -41,7 +41,6 @@ const SOCIALS = [
 ];
 
 export const SiteFooter: React.FC = () => {
-  const navigate = useNavigate();
   const [openColumn, setOpenColumn] = useState<string | null>('EXPLORE');
   const [isDesktop, setIsDesktop] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false,
@@ -60,13 +59,13 @@ export const SiteFooter: React.FC = () => {
       <div className="flex flex-col items-start md:flex-row md:items-stretch justify-between gap-8">
         {/* Brand Block */}
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => navigate('/')}
+          <Link
+            to="/"
             className="w-28 h-28 rounded-full border border-black flex items-center justify-center p-1 overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 shadow-sm shrink-0"
             title="Home"
           >
             <img src={crestImg} alt="Guild Crest" className="w-full h-full object-cover" />
-          </button>
+          </Link>
           <div className="text-sm font-mono tracking-widest uppercase leading-tight font-bold">
             <div>STRENGTH IN SILENCE</div>
             <div>CROWN OF SHADOWS</div>
@@ -101,18 +100,30 @@ export const SiteFooter: React.FC = () => {
                       transition={{ duration: 0.3, ease: [0.25, 1, 0.5, 1] }}
                       className="overflow-hidden flex flex-col gap-3 pt-1 md:pt-0"
                     >
-                      {column.links.map((link) => (
-                        <button
-                          key={link.label}
-                          onClick={() => link.path && navigate(link.path)}
-                          className="text-left text-xs font-mono tracking-[0.2em] uppercase font-bold cursor-pointer group relative pb-1 whitespace-nowrap"
-                        >
-                          <span className="relative inline-block">
-                            {link.label}
-                            <span className="absolute left-0 right-0 bottom-[-4px] h-[2px] bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                      {column.links.map((link) =>
+                        link.path ? (
+                          <Link
+                            key={link.label}
+                            to={link.path}
+                            className="text-left text-xs font-mono tracking-[0.2em] uppercase font-bold cursor-pointer group relative pb-1 whitespace-nowrap"
+                          >
+                            <span className="relative inline-block">
+                              {link.label}
+                              <span className="absolute left-0 right-0 bottom-[-4px] h-[2px] bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                            </span>
+                          </Link>
+                        ) : (
+                          <span
+                            key={link.label}
+                            className="text-left text-xs font-mono tracking-[0.2em] uppercase font-bold group relative pb-1 whitespace-nowrap"
+                          >
+                            <span className="relative inline-block">
+                              {link.label}
+                              <span className="absolute left-0 right-0 bottom-[-4px] h-[2px] bg-black origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                            </span>
                           </span>
-                        </button>
-                      ))}
+                        )
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>

@@ -1,5 +1,5 @@
 import { Plus, Sparkles, Heart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ShopItem } from '../../types';
 import { COLOR_HEX } from '../../constants/shop';
 import { MotionButton } from '../MotionButton';
@@ -12,17 +12,16 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wished, onToggleWishlist }) => {
-  const navigate = useNavigate();
   const primaryImage = item.images[0];
-
-  const openProduct = () => navigate(`/product/${item.id}`);
 
   return (
     <div className="group flex flex-col justify-between space-y-2 relative h-full min-h-0">
-      <div
-        onClick={openProduct}
-        className="w-full h-48 sm:h-56 lg:h-auto lg:flex-1 lg:min-h-0 bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 relative overflow-hidden cursor-pointer flex items-center justify-center p-2"
-      >
+      <div className="relative w-full h-40 sm:h-44 lg:h-85 shrink-0">
+        <Link
+          to={`/product/${item.id}`}
+          title={item.title}
+          className="flex items-center justify-center w-full h-full bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 overflow-hidden p-2"
+        >
         {primaryImage ? (
           <img
             src={primaryImage}
@@ -51,11 +50,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
             OUT OF STOCK
           </span>
         )}
+        </Link>
 
         {onToggleWishlist && (
           <MotionButton
             variant={wished ? 'solid' : 'ghost'}
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onToggleWishlist(item);
             }}
@@ -71,13 +72,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
 
       <div className="flex items-start justify-between gap-2 pt-1 shrink-0">
         <div className="space-y-0.5 flex-1 min-w-0">
-          <h3
-            onClick={openProduct}
+          <Link
+            to={`/product/${item.id}`}
             className="font-mono text-xs font-bold tracking-widest text-black uppercase hover:underline cursor-pointer leading-snug truncate"
             title={item.title}
           >
             {item.title}
-          </h3>
+          </Link>
           <div className="font-mono text-xs font-bold text-black">
             ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </div>

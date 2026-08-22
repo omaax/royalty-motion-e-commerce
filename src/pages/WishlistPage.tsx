@@ -1,9 +1,8 @@
 import React from 'react';
 import { Heart, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { ShopItem } from '../types';
 import { ProductCard } from '../components/shop/ProductCard';
-import { MotionButton } from '../components/MotionButton';
+import { MotionLink } from '../components/MotionButton';
 
 interface WishlistPageProps {
   wishlistItems: ShopItem[];
@@ -16,7 +15,6 @@ export const WishlistPage: React.FC<WishlistPageProps> = ({
   onAddToCart,
   onToggleWishlist,
 }) => {
-  const navigate = useNavigate();
   const wishlistIds = wishlistItems.map((w) => w.id);
 
   return (
@@ -39,13 +37,13 @@ export const WishlistPage: React.FC<WishlistPageProps> = ({
           <p className="text-xs uppercase font-semibold tracking-widest">
             Your wishlist is empty.
           </p>
-          <MotionButton
-            onClick={() => navigate('/shop')}
+          <MotionLink
+            to="/shop"
             className="font-mono text-xs tracking-widest uppercase px-6 py-2"
           >
             <span>CONTINUE SHOPPING</span>
             <ArrowRight className="w-4 h-4" />
-          </MotionButton>
+          </MotionLink>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 pt-8">

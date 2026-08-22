@@ -1,12 +1,10 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { CATEGORIES, categoryToSlug } from '../constants/shop';
 import { SHOP_PRODUCTS } from '../data/shopData';
 
 export const CategoriesPage: React.FC = () => {
-  const navigate = useNavigate();
-
   const categoryCounts = (() => {
     const counts: Record<string, number> = {};
     for (const item of SHOP_PRODUCTS) {
@@ -30,10 +28,10 @@ export const CategoriesPage: React.FC = () => {
         {CATEGORIES.map((category) => {
           const count = categoryCounts[category] ?? 0;
           return (
-            <div
+            <Link
               key={category}
+              to={`/category/${categoryToSlug(category)}`}
               className="relative p-6 border border-gray-200 hover:border-black transition-colors group space-y-4 flex flex-col justify-between cursor-pointer"
-              onClick={() => navigate(`/category/${categoryToSlug(category)}`)}
             >
               <div className="flex items-center justify-between text-[10px] font-mono tracking-widest uppercase text-gray-400">
                 <span>{categoryToSlug(category).toUpperCase()}</span>
@@ -47,17 +45,11 @@ export const CategoriesPage: React.FC = () => {
                   {count} {count === 1 ? 'PRODUCT' : 'PRODUCTS'} IN THIS CATEGORY.
                 </p>
               </div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/category/${categoryToSlug(category)}`);
-                }}
-                className="text-left text-[10px] font-mono font-bold tracking-widest text-black flex items-center gap-1.5 uppercase transition-colors cursor-pointer pt-2 border-t border-gray-100"
-              >
+              <span className="flex items-center gap-1.5 text-left text-[10px] font-mono font-bold tracking-widest text-black uppercase transition-colors pt-2 border-t border-gray-100">
                 <span>VIEW CATEGORY</span>
                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
+              </span>
+            </Link>
           );
         })}
       </div>

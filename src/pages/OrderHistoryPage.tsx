@@ -1,8 +1,7 @@
 import React from 'react';
 import { PackageOpen, ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { Order } from '../types';
-import { MotionButton } from '../components/MotionButton';
+import { MotionLink } from '../components/MotionButton';
 import { COLOR_HEX } from '../constants/shop';
 
 interface OrderHistoryPageProps {
@@ -24,8 +23,6 @@ const formatDate = (iso: string): string =>
   });
 
 export const OrderHistoryPage: React.FC<OrderHistoryPageProps> = ({ orders }) => {
-  const navigate = useNavigate();
-
   if (orders.length === 0) {
     return (
       <div className="py-24 flex flex-col items-center justify-center text-center space-y-4 text-gray-400 border border-gray-200 rounded-md">
@@ -36,13 +33,13 @@ export const OrderHistoryPage: React.FC<OrderHistoryPageProps> = ({ orders }) =>
         <p className="text-[10px] font-mono tracking-[0.2em] uppercase text-gray-300">
           Your order history will appear here after checkout.
         </p>
-        <MotionButton
-          onClick={() => navigate('/shop')}
+        <MotionLink
+          to="/shop"
           className="font-mono text-xs tracking-widest uppercase px-6 py-2"
         >
           <span>START SHOPPING</span>
           <ArrowRight className="w-4 h-4" />
-        </MotionButton>
+        </MotionLink>
       </div>
     );
   }
