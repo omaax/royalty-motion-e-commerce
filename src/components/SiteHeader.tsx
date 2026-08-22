@@ -49,8 +49,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = React.memo(({ activeNavTab,
             <img
               src={honorLogoImg}
               alt={APP_NAME}
-              width={80}
-              height={80}
               className="h-20 md:h-28 lg:h-32 scale-[2.6] md:scale-[3.4] lg:scale-[4.0] translate-y-8 md:translate-y-8 lg:translate-y-11 object-contain select-none origin-center transform pointer-events-none transition-transform duration-300"
             />
           </div>
