@@ -1,9 +1,14 @@
 import React from 'react';
 import { APP_NAME, APP_YEAR } from '../constants/branding';
+import { SEO } from '../components/SEO';
 
 export const AboutPage: React.FC = () => {
   return (
     <main className="px-6 lg:px-12 pt-10">
+        <SEO
+          title="About"
+          description="Learn about ROYALTY — future-forward fashion engineered for those who move in silence and lead in power."
+        />
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
           <div className="flex flex-col md:flex-row md:items-baseline gap-6">

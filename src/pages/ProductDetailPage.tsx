@@ -8,6 +8,7 @@ import { COLOR_HEX, categoryToSlug } from '../constants/shop';
 import { ProductCard } from '../components/shop/ProductCard';
 import { ProductInfoDrawer, InfoTab } from '../components/shop/ProductInfoDrawer';
 import { MotionButton } from '../components/MotionButton';
+import { SEO } from '../components/SEO';
 
 interface ProductDetailPageProps {
   onAddToCart: (item: ShopItem, options?: CartLineOptions) => void;
@@ -91,6 +92,17 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
 
   return (
     <main className="px-6 lg:px-12 pt-8 pb-16">
+      <SEO
+        title={item.title}
+        description={item.description}
+        type="product"
+        product={{
+          name: item.title,
+          price: item.price,
+          image: item.images[0] || '',
+          description: item.description,
+        }}
+      />
       <Link
         to="/shop"
         className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors cursor-pointer mb-6"

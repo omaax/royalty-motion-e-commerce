@@ -3,6 +3,7 @@ import { Heart, ArrowRight } from 'lucide-react';
 import { ShopItem } from '../types';
 import { ProductCard } from '../components/shop/ProductCard';
 import { MotionLink } from '../components/MotionButton';
+import { SEO } from '../components/SEO';
 
 interface WishlistPageProps {
   wishlistItems: ShopItem[];
@@ -19,6 +20,10 @@ export const WishlistPage: React.FC<WishlistPageProps> = ({
 
   return (
     <main className="px-6 lg:px-12 pt-10 pb-16">
+      <SEO
+        title="Wishlist"
+        description="Your saved items from ROYALTY — gathered, marked, and yours to claim."
+      />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
         <div className="flex flex-col md:flex-row md:items-baseline gap-6">
           <h2 className="font-serif text-3xl md:text-6xl font-bold tracking-tight text-black uppercase">

@@ -6,6 +6,7 @@ import { CartItem, ShippingInfo, PaymentInfo } from '../types';
 import { MotionLink } from '../components/MotionButton';
 import { FormField } from '../components/FormField';
 import { OrderSummary } from '../components/shop/OrderSummary';
+import { SEO } from '../components/SEO';
 
 const paymentSchema = z.object({
   cardLast4: z.string().min(4, 'Card number is required'),
@@ -96,6 +97,10 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
 
   return (
     <main className="px-6 lg:px-12 pt-10">
+      <SEO
+        title="Payment"
+        description="Secure payment for your ROYALTY order — complete your purchase."
+      />
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
         <div className="flex flex-col md:flex-row md:items-baseline gap-6">

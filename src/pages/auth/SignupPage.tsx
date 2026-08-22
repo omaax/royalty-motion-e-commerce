@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 import { APP_NAME } from '../../constants/branding';
 import { UserProfile } from '../../types';
 import { AuthForm, AuthFormValues } from './AuthForm';
@@ -18,6 +19,10 @@ export const SignupPage: React.FC<SignupPageProps> = ({ onLogin }) => {
   };
   return (
     <main className="min-h-screen bg-white text-black font-jakarta flex flex-col">
+      <SEO
+        title="Sign Up"
+        description="Create your ROYALTY account to join the circle — get first access to limited drops and exclusive collections."
+      />
       <div className="flex items-center justify-between px-6 pt-6">
         <Link
           to="/"

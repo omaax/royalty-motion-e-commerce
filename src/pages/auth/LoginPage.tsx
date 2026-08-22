@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 import { APP_NAME } from '../../constants/branding';
 import { UserProfile } from '../../types';
 import { AuthForm, AuthFormValues } from './AuthForm';
@@ -18,6 +19,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   };
   return (
     <main className="min-h-screen bg-white text-black font-jakarta flex flex-col">
+      <SEO
+        title="Login"
+        description="Sign in to your ROYALTY account to access your orders, wishlist, and profile."
+      />
       <div className="flex items-center justify-between px-6 pt-6">
         <Link
           to="/"

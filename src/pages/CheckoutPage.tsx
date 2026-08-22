@@ -5,6 +5,7 @@ import { Truck } from 'lucide-react';
 import { CartItem, ShippingInfo } from '../types';
 import { FormField } from '../components/FormField';
 import { OrderSummary } from '../components/shop/OrderSummary';
+import { SEO } from '../components/SEO';
 
 const shippingSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -77,6 +78,10 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
 
   return (
     <main className="px-6 lg:px-12 pt-10">
+      <SEO
+        title="Checkout"
+        description="Complete your order from ROYALTY — secure shipping and discreet delivery."
+      />
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
         <div className="flex flex-col md:flex-row md:items-baseline gap-6">

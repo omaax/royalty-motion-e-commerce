@@ -5,6 +5,7 @@ import { ImageRevealBackground, BG_IMAGE_1 } from '../components/ImageRevealBack
 // import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
 import { NavBar } from '../components/NavBar';
 import { MotionLink } from '../components/MotionButton';
+import { SEO } from '../components/SEO';
 import { APP_NAME, APP_TAGLINE } from '../constants/branding';
 import crestRedImg from '@/assets/crest-red.png';
 
@@ -20,6 +21,10 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
 
   return (
     <div className="relative flex-1 flex flex-col justify-between overflow-y-auto lg:overflow-hidden">
+      <SEO
+        title="Home"
+        description="ROYALTY — Future forward fashion. Discover cutting-edge streetwear, limited edition drops, and avant-garde accessories designed for the next generation."
+      />
       {/* Interactive Desktop Spotlight Image Reveal Background */}
       <ImageRevealBackground />
 

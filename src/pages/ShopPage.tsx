@@ -6,6 +6,7 @@ import { ShopToolbar } from '../components/shop/ShopToolbar';
 import { SearchBar } from '../components/shop/SearchBar';
 import { ProductGrid } from '../components/shop/ProductGrid';
 import { JoinCircleModal } from '../components/shop/JoinCircleModal';
+import { SEO } from '../components/SEO';
 
 interface ShopPageProps {
   onAddToCart: (item: ShopItem) => void;
@@ -36,6 +37,10 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, wishlistIds, on
 
   return (
     <>
+      <SEO
+        title="Shop"
+        description="Shop ROYALTY's collection of futuristic streetwear, techwear, and avant-garde accessories. Limited edition drops available now."
+      />
       <div className="lg:flex lg:items-stretch flex-1 min-h-0 lg:overflow-hidden">
         <ShopSidebar filters={filters} onOpenJoinModal={() => setShowJoinModal(true)} />
 

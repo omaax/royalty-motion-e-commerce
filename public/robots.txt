@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://royalty.example/motion-e-commerce/sitemap.xml

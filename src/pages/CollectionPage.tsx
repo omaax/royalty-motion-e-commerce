@@ -6,6 +6,7 @@ import { COLLECTION_ITEMS } from '../data/pageData';
 import { COLLECTION_PRODUCTS } from '../data/shopData';
 import { ProductCard } from '../components/shop/ProductCard';
 import { MotionLink } from '../components/MotionButton';
+import { SEO } from '../components/SEO';
 
 interface CollectionPageProps {
   onAddToCart: (item: ShopItem) => void;
@@ -56,6 +57,10 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
 
   return (
     <main className="px-6 lg:px-12 pt-8 pb-16">
+      <SEO
+        title={collection.title}
+        description={collection.description}
+      />
       <Link
         to="/collections"
         className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors cursor-pointer mb-6"

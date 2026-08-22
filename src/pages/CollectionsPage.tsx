@@ -3,10 +3,15 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { COLLECTION_ITEMS } from '../data/pageData';
 import { COLLECTION_PRODUCTS } from '../data/shopData';
+import { SEO } from '../components/SEO';
 
 export const CollectionsPage: React.FC = () => {
   return (
     <main className="px-6 lg:px-12 pt-10">
+        <SEO
+          title="Collections"
+          description="Explore ROYALTY's curated fashion collections — season archives and engineered lines forged for the future."
+        />
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
           <div className="flex flex-col md:flex-row md:items-baseline gap-6">

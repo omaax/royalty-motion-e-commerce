@@ -3,6 +3,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 import { Order } from '../types';
 import { MotionLink } from '../components/MotionButton';
+import { SEO } from '../components/SEO';
 import { APP_NAME, APP_YEAR, APP_TAGLINE } from '../constants/branding';
 
 interface OrderConfirmationPageProps {
@@ -25,6 +26,10 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({ or
 
   return (
     <main className="px-6 lg:px-12 pt-10">
+      <SEO
+        title="Order Confirmed"
+        description="Your ROYALTY order has been placed successfully. Thank you for your purchase."
+      />
       <div className="max-w-2xl mx-auto py-16 space-y-10">
         {/* Success Header */}
         <div className="flex flex-col items-center text-center space-y-4">

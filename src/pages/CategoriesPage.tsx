@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES, categoryToSlug } from '../constants/shop';
 import { SHOP_PRODUCTS } from '../data/shopData';
+import { SEO } from '../components/SEO';
 
 export const CategoriesPage: React.FC = () => {
   const categoryCounts = useMemo(() => {
@@ -15,6 +16,10 @@ export const CategoriesPage: React.FC = () => {
 
   return (
     <main className="px-6 lg:px-12 pt-10">
+      <SEO
+        title="Categories"
+        description="Browse ROYALTY's product categories — wearables, headgear, accessories, and limited edition collections."
+      />
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
         <h2 className="font-serif text-3xl md:text-6xl font-bold tracking-tight text-black uppercase">
           CATEGORIES

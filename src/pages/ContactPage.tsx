@@ -1,10 +1,15 @@
 import React from 'react';
 import { ArrowRight, Mail, MapPin } from 'lucide-react';
 import { MotionButton } from '../components/MotionButton';
+import { SEO } from '../components/SEO';
 
 export const ContactPage: React.FC = () => {
   return (
     <main className="px-6 lg:px-12 pt-10">
+        <SEO
+          title="Contact"
+          description="Get in touch with ROYALTY. Open a line of communication — the circle is always listening."
+        />
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
           <div className="flex flex-col md:flex-row md:items-baseline gap-6">

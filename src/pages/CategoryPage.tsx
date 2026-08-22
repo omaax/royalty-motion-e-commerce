@@ -6,6 +6,7 @@ import { SHOP_PRODUCTS } from '../data/shopData';
 import { slugToCategory } from '../constants/shop';
 import { ProductCard } from '../components/shop/ProductCard';
 import { MotionLink } from '../components/MotionButton';
+import { SEO } from '../components/SEO';
 
 interface CategoryPageProps {
   onAddToCart: (item: ShopItem) => void;
@@ -53,6 +54,10 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
 
   return (
     <main className="px-6 lg:px-12 pt-8 pb-16">
+      <SEO
+        title={category}
+        description={`Shop ROYALTY's ${category} collection — futuristic streetwear and accessories.`}
+      />
       <Link
         to="/shop"
         className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors cursor-pointer mb-6"

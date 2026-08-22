@@ -3,6 +3,7 @@ import { ShoppingBag, Trash2, ChevronRight, ArrowRight, Minus, Plus } from 'luci
 import { CartItem } from '../types';
 import { MotionLink } from '../components/MotionButton';
 import { COLOR_HEX } from '../constants/shop';
+import { SEO } from '../components/SEO';
 import { APP_NAME, APP_TAGLINE, APP_YEAR } from '../constants/branding';
 
 interface CartPageProps {
@@ -25,6 +26,10 @@ export const CartPage: React.FC<CartPageProps> = ({
 
   return (
     <main className="px-6 lg:px-12 pt-10">
+        <SEO
+          title="Shopping Bag"
+          description="Review your selected items from ROYALTY — futuristic streetwear and accessories ready for checkout."
+        />
         {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
           <div className="flex flex-col md:flex-row md:items-baseline gap-6">
