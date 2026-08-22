@@ -9,7 +9,7 @@ import { MotionLink } from '../components/MotionButton';
 
 interface CategoryPageProps {
   onAddToCart: (item: ShopItem) => void;
-  wishlistIds: string[];
+  wishlistIds: Set<string>;
   onToggleWishlist: (item: ShopItem) => void;
 }
 
@@ -90,7 +90,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
               key={item.id}
               item={item}
               onAddToCart={onAddToCart}
-              wished={wishlistIds.includes(item.id)}
+              wished={wishlistIds.has(item.id)}
               onToggleWishlist={onToggleWishlist}
             />
           ))}

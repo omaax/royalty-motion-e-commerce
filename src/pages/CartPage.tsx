@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ShoppingBag, Trash2, ChevronRight, ArrowRight, Minus, Plus } from 'lucide-react';
 import { CartItem } from '../types';
 import { MotionLink } from '../components/MotionButton';
@@ -18,9 +18,9 @@ export const CartPage: React.FC<CartPageProps> = ({
   onRemoveFromCart,
   onUpdateQuantity,
 }) => {
-  const totalCartPrice = cartItems.reduce(
-    (acc, c) => acc + c.item.price * c.quantity,
-    0
+  const totalCartPrice = useMemo(
+    () => cartItems.reduce((acc, c) => acc + c.item.price * c.quantity, 0),
+    [cartItems]
   );
 
   return (
@@ -64,7 +64,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     {item.images[0] && (
                       <div className="w-16 h-16 bg-gray-50 border border-gray-100 rounded overflow-hidden shrink-0 flex items-center justify-center p-1">
-                        <img src={item.images[0]} alt={item.title} className="w-full h-full object-contain" />
+                        <img src={item.images[0]} alt={item.title} loading="lazy" width={64} height={64} className="w-full h-full object-contain" />
                       </div>
                     )}
                     <div className="min-w-0">

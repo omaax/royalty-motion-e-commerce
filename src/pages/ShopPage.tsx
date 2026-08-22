@@ -9,7 +9,7 @@ import { JoinCircleModal } from '../components/shop/JoinCircleModal';
 
 interface ShopPageProps {
   onAddToCart: (item: ShopItem) => void;
-  wishlistIds: string[];
+  wishlistIds: Set<string>;
   onToggleWishlist: (item: ShopItem) => void;
 }
 
@@ -32,7 +32,7 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, wishlistIds, on
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [filters.hasMore, filters.loadMore, filters.visibleCount]);
+  }, [filters.hasMore, filters.loadMore]);
 
   return (
     <>

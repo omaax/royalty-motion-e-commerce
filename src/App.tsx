@@ -1,29 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { HomePage } from './pages/HomePage';
-import { ShopPage } from './pages/ShopPage';
-import { CategoriesPage } from './pages/CategoriesPage';
-import { CollectionsPage } from './pages/CollectionsPage';
-import { CollectionPage } from './pages/CollectionPage';
-import { JournalPage } from './pages/JournalPage';
-import { CartPage } from './pages/CartPage';
-import { AboutPage } from './pages/AboutPage';
-import { ContactPage } from './pages/ContactPage';
-import { ProductDetailPage } from './pages/ProductDetailPage';
-import { CategoryPage } from './pages/CategoryPage';
-import { WishlistPage } from './pages/WishlistPage';
 import { Toast } from './components/Toast';
 import { ShopItem, CartItem, CartLineOptions, Order, UserProfile, ToastMessage, ShippingInfo, PaymentInfo } from './types';
 import { ProfileLayout } from './components/profile/ProfileLayout';
-import { ProfilePage } from './pages/ProfilePage';
-import { OrderHistoryPage } from './pages/OrderHistoryPage';
-import { OrderDetailPage } from './pages/OrderDetailPage';
-import { CheckoutPage } from './pages/CheckoutPage';
-import { PaymentPage } from './pages/PaymentPage';
-import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
-import { LoginPage } from './pages/auth/LoginPage';
-import { SignupPage } from './pages/auth/SignupPage';
+
+const HomePage = lazy(() => import('./pages/HomePage').then(m => ({ default: m.HomePage })));
+const ShopPage = lazy(() => import('./pages/ShopPage').then(m => ({ default: m.ShopPage })));
+const CategoriesPage = lazy(() => import('./pages/CategoriesPage').then(m => ({ default: m.CategoriesPage })));
+const CollectionsPage = lazy(() => import('./pages/CollectionsPage').then(m => ({ default: m.CollectionsPage })));
+const CollectionPage = lazy(() => import('./pages/CollectionPage').then(m => ({ default: m.CollectionPage })));
+const JournalPage = lazy(() => import('./pages/JournalPage').then(m => ({ default: m.JournalPage })));
+const CartPage = lazy(() => import('./pages/CartPage').then(m => ({ default: m.CartPage })));
+const AboutPage = lazy(() => import('./pages/AboutPage').then(m => ({ default: m.AboutPage })));
+const ContactPage = lazy(() => import('./pages/ContactPage').then(m => ({ default: m.ContactPage })));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const CategoryPage = lazy(() => import('./pages/CategoryPage').then(m => ({ default: m.CategoryPage })));
+const WishlistPage = lazy(() => import('./pages/WishlistPage').then(m => ({ default: m.WishlistPage })));
+const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
+const OrderHistoryPage = lazy(() => import('./pages/OrderHistoryPage').then(m => ({ default: m.OrderHistoryPage })));
+const OrderDetailPage = lazy(() => import('./pages/OrderDetailPage').then(m => ({ default: m.OrderDetailPage })));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage').then(m => ({ default: m.CheckoutPage })));
+const PaymentPage = lazy(() => import('./pages/PaymentPage').then(m => ({ default: m.PaymentPage })));
+const OrderConfirmationPage = lazy(() => import('./pages/OrderConfirmationPage').then(m => ({ default: m.OrderConfirmationPage })));
+const LoginPage = lazy(() => import('./pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
+const SignupPage = lazy(() => import('./pages/auth/SignupPage').then(m => ({ default: m.SignupPage })));
 
 const ORDERS_STORAGE_KEY = 'cff.orders';
 const PROFILE_STORAGE_KEY = 'cff.profile';
@@ -188,10 +189,11 @@ export default function App() {
   const totalCartCount = cartItems.reduce((acc, c) => acc + c.quantity, 0);
   const totalWishlistCount = wishlistItems.length;
 
-  const wishlistIds = wishlistItems.map((w) => w.id);
+  const wishlistIds = useMemo(() => new Set(wishlistItems.map((w) => w.id)), [wishlistItems]);
 
   return (
     <>
+      <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><span className="text-[10px] font-mono tracking-[0.2em] uppercase text-gray-400 animate-pulse">Loading...</span></div>}>
       <Routes>
         <Route element={<Layout cartCount={totalCartCount} wishlistCount={totalWishlistCount} isLoggedIn={!!user} onLogout={handleLogout} />}>
           <Route
@@ -310,6 +312,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="/signup" element={<SignupPage onLogin={handleLogin} />} />
       </Routes>
+      </Suspense>
 
       <Toast toast={toast} onDismiss={() => setToast(null)} />
     </>

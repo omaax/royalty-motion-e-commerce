@@ -11,7 +11,7 @@ interface FormFieldProps {
   className?: string;
 }
 
-export const FormField: React.FC<FormFieldProps> = ({
+export const FormField: React.FC<FormFieldProps> = React.memo(({
   label,
   type = 'text',
   placeholder,
@@ -45,4 +45,4 @@ export const FormField: React.FC<FormFieldProps> = ({
       )}
     </div>
   );
-};
+});

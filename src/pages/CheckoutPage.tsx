@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { Truck } from 'lucide-react';
@@ -39,19 +39,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const updateShipping = (field: keyof ShippingInfo) => (value: string) => {
-    setShipping((prev) => ({ ...prev, [field]: value }));
-    clearError(field);
-  };
-
-  const clearError = (field: string) => {
+  const clearError = useCallback((field: string) => {
     setErrors((prev) => {
       if (!(field in prev)) return prev;
       const next = { ...prev };
       delete next[field];
       return next;
     });
-  };
+  }, []);
+
+  const updateShipping = useCallback((field: keyof ShippingInfo) => (value: string) => {
+    setShipping((prev) => ({ ...prev, [field]: value }));
+    clearError(field);
+  }, [clearError]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

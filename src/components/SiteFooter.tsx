@@ -40,7 +40,7 @@ const SOCIALS = [
   { label: 'YouTube', icon: Youtube },
 ];
 
-export const SiteFooter: React.FC = () => {
+export const SiteFooter: React.FC = React.memo(() => {
   const [openColumn, setOpenColumn] = useState<string | null>('EXPLORE');
   const [isDesktop, setIsDesktop] = useState<boolean>(() =>
     typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false,
@@ -64,7 +64,7 @@ export const SiteFooter: React.FC = () => {
             className="w-28 h-28 rounded-full border border-black flex items-center justify-center p-1 overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 shadow-sm shrink-0"
             title="Home"
           >
-            <img src={crestImg} alt="Guild Crest" className="w-full h-full object-cover" />
+            <img src={crestImg} alt="Guild Crest" width={112} height={112} className="w-full h-full object-cover" />
           </Link>
           <div className="text-sm font-mono tracking-widest uppercase leading-tight font-bold">
             <div>STRENGTH IN SILENCE</div>
@@ -163,4 +163,4 @@ export const SiteFooter: React.FC = () => {
       </div>
     </footer>
   );
-};
+});

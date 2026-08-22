@@ -1,3 +1,4 @@
+import React from 'react';
 import { Plus, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopItem } from '../../types';
@@ -11,7 +12,7 @@ interface ProductCardProps {
   onToggleWishlist?: (item: ShopItem) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wished, onToggleWishlist }) => {
+export const ProductCard: React.FC<ProductCardProps> = React.memo(({ item, onAddToCart, wished, onToggleWishlist }) => {
   const primaryImage = item.images[0];
 
   return (
@@ -26,6 +27,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
           <img
             src={primaryImage}
             alt={item.title}
+            loading="lazy"
+            width={400}
+            height={400}
             className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
           />
         ) : (
@@ -109,4 +113,4 @@ export const ProductCard: React.FC<ProductCardProps> = ({ item, onAddToCart, wis
       </div>
     </div>
   );
-};
+});

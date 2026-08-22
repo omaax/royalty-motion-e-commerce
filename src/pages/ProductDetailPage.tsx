@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useCallback, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Sparkles, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -11,7 +11,7 @@ import { MotionButton } from '../components/MotionButton';
 
 interface ProductDetailPageProps {
   onAddToCart: (item: ShopItem, options?: CartLineOptions) => void;
-  wishlistIds: string[];
+  wishlistIds: Set<string>;
   onToggleWishlist: (item: ShopItem) => void;
 }
 
@@ -23,7 +23,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
     [id]
   );
 
-  const wished = item ? wishlistIds.includes(item.id) : false;
+  const wished = item ? wishlistIds.has(item.id) : false;
 
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -34,12 +34,12 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const updateThumbArrows = () => {
+  const updateThumbArrows = useCallback(() => {
     const el = thumbStripRef.current;
     if (!el) return;
     setCanScrollLeft(el.scrollLeft > 2);
     setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 2);
-  };
+  }, []);
 
   const scrollThumbs = (direction: number) => {
     const el = thumbStripRef.current;
@@ -84,7 +84,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
   }
 
   const primaryImage = item.images[activeImage];
-  const relatedProducts = SHOP_PRODUCTS.filter((p) => p.id !== item.id).slice(0, 4);
+  const relatedProducts = useMemo(
+    () => SHOP_PRODUCTS.filter((p) => p.id !== item.id).slice(0, 4),
+    [item.id]
+  );
 
   return (
     <main className="px-6 lg:px-12 pt-8 pb-16">
@@ -171,7 +174,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
                         : 'border-gray-200 hover:border-gray-400'
                     }`}
                   >
-                    <img src={img} alt={`${item.title} view ${i + 1}`} className="w-full h-full object-contain" />
+                    <img src={img} alt={`${item.title} view ${i + 1}`} loading="lazy" width={128} height={128} className="w-full h-full object-contain" />
                   </button>
                 ))}
               </div>
@@ -338,7 +341,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
               key={related.id}
               item={related}
               onAddToCart={onAddToCart}
-              wished={wishlistIds.includes(related.id)}
+              wished={wishlistIds.has(related.id)}
               onToggleWishlist={onToggleWishlist}
             />
           ))}

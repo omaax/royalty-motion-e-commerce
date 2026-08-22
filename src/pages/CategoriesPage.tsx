@@ -1,17 +1,17 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CATEGORIES, categoryToSlug } from '../constants/shop';
 import { SHOP_PRODUCTS } from '../data/shopData';
 
 export const CategoriesPage: React.FC = () => {
-  const categoryCounts = (() => {
+  const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const item of SHOP_PRODUCTS) {
       counts[item.category] = (counts[item.category] ?? 0) + 1;
     }
     return counts;
-  })();
+  }, []);
 
   return (
     <main className="px-6 lg:px-12 pt-10">

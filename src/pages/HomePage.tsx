@@ -103,6 +103,8 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
             <img
               src={BG_IMAGE_1}
               alt={`${APP_NAME} ${APP_TAGLINE}`}
+              width={1200}
+              height={800}
               className="w-full h-full object-cover bg-white"
               referrerPolicy="no-referrer"
             />
@@ -114,6 +116,8 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
       <img
         src={crestRedImg}
         alt="Honor Red Crest"
+        width={420}
+        height={420}
         className="absolute left-[var(--pad-x)] bottom-0 w-35 md:w-54 lg:w-105 object-contain select-none z-10"
       />
     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Heart, ArrowRight } from 'lucide-react';
 import { ShopItem } from '../types';
 import { ProductCard } from '../components/shop/ProductCard';
@@ -15,7 +15,7 @@ export const WishlistPage: React.FC<WishlistPageProps> = ({
   onAddToCart,
   onToggleWishlist,
 }) => {
-  const wishlistIds = wishlistItems.map((w) => w.id);
+  const wishlistIds = useMemo(() => new Set(wishlistItems.map((w) => w.id)), [wishlistItems]);
 
   return (
     <main className="px-6 lg:px-12 pt-10 pb-16">
@@ -52,7 +52,7 @@ export const WishlistPage: React.FC<WishlistPageProps> = ({
               key={item.id}
               item={item}
               onAddToCart={onAddToCart}
-              wished
+              wished={wishlistIds.has(item.id)}
               onToggleWishlist={onToggleWishlist}
             />
           ))}

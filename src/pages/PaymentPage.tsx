@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { z } from 'zod';
 import { useNavigate } from 'react-router-dom';
 import { CreditCard } from 'lucide-react';
@@ -35,40 +35,40 @@ export const PaymentPage: React.FC<PaymentPageProps> = ({
   const [cardNumber, setCardNumber] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const formatCardNumber = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 16);
-    return digits.replace(/(.{4})/g, '$1 ').trim();
-  };
-
-  const handleCardNumberChange = (value: string) => {
-    const formatted = formatCardNumber(value);
-    setCardNumber(formatted);
-    const last4 = value.replace(/\D/g, '').slice(-4);
-    setPayment((prev) => ({ ...prev, cardLast4: last4 }));
-    clearError('cardLast4');
-  };
-
-  const handleExpiryChange = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 4);
-    const formatted = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
-    setPayment((prev) => ({ ...prev, expiry: formatted }));
-    clearError('expiry');
-  };
-
-  const handleCvvChange = (value: string) => {
-    const digits = value.replace(/\D/g, '').slice(0, 4);
-    setCvv(digits);
-    clearError('cvv');
-  };
-
-  const clearError = (field: string) => {
+  const clearError = useCallback((field: string) => {
     setErrors((prev) => {
       if (!(field in prev)) return prev;
       const next = { ...prev };
       delete next[field];
       return next;
     });
-  };
+  }, []);
+
+  const formatCardNumber = useCallback((value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 16);
+    return digits.replace(/(.{4})/g, '$1 ').trim();
+  }, []);
+
+  const handleCardNumberChange = useCallback((value: string) => {
+    const formatted = formatCardNumber(value);
+    setCardNumber(formatted);
+    const last4 = value.replace(/\D/g, '').slice(-4);
+    setPayment((prev) => ({ ...prev, cardLast4: last4 }));
+    clearError('cardLast4');
+  }, [formatCardNumber, clearError]);
+
+  const handleExpiryChange = useCallback((value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    const formatted = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+    setPayment((prev) => ({ ...prev, expiry: formatted }));
+    clearError('expiry');
+  }, [clearError]);
+
+  const handleCvvChange = useCallback((value: string) => {
+    const digits = value.replace(/\D/g, '').slice(0, 4);
+    setCvv(digits);
+    clearError('cvv');
+  }, [clearError]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
