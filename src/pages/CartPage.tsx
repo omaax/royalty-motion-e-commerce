@@ -1,7 +1,7 @@
 import React from 'react';
 import { ShoppingBag, Trash2, ChevronRight, ArrowRight, Minus, Plus } from 'lucide-react';
 import { CartItem } from '../types';
-import { MotionButton, MotionLink } from '../components/MotionButton';
+import { MotionLink } from '../components/MotionButton';
 import { COLOR_HEX } from '../constants/shop';
 import { APP_NAME, APP_TAGLINE, APP_YEAR } from '../constants/branding';
 
@@ -10,7 +10,6 @@ interface CartPageProps {
   cartItems: CartItem[];
   onRemoveFromCart: (key: string) => void;
   onUpdateQuantity: (key: string, delta: number) => void;
-  onCheckout: () => void;
 }
 
 export const CartPage: React.FC<CartPageProps> = ({
@@ -18,7 +17,6 @@ export const CartPage: React.FC<CartPageProps> = ({
   cartItems,
   onRemoveFromCart,
   onUpdateQuantity,
-  onCheckout,
 }) => {
   const totalCartPrice = cartItems.reduce(
     (acc, c) => acc + c.item.price * c.quantity,
@@ -143,14 +141,14 @@ export const CartPage: React.FC<CartPageProps> = ({
                     ${totalCartPrice.toLocaleString('en-US')} USD
                   </span>
                 </div>
-                <MotionButton
+                <MotionLink
+                  to="/checkout"
                   variant="solid"
-                  onClick={onCheckout}
-                  className="w-full font-jakarta uppercase font-semibold text-xs tracking-[0.18em] py-3"
+                  className="w-full font-jakarta uppercase font-semibold text-xs tracking-[0.18em] py-3 justify-center"
                 >
                   <span>CHECKOUT NOW</span>
                   <ChevronRight className="w-4 h-4 stroke-[2]" />
-                </MotionButton>
+                </MotionLink>
                 <p className="text-[10px] text-center text-gray-400 uppercase font-semibold tracking-widest">
                   {APP_NAME} &copy; {APP_YEAR} &mdash; {APP_TAGLINE}
                 </p>

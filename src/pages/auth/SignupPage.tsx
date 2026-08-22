@@ -25,13 +25,6 @@ export const SignupPage: React.FC<SignupPageProps> = ({ onLogin }) => {
         >
           {APP_NAME}
         </Link>
-        <Link
-          to="/"
-          className="flex items-center gap-2 text-[10px] font-mono tracking-widest uppercase font-bold text-gray-400 hover:text-black transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          Back to shop
-        </Link>
       </div>
 
       <div className="flex-1 flex items-center justify-center px-6 pb-16">

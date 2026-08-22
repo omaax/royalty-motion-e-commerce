@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { HomePage } from './pages/HomePage';
 import { ShopPage } from './pages/ShopPage';
@@ -14,10 +14,14 @@ import { ProductDetailPage } from './pages/ProductDetailPage';
 import { CategoryPage } from './pages/CategoryPage';
 import { WishlistPage } from './pages/WishlistPage';
 import { Toast } from './components/Toast';
-import { ShopItem, CartItem, CartLineOptions, Order, UserProfile, ToastMessage } from './types';
+import { ShopItem, CartItem, CartLineOptions, Order, UserProfile, ToastMessage, ShippingInfo, PaymentInfo } from './types';
 import { ProfileLayout } from './components/profile/ProfileLayout';
 import { ProfilePage } from './pages/ProfilePage';
 import { OrderHistoryPage } from './pages/OrderHistoryPage';
+import { OrderDetailPage } from './pages/OrderDetailPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { PaymentPage } from './pages/PaymentPage';
+import { OrderConfirmationPage } from './pages/OrderConfirmationPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { SignupPage } from './pages/auth/SignupPage';
 
@@ -59,12 +63,14 @@ const loadUser = (): UserProfile | null => {
 };
 
 export default function App() {
+  const navigate = useNavigate();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [wishlistItems, setWishlistItems] = useState<ShopItem[]>([]);
   const [toast, setToast] = useState<ToastMessage | null>(null);
   const [orders, setOrders] = useState<Order[]>(loadOrders);
   const [profile, setProfile] = useState<UserProfile>(loadProfile);
   const [user, setUser] = useState<UserProfile | null>(loadUser);
+  const [shippingInfo, setShippingInfo] = useState<ShippingInfo | null>(null);
 
   useEffect(() => {
     localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
@@ -126,21 +132,28 @@ export default function App() {
     });
   };
 
-  const handleCheckout = () => {
-    if (cartItems.length === 0) return;
+  const handleShippingComplete = (shipping: ShippingInfo) => {
+    setShippingInfo(shipping);
+  };
+
+  const handlePlaceOrder = (shipping: ShippingInfo, payment: PaymentInfo): string | null => {
+    if (cartItems.length === 0) return null;
     const order: Order = {
       id: `CF-${Date.now().toString().slice(-6)}`,
       placedAt: new Date().toISOString(),
       items: cartItems,
       total: cartItems.reduce((acc, c) => acc + c.item.price * c.quantity, 0),
       status: 'Processing',
+      shipping,
+      payment,
     };
     setOrders((prev) => [order, ...prev]);
+    setCartItems([]);
     setToast({
       id: Date.now().toString(),
       text: `Order ${order.id} submitted successfully!`,
     });
-    setCartItems([]);
+    return order.id;
   };
 
   const handleUpdateProfile = (updates: Partial<UserProfile>) => {
@@ -219,8 +232,38 @@ export default function App() {
                 cartItems={cartItems}
                 onRemoveFromCart={handleRemoveFromCart}
                 onUpdateQuantity={handleUpdateQuantity}
-                onCheckout={handleCheckout}
               />
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <CheckoutPage
+                cartCount={totalCartCount}
+                cartItems={cartItems}
+                onShippingComplete={handleShippingComplete}
+              />
+            }
+          />
+          <Route
+            path="/payment"
+            element={
+              shippingInfo ? (
+                <PaymentPage
+                  cartCount={totalCartCount}
+                  cartItems={cartItems}
+                  shipping={shippingInfo}
+                  onPlaceOrder={handlePlaceOrder}
+                />
+              ) : (
+                <Navigate to="/checkout" replace />
+              )
+            }
+          />
+          <Route
+            path="/order-confirmation/:id"
+            element={
+              <OrderConfirmationPage orders={orders} />
             }
           />
           <Route
@@ -259,6 +302,7 @@ export default function App() {
             }
           />
             <Route path="orders" element={<OrderHistoryPage orders={orders} />} />
+            <Route path="orders/:id" element={<OrderDetailPage orders={orders} />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>

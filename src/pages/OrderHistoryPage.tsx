@@ -1,5 +1,6 @@
 import React from 'react';
-import { PackageOpen, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { PackageOpen, ArrowRight, ChevronRight } from 'lucide-react';
 import { Order } from '../types';
 import { MotionLink } from '../components/MotionButton';
 import { COLOR_HEX } from '../constants/shop';
@@ -47,7 +48,11 @@ export const OrderHistoryPage: React.FC<OrderHistoryPageProps> = ({ orders }) =>
   return (
     <div className="space-y-6">
       {orders.map((order) => (
-        <article key={order.id} className="border border-gray-200 rounded-md overflow-hidden">
+        <Link
+          key={order.id}
+          to={`/profile/orders/${order.id}`}
+          className="block border border-gray-200 rounded-md overflow-hidden hover:border-black transition-colors"
+        >
           <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
             <div className="flex items-center gap-3 flex-wrap">
               <h3 className="font-orbitron font-bold text-sm tracking-wider uppercase text-black">
@@ -107,7 +112,14 @@ export const OrderHistoryPage: React.FC<OrderHistoryPageProps> = ({ orders }) =>
               </li>
             ))}
           </ul>
-        </article>
+
+          <div className="px-5 py-3 border-t border-gray-100 flex items-center justify-end">
+            <span className="text-[10px] font-mono tracking-[0.2em] uppercase font-bold text-gray-400 flex items-center gap-1 group-hover:text-black transition-colors">
+              VIEW DETAILS
+              <ChevronRight className="w-3.5 h-3.5" />
+            </span>
+          </div>
+        </Link>
       ))}
     </div>
   );
