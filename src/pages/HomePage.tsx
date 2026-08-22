@@ -8,6 +8,7 @@ import { MotionLink } from '../components/MotionButton';
 import { SEO } from '../components/SEO';
 import { APP_NAME, APP_TAGLINE } from '../constants/branding';
 import crestRedImg from '@/assets/crest-red.png';
+import { getOptimizedImage } from '../utils/imageOptimize';
 
 interface HomePageProps {
   cartCount: number;
@@ -118,13 +119,18 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
       </main>
 
       {/* Red Honor Crest Logo - pinned bottom-left of screen */}
-      <img
-        src={crestRedImg}
-        alt="Honor Red Crest"
-        width={420}
-        height={420}
-        className="absolute left-[var(--pad-x)] bottom-0 w-35 md:w-54 lg:w-105 object-contain select-none z-10"
-      />
+      {(() => {
+        const opt = getOptimizedImage(crestRedImg);
+        return (
+          <img
+            src={opt?.webpSrc ?? crestRedImg}
+            alt="Honor Red Crest"
+            width={420}
+            height={420}
+            className="absolute left-[var(--pad-x)] bottom-0 w-35 md:w-54 lg:w-105 object-contain select-none z-10"
+          />
+        );
+      })()}
     </div>
   );
 };

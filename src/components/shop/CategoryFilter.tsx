@@ -33,7 +33,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
               <button
                 key={catName}
                 onClick={() => onSelect(catName)}
-                className={`flex items-center justify-between w-full text-left transition-colors cursor-pointer ${
+                className={`flex items-center justify-between w-full text-left py-1.5 transition-colors cursor-pointer ${
                   isSelected ? 'font-bold text-black' : 'text-gray-600 hover:text-black'
                 }`}
               >

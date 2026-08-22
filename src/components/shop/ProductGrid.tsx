@@ -45,13 +45,14 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
             : 'grid-cols-1'
       }`}
     >
-      {items.map((item) => (
+      {items.map((item, index) => (
         <ProductCard
           key={item.id}
           item={item}
           onAddToCart={onAddToCart}
           wished={wishlistIds?.has(item.id)}
           onToggleWishlist={onToggleWishlist}
+          priority={index === 0}
         />
       ))}
     </div>

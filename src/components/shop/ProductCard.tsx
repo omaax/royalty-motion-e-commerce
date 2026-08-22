@@ -4,15 +4,17 @@ import { Link } from 'react-router-dom';
 import { ShopItem } from '../../types';
 import { COLOR_HEX } from '../../constants/shop';
 import { MotionButton } from '../MotionButton';
+import { getOptimizedImage } from '../../utils/imageOptimize';
 
 interface ProductCardProps {
   item: ShopItem;
   onAddToCart: (item: ShopItem) => void;
   wished?: boolean;
   onToggleWishlist?: (item: ShopItem) => void;
+  priority?: boolean;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = React.memo(({ item, onAddToCart, wished, onToggleWishlist }) => {
+export const ProductCard: React.FC<ProductCardProps> = React.memo(({ item, onAddToCart, wished, onToggleWishlist, priority }) => {
   const primaryImage = item.images[0];
 
   return (
@@ -24,14 +26,20 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({ item, onAdd
           className="flex items-center justify-center w-full h-full bg-[#f4f4f4] rounded-xl group-hover:shadow-md transition-all duration-300 overflow-hidden p-2"
         >
         {primaryImage ? (
-          <img
-            src={primaryImage}
-            alt={item.title}
-            loading="lazy"
-            width={400}
-            height={400}
-            className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
-          />
+          (() => {
+            const opt = getOptimizedImage(primaryImage);
+            return (
+              <img
+                src={opt?.webpSrc ?? primaryImage}
+                alt={item.title}
+                loading={priority ? 'eager' : 'lazy'}
+                fetchPriority={priority ? 'high' : 'auto'}
+                width={400}
+                height={400}
+                className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
+              />
+            );
+          })()
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center relative bg-gradient-to-b from-gray-50 to-gray-100/50">
             <span className="absolute top-2 left-2 text-xs font-mono text-gray-300">+</span>

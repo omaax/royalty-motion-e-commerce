@@ -52,6 +52,7 @@ export const PriceRangeFilter: React.FC<PriceRangeFilterProps> = ({
               step={PRICE_STEP}
               value={min}
               onChange={(e) => handleMin(Number(e.target.value))}
+              aria-label="Minimum price"
               className="absolute top-0 left-0 w-full h-5 appearance-none bg-transparent pointer-events-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer"
             />
             <input
@@ -61,6 +62,7 @@ export const PriceRangeFilter: React.FC<PriceRangeFilterProps> = ({
               step={PRICE_STEP}
               value={max}
               onChange={(e) => handleMax(Number(e.target.value))}
+              aria-label="Maximum price"
               className="absolute top-0 left-0 w-full h-5 appearance-none bg-transparent pointer-events-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer"
             />
           </div>

@@ -4,6 +4,7 @@ import crestImg from '@/assets/crest.png';
 import honorLogoImg from '@/assets/honor-logo.png';
 import { APP_NAME } from '../constants/branding';
 import { NavBar } from './NavBar';
+import { getOptimizedImage } from '../utils/imageOptimize';
 
 interface SiteHeaderProps {
   activeNavTab: string;
@@ -34,7 +35,18 @@ export const SiteHeader: React.FC<SiteHeaderProps> = React.memo(({ activeNavTab,
             className="w-30 h-30 md:w-35 md:h-35 rounded-full border border-black flex items-center justify-center p-1 overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 shadow-sm"
             title="Home"
           >
-            <img src={crestImg} alt="Guild Crest" width={140} height={140} className="w-full h-full object-cover" />
+            {(() => {
+              const opt = getOptimizedImage(crestImg);
+              return (
+                <img
+                  src={opt?.webpSrc ?? crestImg}
+                  alt="Guild Crest"
+                  width={140}
+                  height={140}
+                  className="w-full h-full object-cover"
+                />
+              );
+            })()}
           </Link>
           <div className="text-[9px] text-center font-mono tracking-widest uppercase leading-tight font-bold hidden sm:block">
             <div>STRENGTH IN SILENCE</div>
@@ -46,11 +58,18 @@ export const SiteHeader: React.FC<SiteHeaderProps> = React.memo(({ activeNavTab,
         {/* Center Brand Title 'HONOR' Artwork Image */}
         <div className="flex-1 flex items-center justify-center">
           <div className="relative text-center my-1 md:my-0 self-center flex items-center justify-center">
-            <img
-              src={honorLogoImg}
-              alt={APP_NAME}
-              className="h-20 md:h-28 lg:h-32 scale-[2.6] md:scale-[3.4] lg:scale-[4.0] translate-y-8 md:translate-y-8 lg:translate-y-11 object-contain select-none origin-center transform pointer-events-none transition-transform duration-300"
-            />
+            {(() => {
+              const opt = getOptimizedImage(honorLogoImg);
+              return (
+                <img
+                  src={opt?.webpSrc ?? honorLogoImg}
+                  alt={APP_NAME}
+                  width={500}
+                  height={200}
+                  className="h-20 md:h-28 lg:h-32 scale-[2.6] md:scale-[3.4] lg:scale-[4.0] translate-y-8 md:translate-y-8 lg:translate-y-11 object-contain select-none origin-center transform pointer-events-none transition-transform duration-300"
+                />
+              );
+            })()}
           </div>
         </div>
       </div>

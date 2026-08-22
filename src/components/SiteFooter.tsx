@@ -5,6 +5,7 @@ import { Instagram, Twitter, Youtube } from 'lucide-react';
 import crestImg from '@/assets/crest.png';
 import { APP_EMAIL, APP_NAME, APP_TAGLINE, APP_YEAR } from '../constants/branding';
 import { MotionButton } from './MotionButton';
+import { getOptimizedImage } from '../utils/imageOptimize';
 
 const FOOTER_COLUMNS: { title: string; links: { label: string; path?: string }[] }[] = [
   {
@@ -64,7 +65,18 @@ export const SiteFooter: React.FC = React.memo(() => {
             className="w-28 h-28 rounded-full border border-black flex items-center justify-center p-1 overflow-hidden cursor-pointer hover:scale-105 transition-all duration-300 shadow-sm shrink-0"
             title="Home"
           >
-            <img src={crestImg} alt="Guild Crest" width={112} height={112} className="w-full h-full object-cover" />
+            {(() => {
+              const opt = getOptimizedImage(crestImg);
+              return (
+                <img
+                  src={opt?.webpSrc ?? crestImg}
+                  alt="Guild Crest"
+                  width={112}
+                  height={112}
+                  className="w-full h-full object-cover"
+                />
+              );
+            })()}
           </Link>
           <div className="text-sm font-mono tracking-widest uppercase leading-tight font-bold">
             <div>STRENGTH IN SILENCE</div>
@@ -85,9 +97,9 @@ export const SiteFooter: React.FC = React.memo(() => {
                   className="flex items-center justify-between w-full md:pointer-events-none md:cursor-default cursor-pointer select-none"
                   aria-expanded={isOpen}
                 >
-                  <h4 className="text-[10px] font-mono tracking-[0.25em] uppercase font-bold text-gray-400">
+                  <h3 className="text-[10px] font-mono tracking-[0.25em] uppercase font-bold text-gray-600">
                     {column.title}
-                  </h4>
+                  </h3>
                   <span className="text-sm text-gray-400 md:hidden">{isOpen ? '−' : '+'}</span>
                 </button>
                 <AnimatePresence initial={false}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useMotionValue, useSpring } from 'motion/react';
-import bgArmorCutout from '@/assets/bg-armor-cutout.png';
-import bgCloakCutout from '@/assets/bg-colored-armor-cutout.png';
+import bgArmorCutout from '@/assets/webp/bg-armor-cutout-1200w.webp';
+import bgCloakCutout from '@/assets/webp/bg-colored-armor-cutout-1200w.webp';
 
 // High-resolution fashion editorial images for ROYALTY reveal experience
 export const BG_IMAGE_1 = bgArmorCutout;

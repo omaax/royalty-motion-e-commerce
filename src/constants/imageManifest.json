@@ -1,0 +1,174 @@
+{
+  "products": {
+    "ANCIENT-2.png": [
+      {
+        "name": "ANCIENT-2-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ANCIENT-2-400w.webp"
+      },
+      {
+        "name": "ANCIENT-2-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ANCIENT-2-800w.webp"
+      }
+    ],
+    "ancient-tshirt-white.png": [
+      {
+        "name": "ancient-tshirt-white-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ancient-tshirt-white-400w.webp"
+      },
+      {
+        "name": "ancient-tshirt-white-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ancient-tshirt-white-800w.webp"
+      }
+    ],
+    "ANCIENT-tshirt.png": [
+      {
+        "name": "ANCIENT-tshirt-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ANCIENT-tshirt-400w.webp"
+      },
+      {
+        "name": "ANCIENT-tshirt-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ANCIENT-tshirt-800w.webp"
+      }
+    ],
+    "ANCIENT.png": [
+      {
+        "name": "ANCIENT-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ANCIENT-400w.webp"
+      },
+      {
+        "name": "ANCIENT-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\ANCIENT-800w.webp"
+      }
+    ],
+    "Hidden-in-Plain Sight-1.png": [
+      {
+        "name": "Hidden-in-Plain Sight-1-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\Hidden-in-Plain Sight-1-400w.webp"
+      },
+      {
+        "name": "Hidden-in-Plain Sight-1-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\Hidden-in-Plain Sight-1-800w.webp"
+      }
+    ],
+    "Hidden-in-Plain Sight-2.png": [
+      {
+        "name": "Hidden-in-Plain Sight-2-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\Hidden-in-Plain Sight-2-400w.webp"
+      },
+      {
+        "name": "Hidden-in-Plain Sight-2-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\Hidden-in-Plain Sight-2-800w.webp"
+      }
+    ],
+    "Hidden-in-Plain Sight-3.png": [
+      {
+        "name": "Hidden-in-Plain Sight-3-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\Hidden-in-Plain Sight-3-400w.webp"
+      },
+      {
+        "name": "Hidden-in-Plain Sight-3-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\Hidden-in-Plain Sight-3-800w.webp"
+      }
+    ],
+    "masouerade-black.png": [
+      {
+        "name": "masouerade-black-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\masouerade-black-400w.webp"
+      },
+      {
+        "name": "masouerade-black-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\masouerade-black-800w.webp"
+      }
+    ],
+    "masouerade-white.png": [
+      {
+        "name": "masouerade-white-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\masouerade-white-400w.webp"
+      },
+      {
+        "name": "masouerade-white-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\masouerade-white-800w.webp"
+      }
+    ],
+    "masquerade-front.png": [
+      {
+        "name": "masquerade-front-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\masquerade-front-400w.webp"
+      },
+      {
+        "name": "masquerade-front-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\masquerade-front-800w.webp"
+      }
+    ],
+    "sinner-tshirt.png": [
+      {
+        "name": "sinner-tshirt-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\sinner-tshirt-400w.webp"
+      },
+      {
+        "name": "sinner-tshirt-800w.webp",
+        "width": 800,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\products\\webp\\sinner-tshirt-800w.webp"
+      }
+    ]
+  },
+  "assets": {
+    "crest.png": [
+      {
+        "name": "crest-140w.webp",
+        "width": 140,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\webp\\crest-140w.webp"
+      },
+      {
+        "name": "crest-280w.webp",
+        "width": 280,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\webp\\crest-280w.webp"
+      }
+    ],
+    "crest-red.png": [
+      {
+        "name": "crest-red-140w.webp",
+        "width": 140,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\webp\\crest-red-140w.webp"
+      },
+      {
+        "name": "crest-red-280w.webp",
+        "width": 280,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\webp\\crest-red-280w.webp"
+      }
+    ],
+    "honor-logo.png": [
+      {
+        "name": "honor-logo-200w.webp",
+        "width": 200,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\webp\\honor-logo-200w.webp"
+      },
+      {
+        "name": "honor-logo-400w.webp",
+        "width": 400,
+        "path": "D:\\Projects\\classic-forward-fashion\\assets\\webp\\honor-logo-400w.webp"
+      }
+    ]
+  }
+}

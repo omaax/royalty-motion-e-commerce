@@ -36,9 +36,10 @@ export const ShopToolbar: React.FC<ShopToolbarProps> = ({
         </button>
 
         <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
-          <span className="text-gray-500">SORT BY:</span>
+          <label htmlFor="sort-select" className="text-gray-500">SORT BY:</label>
           <div className="relative">
             <select
+              id="sort-select"
               value={sortBy}
               onChange={(e) => onSortBy(e.target.value as SortOption)}
               className="appearance-none bg-transparent pr-6 font-bold cursor-pointer focus:outline-none"

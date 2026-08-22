@@ -1,5 +1,6 @@
 import { ArrowRight } from 'lucide-react';
 import crestRedImg from '@/assets/crest-red.png';
+import { getOptimizedImage } from '../../utils/imageOptimize';
 
 interface JoinCircleBoxProps {
   onOpen: () => void;
@@ -10,7 +11,16 @@ export const JoinCircleBox: React.FC<JoinCircleBoxProps> = ({ onOpen }) => {
     <div className="p-4 border border-black bg-white relative overflow-hidden group min-h-30 flex flex-col justify-center">
       <div className="flex items-center gap-2">
         <div className="w-25 h-25 rounded-full border border-red-700/40 flex items-center justify-center shrink-0 overflow-hidden">
-          <img src={crestRedImg} alt="Honor Red Crest" className="w-full h-full object-cover" />
+          {(() => {
+            const opt = getOptimizedImage(crestRedImg);
+            return (
+              <img
+                src={opt?.webpSrc ?? crestRedImg}
+                alt="Honor Red Crest"
+                className="w-full h-full object-cover"
+              />
+            );
+          })()}
         </div>
         <div className="space-y-2">
           <h4 className="font-serif font-bold text-xs tracking-wider uppercase text-black">
