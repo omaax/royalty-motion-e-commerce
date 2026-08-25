@@ -26,6 +26,13 @@ const OrderConfirmationPage = lazy(() => import('./pages/OrderConfirmationPage')
 const LoginPage = lazy(() => import('./pages/auth/LoginPage').then(m => ({ default: m.LoginPage })));
 const SignupPage = lazy(() => import('./pages/auth/SignupPage').then(m => ({ default: m.SignupPage })));
 
+const AdminLayout = lazy(() => import('./app/admin/layout').then(m => ({ default: m.default })));
+const AdminDashboard = lazy(() => import('./app/admin/page').then(m => ({ default: m.default })));
+const AdminProductsPage = lazy(() => import('./app/admin/products/page').then(m => ({ default: m.default })));
+const AdminUsersPage = lazy(() => import('./app/admin/users/page').then(m => ({ default: m.default })));
+const AdminUserDetailPage = lazy(() => import('./app/admin/users/[id]/page').then(m => ({ default: m.default })));
+const AdminPaymentsPage = lazy(() => import('./app/admin/payments/page').then(m => ({ default: m.default })));
+
 const ORDERS_STORAGE_KEY = 'cff.orders';
 const PROFILE_STORAGE_KEY = 'cff.profile';
 const USER_STORAGE_KEY = 'cff.user';
@@ -311,6 +318,14 @@ export default function App() {
 
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route path="/signup" element={<SignupPage onLogin={handleLogin} />} />
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProductsPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
+          <Route path="users/:id" element={<AdminUserDetailPage />} />
+          <Route path="payments" element={<AdminPaymentsPage />} />
+        </Route>
       </Routes>
       </Suspense>
 
