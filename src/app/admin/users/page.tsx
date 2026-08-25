@@ -4,8 +4,10 @@ import { DataTable } from "./data-table";
 
 const UsersPage = () => {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold tracking-tight">All Payments</h1>
+    <div className="">
+      <div className="mb-8 px-4 py-2 bg-secondary rounded-md">
+        <h1 className="font-semibold">All Users</h1>
+      </div>
       <DataTable columns={columns} data={adminUsers} />
     </div>
   );

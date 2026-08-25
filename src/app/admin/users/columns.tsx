@@ -117,7 +117,7 @@ export const columns: ColumnDef<User>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link to={`/admin/customers/${user.id}`}>
+              <Link to={`/admin/users/${user.id}`}>
                 <Eye className="mr-2 h-4 w-4" />
                 View customer
               </Link>

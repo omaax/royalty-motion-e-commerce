@@ -3,6 +3,7 @@ import * as LabelPrimitive from "@radix-ui/react-label"
 import { Slot } from "@radix-ui/react-slot"
 import {
   Controller,
+  FormProvider,
   type ControllerProps,
   type FieldPath,
   type FieldValues,
@@ -12,12 +13,18 @@ import {
 import { cn } from "../../lib/utils"
 import { Label } from "./label"
 
-const Form = React.forwardRef<
-  HTMLFormElement,
-  React.HTMLAttributes<HTMLFormElement>
->(({ className, ...props }, ref) => (
-  <form ref={ref} className={cn("space-y-6", className)} {...props} />
-))
+const Form = <
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+>({
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> &
+  ReturnType<typeof useFormContext<TFieldValues>>) => (
+  <FormProvider {...props}>
+    {children}
+  </FormProvider>
+)
 Form.displayName = "Form"
 
 type FormFieldContextValue<

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ThemeProvider } from "../../components/admin/providers/ThemeProvider";
-import { SidebarProvider, SidebarTrigger } from "../../components/ui/sidebar";
+import { SidebarProvider } from "../../components/ui/sidebar";
 import { AppSidebar } from "../../components/admin/AppSidebar";
 import { Navbar } from "../../components/admin/Navbar";
 
@@ -30,7 +30,7 @@ const AdminLayout = () => {
           <AppSidebar />
           <main className="w-full overflow-y-auto">
             <Navbar />
-            <div className="px-4 pb-4">
+            <div className="p-4">
               <Outlet />
             </div>
           </main>

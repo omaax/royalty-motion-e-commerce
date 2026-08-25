@@ -1,6 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Copy, Eye } from "lucide-react";
-import { Link } from "react-router-dom";
+import { ArrowUpDown, MoreHorizontal, Copy } from "lucide-react";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { Button } from "../../../components/ui/button";
 import {
@@ -113,12 +112,6 @@ export const columns: ColumnDef<Product>[] = [
               onClick={() => navigator.clipboard.writeText(String(product.id))}
             >
               <Copy className="mr-2 h-4 w-4" /> Copy product ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to={`/admin/products/${product.id}`}>
-                <Eye className="mr-2 h-4 w-4" /> View product
-              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

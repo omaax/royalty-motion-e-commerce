@@ -4,9 +4,9 @@ import { DataTable } from "./data-table";
 
 const ProductsPage = () => {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">All Products</h1>
+    <div className="">
+      <div className="mb-8 px-4 py-2 bg-secondary rounded-md">
+        <h1 className="font-semibold">All Products</h1>
       </div>
       <DataTable columns={columns} data={adminProducts} />
     </div>

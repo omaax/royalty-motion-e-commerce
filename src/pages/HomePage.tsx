@@ -30,7 +30,7 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
       <ImageRevealBackground />
 
       {/* NavBar - same position as the SiteHeader navbar on other pages */}
-      <div className="absolute top-4 left-6 right-6 lg:left-12 lg:right-12 z-30 flex items-center gap-4 md:gap-6">
+      <div className="absolute top-0 left-6 right-6 lg:left-12 lg:right-12 z-30 flex items-center gap-4 md:gap-6">
         <NavBar
           activeNavTab={location.pathname}
           cartCount={cartCount}

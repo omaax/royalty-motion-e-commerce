@@ -1,6 +1,5 @@
-import * as React from "react";
+import { Label, Pie, PieChart } from "recharts";
 import { TrendingUp } from "lucide-react";
-import { Pie, PieChart } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
@@ -26,30 +25,18 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function AppPieChart() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
-
+  const totalVisitors = chartData.reduce((acc, curr) => acc + curr.visitors, 0);
   return (
-    <div className="w-full">
-      <div className="mb-2">
-        <h2 className="text-2xl font-bold tracking-tight">Browser Usage</h2>
-        <p className="text-muted-foreground text-sm">
-          Distribution of visitors by browser
-        </p>
-      </div>
-      <ChartContainer config={chartConfig} className="h-[300px] w-full">
+    <div className="items-center">
+      <h1 className="text-lg font-medium mb-6">Browser Usage</h1>
+      <ChartContainer
+        config={chartConfig}
+        className="mx-auto aspect-square max-h-[250px]"
+      >
         <PieChart>
           <ChartTooltip
-            content={
-              <ChartTooltipContent
-                nameKey="browser"
-                labelKey="browser"
-                formatter={(value) =>
-                  `${value.toLocaleString()} visitors`
-                }
-              />
-            }
+            cursor={false}
+            content={<ChartTooltipContent hideLabel />}
           />
           <Pie
             data={chartData}
@@ -57,17 +44,46 @@ export default function AppPieChart() {
             nameKey="browser"
             innerRadius={60}
             strokeWidth={5}
-          />
+          >
+            <Label
+              content={({ viewBox }) => {
+                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                  return (
+                    <text
+                      x={viewBox.cx}
+                      y={viewBox.cy}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                    >
+                      <tspan
+                        x={viewBox.cx}
+                        y={viewBox.cy}
+                        className="fill-foreground text-3xl font-bold"
+                      >
+                        {totalVisitors.toLocaleString()}
+                      </tspan>
+                      <tspan
+                        x={viewBox.cx}
+                        y={(viewBox.cy || 0) + 24}
+                        className="fill-muted-foreground"
+                      >
+                        Visitors
+                      </tspan>
+                    </text>
+                  );
+                }
+              }}
+            />
+          </Pie>
         </PieChart>
       </ChartContainer>
-      <div className="flex flex-col items-center mt-2">
-        <div className="text-3xl font-bold">{totalVisitors.toLocaleString()}</div>
-        <div className="text-muted-foreground text-sm">Total Visitors</div>
-        <div className="flex items-center gap-2 mt-1">
-          <TrendingUp className="h-4 w-4 text-emerald-500" />
-          <span className="text-sm text-muted-foreground">
-            Trending up by 5.2% this month
-          </span>
+      <div className="mt-4 flex flex-col gap-2 items-center">
+        <div className="flex items-center gap-2 leading-none font-medium">
+          Trending up by 5.2% this month{" "}
+          <TrendingUp className="h-4 w-4 text-green-500" />
+        </div>
+        <div className="text-muted-foreground leading-none">
+          Showing total visitors for the last 6 months
         </div>
       </div>
     </div>

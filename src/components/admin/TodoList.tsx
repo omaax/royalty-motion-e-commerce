@@ -2,7 +2,6 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Checkbox } from "../ui/checkbox";
 import {
   Popover,
@@ -44,56 +43,46 @@ export function TodoList() {
   };
 
   return (
-    <Card className="col-span-1 lg:col-span-4">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg">Todos</CardTitle>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                "w-[200px] justify-start text-left font-normal",
-                !date && "text-muted-foreground"
-              )}
+    <div className="flex flex-col h-full">
+      <h1 className="text-lg font-medium mb-6">Todo List</h1>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button className="w-full">
+            <CalendarIcon />
+            {date ? format(date, "PPP") : <span>Pick a date</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="p-0 w-auto">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(day) => setDate(day)}
+          />
+        </PopoverContent>
+      </Popover>
+      <ScrollArea className="flex-1 min-h-0 mt-4 overflow-y-auto">
+        <div className="flex flex-col gap-4 h-full">
+          {todos.map((todo) => (
+            <div
+              key={todo.id}
+              className="flex flex-1 items-center gap-4 rounded-lg border p-4"
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="end">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={(day) => setDate(day)}
-            />
-          </PopoverContent>
-        </Popover>
-      </CardHeader>
-      <CardContent>
-        <ScrollArea className="h-[350px] pr-4">
-          <div className="space-y-3">
-            {todos.map((todo) => (
-              <div
-                key={todo.id}
-                className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50"
+              <Checkbox
+                checked={todo.completed}
+                onCheckedChange={() => toggleTodo(todo.id)}
+              />
+              <span
+                className={cn(
+                  "text-sm text-muted-foreground",
+                  todo.completed && "line-through"
+                )}
               >
-                <Checkbox
-                  checked={todo.completed}
-                  onCheckedChange={() => toggleTodo(todo.id)}
-                />
-                <span
-                  className={cn(
-                    "text-sm",
-                    todo.completed && "text-muted-foreground line-through"
-                  )}
-                >
-                  {todo.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
-      </CardContent>
-    </Card>
+                {todo.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
   );
 }

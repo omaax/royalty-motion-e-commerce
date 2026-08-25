@@ -9,8 +9,9 @@ import {
   Package,
   CreditCard,
   Plus,
+  User2,
+  ChevronUp,
   LogOut,
-  User,
 } from "lucide-react"
 
 import {
@@ -18,13 +19,14 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuBadge,
   SidebarSeparator,
 } from "../ui/sidebar"
 import {
@@ -35,14 +37,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "../ui/sheet"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import { Sheet, SheetTrigger } from "../ui/sheet"
 import AddProduct from "./forms/AddProduct"
 import AddCategory from "./forms/AddCategory"
 import AddUser from "./forms/AddUser"
@@ -70,29 +65,28 @@ const orderItems = [
 
 export function AppSidebar() {
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <Link to="/admin" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary">
-            <img
-              src="/admin/logo.jpg"
-              alt="Logo"
-              className="h-8 w-8 rounded-md object-cover"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.style.display = "none"
-                target.nextElementSibling?.classList.remove("hidden")
-              }}
-            />
-            <span className="hidden text-sm font-bold text-primary-foreground">
-              ROYALTY
-            </span>
-          </div>
-          <span className="text-lg font-semibold">Admin Panel</span>
-        </Link>
+    <Sidebar side="left" collapsible="icon">
+      <SidebarHeader className="py-4">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link to="/admin">
+                <img
+                  src="/admin/logo.jpg"
+                  alt="logo"
+                  width={20}
+                  height={20}
+                  className="rounded-full"
+                />
+                <span>Omar Adel</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
+        {/* Application */}
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -103,19 +97,22 @@ export function AppSidebar() {
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4" />
                       <span>{item.title}</span>
-                      {item.badge && (
-                        <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
-                      )}
                     </Link>
                   </SidebarMenuButton>
+                  {item.badge && <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>}
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Products */}
         <SidebarGroup>
           <SidebarGroupLabel>Products</SidebarGroupLabel>
+          <SidebarGroupAction title="Add Product">
+            <Plus />
+            <span className="sr-only">Add Product</span>
+          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
               {productItems.map((item) => (
@@ -136,12 +133,7 @@ export function AppSidebar() {
                       <span>Add Product</span>
                     </SidebarMenuButton>
                   </SheetTrigger>
-                  <SheetContent className="w-[400px] sm:w-[540px]">
-                    <SheetHeader>
-                      <SheetTitle>Add Product</SheetTitle>
-                    </SheetHeader>
-                    <AddProduct />
-                  </SheetContent>
+                  <AddProduct />
                 </Sheet>
               </SidebarMenuItem>
               <SidebarMenuItem>
@@ -152,20 +144,20 @@ export function AppSidebar() {
                       <span>Add Category</span>
                     </SidebarMenuButton>
                   </SheetTrigger>
-                  <SheetContent className="w-[400px] sm:w-[540px]">
-                    <SheetHeader>
-                      <SheetTitle>Add Category</SheetTitle>
-                    </SheetHeader>
-                    <AddCategory />
-                  </SheetContent>
+                  <AddCategory />
                 </Sheet>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Users */}
         <SidebarGroup>
           <SidebarGroupLabel>Users</SidebarGroupLabel>
+          <SidebarGroupAction title="Add User">
+            <Plus />
+            <span className="sr-only">Add User</span>
+          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
               {userItems.map((item) => (
@@ -186,20 +178,20 @@ export function AppSidebar() {
                       <span>Add User</span>
                     </SidebarMenuButton>
                   </SheetTrigger>
-                  <SheetContent className="w-[400px] sm:w-[540px]">
-                    <SheetHeader>
-                      <SheetTitle>Add User</SheetTitle>
-                    </SheetHeader>
-                    <AddUser />
-                  </SheetContent>
+                  <AddUser />
                 </Sheet>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Orders / Payments */}
         <SidebarGroup>
           <SidebarGroupLabel>Orders / Payments</SidebarGroupLabel>
+          <SidebarGroupAction title="Add Order">
+            <Plus />
+            <span className="sr-only">Add Order</span>
+          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
               {orderItems.map((item) => (
@@ -220,36 +212,31 @@ export function AppSidebar() {
                       <span>Add Order</span>
                     </SidebarMenuButton>
                   </SheetTrigger>
-                  <SheetContent className="w-[400px] sm:w-[540px]">
-                    <SheetHeader>
-                      <SheetTitle>Add Order</SheetTitle>
-                    </SheetHeader>
-                    <AddOrder />
-                  </SheetContent>
+                  <AddOrder />
                 </Sheet>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* FOOTER */}
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <Avatar className="h-6 w-6">
-                    <AvatarImage src="/admin/avatar.jpg" alt="Admin" />
-                    <AvatarFallback>A</AvatarFallback>
-                  </Avatar>
-                  <span>Admin User</span>
+                  <User2 className="h-4 w-4" />
+                  <span>Omar Adel</span>
+                  <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent side="top" className="w-[--radix-dropdown-menu-trigger-width]">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
+                  <User2 className="mr-2 h-4 w-4" />
                   Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem>

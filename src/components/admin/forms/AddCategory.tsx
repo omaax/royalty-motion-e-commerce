@@ -4,6 +4,8 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
+import { ScrollArea } from "../../ui/scroll-area";
+import { SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../../ui/sheet";
 
 const formSchema = z.object({
   name: z.string().min(1, "Category name is required"),
@@ -11,11 +13,7 @@ const formSchema = z.object({
 
 type AddCategoryFormValues = z.infer<typeof formSchema>;
 
-interface AddCategoryProps {
-  onSubmit?: (values: AddCategoryFormValues) => void;
-}
-
-export default function AddCategory({ onSubmit }: AddCategoryProps) {
+export default function AddCategory() {
   const form = useForm<AddCategoryFormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
@@ -24,31 +22,40 @@ export default function AddCategory({ onSubmit }: AddCategoryProps) {
   });
 
   function handleSubmit(values: AddCategoryFormValues) {
-    onSubmit?.(values);
+    console.log(values);
     form.reset();
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="mt-6 space-y-6">
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Category Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g. T-shirts" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <SheetContent>
+      <ScrollArea className="h-screen">
+        <SheetHeader>
+          <SheetTitle className="mb-4">Add Category</SheetTitle>
+          <SheetDescription asChild>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. T-shirts" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-          <Button type="submit" className="w-full">
-            Add Category
-          </Button>
-      </form>
-    </Form>
+                <Button type="submit" className="w-full">
+                  Add Category
+                </Button>
+              </form>
+            </Form>
+          </SheetDescription>
+        </SheetHeader>
+      </ScrollArea>
+    </SheetContent>
   );
 }

@@ -1,5 +1,4 @@
-import { TrendingUp } from "lucide-react";
-import { Line, LineChart, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
@@ -23,58 +22,37 @@ const chartConfig = {
 
 export default function AppLineChart() {
   return (
-    <div className="w-full">
-      <div className="mb-2">
-        <h2 className="text-2xl font-bold tracking-tight">Total Visitors</h2>
-        <p className="text-muted-foreground text-sm">
-          Monthly visitor data for 2024
-        </p>
-      </div>
-      <ChartContainer config={chartConfig} className="h-[300px] w-full">
-        <LineChart accessibilityLayer data={chartData}>
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-          />
-          <XAxis
-            dataKey="month"
-            tickLine={false}
-            tickMargin={10}
-            axisLine={false}
-            tickFormatter={(value: string) => value.slice(0, 3)}
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                indicator="line"
-              />
-            }
-          />
-          <Line
-            dataKey="desktop"
-            type="natural"
-            stroke="var(--color-desktop)"
-            strokeWidth={2}
-            dot={{ fill: "var(--color-desktop)" }}
-            activeDot={{ r: 6 }}
-          />
-          <Line
-            dataKey="mobile"
-            type="natural"
-            stroke="var(--color-mobile)"
-            strokeWidth={2}
-            dot={{ fill: "var(--color-mobile)" }}
-            activeDot={{ r: 6 }}
-          />
-        </LineChart>
-      </ChartContainer>
-      <div className="flex items-center gap-2 mt-2">
-        <TrendingUp className="h-4 w-4 text-emerald-500" />
-        <span className="text-sm text-muted-foreground">
-          Trending up by 5.2% this month
-        </span>
-      </div>
-    </div>
+    <ChartContainer config={chartConfig} className="mt-6">
+      <LineChart
+        accessibilityLayer
+        data={chartData}
+        margin={{ left: 12, right: 12 }}
+      >
+        <CartesianGrid vertical={false} />
+        <XAxis
+          dataKey="month"
+          tickLine={false}
+          axisLine={false}
+          tickMargin={8}
+          tickFormatter={(value: string) => value.slice(0, 3)}
+        />
+        <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+        <Line
+          dataKey="desktop"
+          type="monotone"
+          stroke="var(--color-desktop)"
+          strokeWidth={2}
+          dot={false}
+        />
+        <Line
+          dataKey="mobile"
+          type="monotone"
+          stroke="var(--color-mobile)"
+          strokeWidth={2}
+          dot={false}
+        />
+      </LineChart>
+    </ChartContainer>
   );
 }

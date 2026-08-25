@@ -6,7 +6,7 @@ import { APP_NAME, APP_TAGLINE } from './src/constants/branding';
 
 export default defineConfig(() => {
   return {
-    base: '/motion-e-commerce/',
+    base: '/',
     plugins: [
       react(),
       tailwindcss(),

@@ -15,6 +15,8 @@ export type AdminPayment = {
   status: "pending" | "processing" | "success" | "failed";
 };
 
+const BASE = import.meta.env.BASE_URL;
+
 export const adminProducts = [
   {
     id: 1,
@@ -26,8 +28,8 @@ export const adminProducts = [
     sizes: ["s", "m", "l", "xl", "xxl"],
     colors: ["black", "gray"],
     images: {
-      black: "/admin/products/ANCIENT.png",
-      gray: "/admin/products/ANCIENT-2.png",
+      black: `${BASE}admin/products/ANCIENT.png`,
+      gray: `${BASE}admin/products/ANCIENT-2.png`,
     },
   },
   {
@@ -40,8 +42,8 @@ export const adminProducts = [
     sizes: ["s", "m", "l", "xl"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/masouerade-black.png",
-      white: "/admin/products/masouerade-white.png",
+      black: `${BASE}admin/products/masouerade-black.png`,
+      white: `${BASE}admin/products/masouerade-white.png`,
     },
   },
   {
@@ -54,8 +56,8 @@ export const adminProducts = [
     sizes: ["s", "m", "l"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/sinner-tshirt.png",
-      white: "/admin/products/ancient-tshirt-white.png",
+      black: `${BASE}admin/products/sinner-tshirt.png`,
+      white: `${BASE}admin/products/ancient-tshirt-white.png`,
     },
   },
   {
@@ -68,8 +70,8 @@ export const adminProducts = [
     sizes: ["s", "m", "l", "xl"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/Hidden-in-Plain Sight-1.png",
-      white: "/admin/products/Hidden-in-Plain Sight-2.png",
+      black: `${BASE}admin/products/Hidden-in-Plain Sight-1.png`,
+      white: `${BASE}admin/products/Hidden-in-Plain Sight-2.png`,
     },
   },
   {
@@ -82,23 +84,23 @@ export const adminProducts = [
     sizes: ["s", "m", "l"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/ANCIENT-tshirt.png",
-      white: "/admin/products/ancient-tshirt-white.png",
+      black: `${BASE}admin/products/ANCIENT-tshirt.png`,
+      white: `${BASE}admin/products/ancient-tshirt-white.png`,
     },
   },
 ];
 
 export const adminUsers: AdminUser[] = [
-  { id: "u1", avatar: "/admin/users/1.png", name: "Marcus Aurelio", email: "marcus.a@royalty.com", status: "active" },
-  { id: "u2", avatar: "/admin/users/2.png", name: "Victoria Chen", email: "v.chen@royalty.com", status: "active" },
-  { id: "u3", avatar: "/admin/users/3.png", name: "Darius Kingsley", email: "d.kingsley@royalty.com", status: "inactive" },
-  { id: "u4", avatar: "/admin/users/4.png", name: "Sophia Laurent", email: "s.laurent@royalty.com", status: "active" },
-  { id: "u5", avatar: "/admin/users/5.png", name: "Elijah Montgomery", email: "e.montgomery@royalty.com", status: "active" },
-  { id: "u6", avatar: "/admin/users/6.png", name: "Camille Dubois", email: "c.dubois@royalty.com", status: "inactive" },
-  { id: "u7", avatar: "/admin/users/7.png", name: "Rafael Santoro", email: "r.santoro@royalty.com", status: "active" },
-  { id: "u8", avatar: "/admin/users/8.png", name: "Nadia Petrov", email: "n.petrov@royalty.com", status: "active" },
-  { id: "u9", avatar: "/admin/users/9.png", name: "Levi Ashford", email: "l.ashford@royalty.com", status: "inactive" },
-  { id: "u10", avatar: "/admin/users/10.png", name: "Aria Fontaine", email: "a.fontaine@royalty.com", status: "active" },
+  { id: "u1", avatar: `${BASE}admin/users/1.png`, name: "Marcus Aurelio", email: "marcus.a@royalty.com", status: "active" },
+  { id: "u2", avatar: `${BASE}admin/users/2.png`, name: "Victoria Chen", email: "v.chen@royalty.com", status: "active" },
+  { id: "u3", avatar: `${BASE}admin/users/3.png`, name: "Darius Kingsley", email: "d.kingsley@royalty.com", status: "inactive" },
+  { id: "u4", avatar: `${BASE}admin/users/4.png`, name: "Sophia Laurent", email: "s.laurent@royalty.com", status: "active" },
+  { id: "u5", avatar: `${BASE}admin/users/5.png`, name: "Elijah Montgomery", email: "e.montgomery@royalty.com", status: "active" },
+  { id: "u6", avatar: `${BASE}admin/users/6.png`, name: "Camille Dubois", email: "c.dubois@royalty.com", status: "inactive" },
+  { id: "u7", avatar: `${BASE}admin/users/7.png`, name: "Rafael Santoro", email: "r.santoro@royalty.com", status: "active" },
+  { id: "u8", avatar: `${BASE}admin/users/8.png`, name: "Nadia Petrov", email: "n.petrov@royalty.com", status: "active" },
+  { id: "u9", avatar: `${BASE}admin/users/9.png`, name: "Levi Ashford", email: "l.ashford@royalty.com", status: "inactive" },
+  { id: "u10", avatar: `${BASE}admin/users/10.png`, name: "Aria Fontaine", email: "a.fontaine@royalty.com", status: "active" },
 ];
 
 export const adminPayments: AdminPayment[] = [
@@ -187,8 +189,8 @@ export const popularProducts = [
     sizes: ["s", "m", "l", "xl"],
     colors: ["black", "gray"],
     images: {
-      black: "/admin/products/ANCIENT.png",
-      gray: "/admin/products/ANCIENT-2.png",
+      black: `${BASE}admin/products/ANCIENT.png`,
+      gray: `${BASE}admin/products/ANCIENT-2.png`,
     },
   },
   {
@@ -199,8 +201,8 @@ export const popularProducts = [
     sizes: ["s", "m", "l", "xl"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/masouerade-black.png",
-      white: "/admin/products/masouerade-white.png",
+      black: `${BASE}admin/products/masouerade-black.png`,
+      white: `${BASE}admin/products/masouerade-white.png`,
     },
   },
   {
@@ -211,8 +213,8 @@ export const popularProducts = [
     sizes: ["s", "m", "l"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/sinner-tshirt.png",
-      white: "/admin/products/ancient-tshirt-white.png",
+      black: `${BASE}admin/products/sinner-tshirt.png`,
+      white: `${BASE}admin/products/ancient-tshirt-white.png`,
     },
   },
   {
@@ -223,8 +225,8 @@ export const popularProducts = [
     sizes: ["s", "m", "l", "xl"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/Hidden-in-Plain Sight-1.png",
-      white: "/admin/products/Hidden-in-Plain Sight-2.png",
+      black: `${BASE}admin/products/Hidden-in-Plain Sight-1.png`,
+      white: `${BASE}admin/products/Hidden-in-Plain Sight-2.png`,
     },
   },
   {
@@ -235,8 +237,8 @@ export const popularProducts = [
     sizes: ["s", "m", "l"],
     colors: ["black", "white"],
     images: {
-      black: "/admin/products/ANCIENT-tshirt.png",
-      white: "/admin/products/ancient-tshirt-white.png",
+      black: `${BASE}admin/products/ANCIENT-tshirt.png`,
+      white: `${BASE}admin/products/ancient-tshirt-white.png`,
     },
   },
 ];

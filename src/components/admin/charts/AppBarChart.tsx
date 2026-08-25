@@ -1,7 +1,9 @@
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from "../../ui/chart";
@@ -22,21 +24,11 @@ const chartConfig = {
 
 export default function AppBarChart() {
   return (
-    <div className="w-full">
-      <div className="mb-2">
-        <h2 className="text-2xl font-bold tracking-tight">Total Revenue</h2>
-        <p className="text-muted-foreground text-sm">
-          Monthly revenue breakdown for 2024
-        </p>
-      </div>
-      <ChartContainer config={chartConfig} className="h-[300px] w-full">
+    <div>
+      <h1 className="text-lg font-medium mb-6">Total Revenue</h1>
+      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
         <BarChart accessibilityLayer data={chartData}>
-          <YAxis
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            tickFormatter={(value: number) => `$${value}`}
-          />
+          <CartesianGrid vertical={false} />
           <XAxis
             dataKey="month"
             tickLine={false}
@@ -44,14 +36,9 @@ export default function AppBarChart() {
             axisLine={false}
             tickFormatter={(value: string) => value.slice(0, 3)}
           />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                labelFormatter={(value) => `${value}, 2024`}
-                formatter={(value) => `$${value}`}
-              />
-            }
-          />
+          <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <ChartLegend content={<ChartLegendContent />} />
           <Bar dataKey="total" fill="var(--color-total)" radius={4} />
           <Bar dataKey="successful" fill="var(--color-successful)" radius={4} />
         </BarChart>

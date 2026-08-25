@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { popularProducts, latestTransactions } from "../../data/adminData";
 
@@ -10,11 +9,9 @@ export function CardList({ title }: CardListProps) {
   const isPopularProducts = title === "Popular Products";
 
   return (
-    <Card className="col-span-1 lg:col-span-4">
-      <CardHeader>
-        <CardTitle className="text-lg">{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div>
+      <h1 className="text-lg font-medium mb-6">{title}</h1>
+      <div className="flex flex-col gap-2">
         {isPopularProducts
           ? popularProducts.map((product) => (
               <div
@@ -66,7 +63,7 @@ export function CardList({ title }: CardListProps) {
                 <Badge variant="secondary">${txn.count}</Badge>
               </div>
             ))}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
