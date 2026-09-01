@@ -1,6 +1,6 @@
 import { adminProducts } from "../../../data/adminData";
 import { columns } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "../../../components/admin/DataTable";
 
 const ProductsPage = () => {
   return (

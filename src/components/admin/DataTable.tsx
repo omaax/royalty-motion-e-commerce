@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -6,8 +7,8 @@ import {
   getSortedRowModel,
   type SortingState,
   useReactTable,
+  type VisibilityState,
 } from "@tanstack/react-table";
-import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import {
   Table,
@@ -16,21 +17,24 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../components/ui/table";
-import { Button } from "../../../components/ui/button";
-import { TablePagination } from "../../../components/admin/TablePagination";
+} from "../ui/table";
+import { Button } from "../ui/button";
+import { TablePagination } from "./TablePagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  enableRowSelection?: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  enableRowSelection = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
@@ -39,20 +43,26 @@ export function DataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
+    onRowSelectionChange: enableRowSelection ? setRowSelection : undefined,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
-      rowSelection,
+      ...(enableRowSelection && { rowSelection }),
+      columnVisibility,
     },
   });
 
+  const selectedRows = enableRowSelection
+    ? table.getFilteredSelectedRowModel().rows
+    : [];
+
   return (
     <div className="space-y-4">
-      {table.getFilteredSelectedRowModel().rows.length > 0 && (
+      {enableRowSelection && selectedRows.length > 0 && (
         <div className="flex items-center gap-2">
           <Button variant="destructive" size="sm">
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete ({table.getFilteredSelectedRowModel().rows.length})
+            Delete ({selectedRows.length})
           </Button>
         </div>
       )}
@@ -79,7 +89,7 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={enableRowSelection && row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
