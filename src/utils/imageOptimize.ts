@@ -2,7 +2,7 @@ function deriveWebpPaths(pngUrl: string): { webpSrc: string; webpSrcSet: string 
   // Vite emits bundled assets with a content hash (e.g. crest-CxlX4nhy.png).
   // The matching .webp sources are served from /assets/webp with their original
   // (unhashed) names, so strip the hash before building the webp path.
-  const stripHash = (name: string) => name.replace(/-[A-Za-z0-9]{6,}$/, '');
+  const stripHash = (name: string) => name.replace(/-[A-Za-z0-9]{8}$/, '');
 
   const productMatch = pngUrl.match(/\/assets\/products\/(.+)\.png$/);
   if (productMatch) {

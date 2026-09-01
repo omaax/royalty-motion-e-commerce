@@ -36,6 +36,7 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({ item, onAdd
                 fetchPriority={priority ? 'high' : 'auto'}
                 width={400}
                 height={400}
+                onError={(e) => { e.currentTarget.src = primaryImage; }}
                 className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
               />
             );
