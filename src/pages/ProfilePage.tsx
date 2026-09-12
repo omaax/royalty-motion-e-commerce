@@ -1,61 +1,84 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, Check, LogOut, X, MapPin, PackageCheck, Wallet, Heart } from 'lucide-react';
-import { Order, UserProfile } from '../types';
 import { MotionButton } from '../components/MotionButton';
+import { useMe, useUpdateProfile, useLogout } from '../hooks/useAuth';
+import { useOrders } from '../hooks/useOrders';
+import { useWishlistIds } from '../hooks/useWishlist';
+import { pushToast } from '../lib/useToast';
 
-interface ProfilePageProps {
-  profile: UserProfile;
-  onUpdateProfile: (updates: Partial<UserProfile>) => void;
-  onLogout: () => void;
-  orders: Order[];
-  wishlistCount: number;
+interface DraftProfile {
+  name: string;
+  email: string;
+  phone: string;
 }
 
-export const ProfilePage: React.FC<ProfilePageProps> = ({
-  profile,
-  onUpdateProfile,
-  onLogout,
-  orders,
-  wishlistCount,
-}) => {
+export const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
+  const { data: profile } = useMe();
+  const updateProfile = useUpdateProfile();
+  const logout = useLogout();
+  const { data: orders = [] } = useOrders();
+  const wishlistCount = useWishlistIds().length;
+
   const [isEditing, setIsEditing] = useState(false);
-  const [draft, setDraft] = useState<UserProfile>(profile);
+  const [draft, setDraft] = useState<DraftProfile>({
+    name: profile?.name ?? '',
+    email: profile?.email ?? '',
+    phone: profile?.phone ?? '',
+  });
 
   const handleLogout = () => {
-    onLogout();
+    logout();
     navigate('/login');
   };
 
   const startEditing = () => {
-    setDraft(profile);
+    setDraft({
+      name: profile?.name ?? '',
+      email: profile?.email ?? '',
+      phone: profile?.phone ?? '',
+    });
     setIsEditing(true);
   };
 
   const cancelEditing = () => {
-    setDraft(profile);
+    setDraft({
+      name: profile?.name ?? '',
+      email: profile?.email ?? '',
+      phone: profile?.phone ?? '',
+    });
     setIsEditing(false);
   };
 
   const saveEditing = () => {
-    onUpdateProfile(draft);
-    setIsEditing(false);
+    updateProfile.mutate(
+      { name: draft.name, email: draft.email, phone: draft.phone || undefined },
+      {
+        onSuccess: () => {
+          setIsEditing(false);
+          pushToast('Profile updated.');
+        },
+        onError: (error) => {
+          pushToast(error instanceof Error ? error.message : 'Could not update profile.');
+        },
+      }
+    );
   };
 
   const totalSpent = orders.reduce((acc, o) => acc + o.total, 0);
 
   const stats = [
     { label: 'TOTAL ORDERS', value: orders.length, icon: PackageCheck },
-    { label: 'TOTAL SPENT', value: `$${totalSpent.toLocaleString('en-US')}`, icon: Wallet },
+    { label: 'TOTAL SPENT', value: `EGP ${totalSpent.toFixed(2)}`, icon: Wallet },
     { label: 'WISHLIST', value: wishlistCount, icon: Heart },
   ];
 
-  const fields: { label: string; value?: string; key?: keyof UserProfile }[] = [
-    { label: 'Full Name', key: 'name', value: profile.name },
-    { label: 'Email', key: 'email', value: profile.email },
-    { label: 'Member Since', value: '2026' },
-    { label: 'Default Shipping Address', key: 'address', value: profile.address },
+  const fields: { label: string; value?: string; key?: keyof DraftProfile }[] = [
+    { label: 'Full Name', key: 'name', value: profile?.name },
+    { label: 'Email', key: 'email', value: profile?.email },
+    { label: 'Phone', key: 'phone', value: profile?.phone },
+    { label: 'Member Since', value: profile?.createdAt ? new Date(profile.createdAt).getFullYear().toString() : '—' },
   ];
 
   return (
@@ -140,13 +163,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
           Shipping Address
         </h3>
         <p className="text-xs font-jakarta font-semibold text-gray-700 uppercase tracking-wide">
-          {profile.address || '— Not set — Add a default shipping address to speed up checkout.'}
+          Add a default shipping address during checkout to speed up future orders.
         </p>
       </section>
 
       <section className="border-t border-gray-200 pt-6 flex items-center justify-between gap-4">
         <div className="text-[10px] font-mono tracking-[0.2em] uppercase font-bold text-gray-400">
-          Signed in as {profile.email}
+          Signed in as {profile?.email}
         </div>
         <MotionButton
           variant="ghost"

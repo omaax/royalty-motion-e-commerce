@@ -8,22 +8,14 @@ import { getOptimizedImage } from '../utils/imageOptimize';
 
 interface SiteHeaderProps {
   activeNavTab: string;
-  cartCount: number;
-  wishlistCount: number;
-  isLoggedIn: boolean;
-  onLogout: () => void;
 }
 
-export const SiteHeader: React.FC<SiteHeaderProps> = React.memo(({ activeNavTab, cartCount, wishlistCount, isLoggedIn, onLogout }) => {
+export const SiteHeader: React.FC<SiteHeaderProps> = React.memo(({ activeNavTab }) => {
   return (
     <header className="px-6 lg:px-12 relative bg-white z-40 shrink-0 pb-4">
       {/* Center Main Nav Tabs */}
       <NavBar
         activeNavTab={activeNavTab}
-        cartCount={cartCount}
-        wishlistCount={wishlistCount}
-        isLoggedIn={isLoggedIn}
-        onLogout={onLogout}
         className="pl-0 md:pl-24 lg:pl-40 pt-8 -mb-5 relative z-30"
       />
 

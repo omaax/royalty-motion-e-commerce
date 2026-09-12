@@ -1,22 +1,15 @@
 import React, { useMemo } from 'react';
 import { Heart, ArrowRight } from 'lucide-react';
-import { ShopItem } from '../types';
 import { ProductCard } from '../components/shop/ProductCard';
 import { MotionLink } from '../components/MotionButton';
 import { SEO } from '../components/SEO';
+import { useWishlist } from '../hooks/useWishlist';
+import { useShopActions } from '../hooks/useCart';
 
-interface WishlistPageProps {
-  wishlistItems: ShopItem[];
-  onAddToCart: (item: ShopItem) => void;
-  onToggleWishlist: (item: ShopItem) => void;
-}
-
-export const WishlistPage: React.FC<WishlistPageProps> = ({
-  wishlistItems,
-  onAddToCart,
-  onToggleWishlist,
-}) => {
-  const wishlistIds = useMemo(() => new Set(wishlistItems.map((w) => w.id)), [wishlistItems]);
+export const WishlistPage: React.FC = () => {
+  const { ids, products, isEmpty } = useWishlist();
+  const { onAddToCart, onToggleWishlist } = useShopActions();
+  const wishlistIds = useMemo(() => new Set(ids), [ids]);
 
   return (
     <main className="px-6 lg:px-12 pt-10 pb-16">
@@ -30,13 +23,13 @@ export const WishlistPage: React.FC<WishlistPageProps> = ({
             WISHLIST
           </h2>
           <div className="text-xs font-mono text-red-700 tracking-wider font-semibold leading-relaxed">
-            <div>Saved items ({wishlistItems.length})</div>
+            <div>Saved items ({products.length})</div>
             <div>Gathered. Marked. Yours to claim.</div>
           </div>
         </div>
       </div>
 
-      {wishlistItems.length === 0 ? (
+      {isEmpty ? (
         <div className="py-24 flex flex-col items-center justify-center text-center space-y-4 text-gray-400">
           <Heart className="w-12 h-12 stroke-[1.2]" />
           <p className="text-xs uppercase font-semibold tracking-widest">
@@ -52,7 +45,7 @@ export const WishlistPage: React.FC<WishlistPageProps> = ({
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 pt-8">
-          {wishlistItems.map((item) => (
+          {products.map((item) => (
             <ProductCard
               key={item.id}
               item={item}

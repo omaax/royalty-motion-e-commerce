@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -6,32 +7,65 @@ import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
 import { ScrollArea } from "../../ui/scroll-area";
 import { SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../../ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
+import { useCreateUser } from "../../../hooks/useUsers";
+import { getErrorInfo } from "../../../api/client";
+import { pushToast } from "../../../lib/useToast";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone is required"),
-  address: z.string().min(1, "Address is required"),
-  city: z.string().min(1, "City is required"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: z.enum(["user", "admin"]),
 });
 
 type AddUserFormValues = z.infer<typeof formSchema>;
 
 export default function AddUser() {
+  const createUser = useCreateUser();
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<AddUserFormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
       name: "",
       email: "",
-      phone: "",
-      address: "",
-      city: "",
+      password: "",
+      role: "user",
     },
   });
 
   function handleSubmit(values: AddUserFormValues) {
-    console.log(values);
-    form.reset();
+    setError(null);
+    createUser.mutate(
+      {
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        role: values.role,
+      },
+      {
+        onSuccess: () => {
+          form.reset();
+          pushToast("User created.");
+        },
+        onError: (err) => {
+          const info = getErrorInfo(err);
+          setError(
+            info.fieldErrors?.email ??
+              info.fieldErrors?.password ??
+              info.fieldErrors?.name ??
+              info.message
+          );
+        },
+      }
+    );
   }
 
   return (
@@ -72,12 +106,12 @@ export default function AddUser() {
 
                 <FormField
                   control={form.control}
-                  name="phone"
+                  name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input placeholder="+1 (555) 000-0000" {...field} />
+                        <Input type="password" placeholder="Min. 6 characters" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -86,34 +120,32 @@ export default function AddUser() {
 
                 <FormField
                   control={form.control}
-                  name="address"
+                  name="role"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Address</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Street address" {...field} />
-                      </FormControl>
+                      <FormLabel>Role</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>City</FormLabel>
-                      <FormControl>
-                        <Input placeholder="City" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {error && (
+                  <p className="text-sm font-medium text-destructive">{error}</p>
+                )}
 
-                <Button type="submit" className="w-full">
-                  Add User
+                <Button type="submit" className="w-full" disabled={createUser.isPending}>
+                  {createUser.isPending ? "Creating..." : "Add User"}
                 </Button>
               </form>
             </Form>

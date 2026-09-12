@@ -2,7 +2,6 @@ import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import { ImageRevealBackground, BG_IMAGE_1 } from '../components/ImageRevealBackground';
-// import { CornerBracket, CheckerboardGrid } from '../components/SVGIcons';
 import { NavBar } from '../components/NavBar';
 import { MotionLink } from '../components/MotionButton';
 import { SEO } from '../components/SEO';
@@ -10,14 +9,7 @@ import { APP_NAME, APP_TAGLINE } from '../constants/branding';
 import crestRedImg from '@/assets/crest-red.png';
 import { getOptimizedImage } from '../utils/imageOptimize';
 
-interface HomePageProps {
-  cartCount: number;
-  wishlistCount: number;
-  isLoggedIn: boolean;
-  onLogout: () => void;
-}
-
-export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, isLoggedIn, onLogout }) => {
+export const HomePage: React.FC = () => {
   const location = useLocation();
 
   return (
@@ -33,10 +25,6 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
       <div className="absolute top-0 left-6 right-6 lg:left-12 lg:right-12 z-30 flex items-center gap-4 md:gap-6">
         <NavBar
           activeNavTab={location.pathname}
-          cartCount={cartCount}
-          wishlistCount={wishlistCount}
-          isLoggedIn={isLoggedIn}
-          onLogout={onLogout}
           className="pl-0 md:pl-24 lg:pl-40 pt-8 w-full"
         />
       </div>
@@ -52,16 +40,6 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
         <div className="flex flex-col gap-10 lg:gap-0 lg:flex-row lg:items-end justify-between w-full my-auto">
           {/* Left Block (Vertically Centered / Stacked) */}
           <div className="flex flex-col items-start space-y-3 max-w-4xl">
-            {/* Top-Left Corner Bracket */}
-            {/* <CornerBracket
-              position="TL"
-              style={{
-                width: 'var(--corner)',
-                height: 'var(--corner)',
-              }}
-              className="text-black mb-1"
-            /> */}
-
             {/* Headline: The Silent King */}
             <div className="space-y-2">
               <h1
@@ -74,16 +52,6 @@ export const HomePage: React.FC<HomePageProps> = ({ cartCount, wishlistCount, is
                 Hidden behind the shadows, he guards his realm with unyielding strength. Honor is his creed, and justice his blade.
               </p>
             </div>
-
-            {/* Bottom-Left Corner Bracket */}
-            {/* <CornerBracket
-              position="BR"
-              style={{
-                width: 'var(--corner)',
-                height: 'var(--corner)',
-              }}
-              className="text-black mt-1"
-            /> */}
 
             {/* CTA Button */}
             <div className="pt-4">

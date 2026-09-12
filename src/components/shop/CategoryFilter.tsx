@@ -1,11 +1,10 @@
-import { CATEGORIES } from '../../constants/shop';
-
 interface CategoryFilterProps {
   collapsed: boolean;
   onToggle: () => void;
   selectedCategory: string;
   onSelect: (category: string) => void;
   counts: Record<string, number>;
+  categories: string[];
 }
 
 export const CategoryFilter: React.FC<CategoryFilterProps> = ({
@@ -14,6 +13,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
   selectedCategory,
   onSelect,
   counts,
+  categories,
 }) => {
   return (
     <div>
@@ -27,7 +27,7 @@ export const CategoryFilter: React.FC<CategoryFilterProps> = ({
 
       {!collapsed && (
         <div className="space-y-1 pt-1 pl-1 text-xs font-mono">
-          {['All Products', ...CATEGORIES].map((catName) => {
+          {['All Products', ...categories].map((catName) => {
             const isSelected = selectedCategory === catName;
             return (
               <button

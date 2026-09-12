@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ShopItem, SortOption, ProductColor } from '../types';
-import { SHOP_PRODUCTS } from '../data/shopData';
+import { ShopItem, SortOption } from '../types';
+import { useProducts } from './useProducts';
 import { PRICE_MIN, PRICE_MAX, DEFAULT_FILTERS } from '../constants/shop';
 
 const INITIAL_VISIBLE = 8;
 const LOAD_MORE_STEP = 8;
 
 export function useShopFilters() {
+  const { data: sourceProducts = [] } = useProducts({});
+
   const [selectedCategory, setSelectedCategory] = useState<string>(DEFAULT_FILTERS.selectedCategory);
   const [priceRange, setPriceRange] = useState<[number, number]>(DEFAULT_FILTERS.priceRange);
   const [selectedColor, setSelectedColor] = useState<string | null>(DEFAULT_FILTERS.selectedColor);
@@ -20,14 +22,14 @@ export function useShopFilters() {
   const [collapseColor, setCollapseColor] = useState(false);
 
   const filteredProducts = useMemo(() => {
-    return SHOP_PRODUCTS.filter((item) => {
+    return sourceProducts.filter((item) => {
       if (selectedCategory !== 'All Products' && item.category !== selectedCategory) {
         return false;
       }
       if (item.price < priceRange[0] || item.price > priceRange[1]) {
         return false;
       }
-      if (selectedColor && !item.colors.includes(selectedColor as ProductColor)) {
+      if (selectedColor && !item.colors.includes(selectedColor)) {
         return false;
       }
       if (inStockOnly && !item.inStock) {
@@ -38,7 +40,7 @@ export function useShopFilters() {
         return (
           item.title.toLowerCase().includes(q) ||
           item.category.toLowerCase().includes(q) ||
-          item.description?.toLowerCase().includes(q)
+          (item.description ?? '').toLowerCase().includes(q)
         );
       }
       return true;
@@ -48,25 +50,25 @@ export function useShopFilters() {
       if (sortBy === 'newest') return b.id.localeCompare(a.id);
       return 0;
     });
-  }, [selectedCategory, priceRange, selectedColor, inStockOnly, sortBy, searchQuery]);
+  }, [sourceProducts, selectedCategory, priceRange, selectedColor, inStockOnly, sortBy, searchQuery]);
 
   const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = { 'All Products': SHOP_PRODUCTS.length };
-    for (const item of SHOP_PRODUCTS) {
+    const counts: Record<string, number> = { 'All Products': sourceProducts.length };
+    for (const item of sourceProducts) {
       counts[item.category] = (counts[item.category] ?? 0) + 1;
     }
     return counts;
-  }, []);
+  }, [sourceProducts]);
 
   const colorCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const item of SHOP_PRODUCTS) {
+    for (const item of sourceProducts) {
       for (const color of item.colors) {
         counts[color] = (counts[color] ?? 0) + 1;
       }
     }
     return counts;
-  }, []);
+  }, [sourceProducts]);
 
   const hasActiveFilters =
     selectedCategory !== 'All Products' ||

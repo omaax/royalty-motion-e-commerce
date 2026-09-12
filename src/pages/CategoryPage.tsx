@@ -1,31 +1,34 @@
 import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Sparkles } from 'lucide-react';
-import { ShopItem } from '../types';
-import { SHOP_PRODUCTS } from '../data/shopData';
-import { slugToCategory } from '../constants/shop';
+import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
+import { useShopActions } from '../hooks/useCart';
+import { useWishlistIds } from '../hooks/useWishlist';
+import { toKebab } from '../api/mappers';
 import { ProductCard } from '../components/shop/ProductCard';
 import { MotionLink } from '../components/MotionButton';
 import { SEO } from '../components/SEO';
 
-interface CategoryPageProps {
-  onAddToCart: (item: ShopItem) => void;
-  wishlistIds: Set<string>;
-  onToggleWishlist: (item: ShopItem) => void;
-}
-
-export const CategoryPage: React.FC<CategoryPageProps> = ({
-  onAddToCart,
-  wishlistIds,
-  onToggleWishlist,
-}) => {
+export const CategoryPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { data: allProducts = [] } = useProducts({});
+  const { data: apiCategories = [] } = useCategories();
+  const { onAddToCart, onToggleWishlist } = useShopActions();
+  const wishlistIds = useWishlistIds();
 
-  const category = useMemo(() => (slug ? slugToCategory(slug) : null), [slug]);
+  const category = useMemo(() => {
+    if (!slug) return null;
+    const decoded = decodeURIComponent(slug);
+    const matched = apiCategories.find(
+      (c) => (c.slug?.trim() ?? toKebab(c.name)) === decoded
+    );
+    return matched?.name ?? decoded;
+  }, [slug, apiCategories]);
 
   const items = useMemo(
-    () => (category ? SHOP_PRODUCTS.filter((p) => p.category === category) : []),
-    [category]
+    () => (category ? allProducts.filter((p) => p.category === category) : []),
+    [category, allProducts]
   );
 
   useEffect(() => {
@@ -95,7 +98,7 @@ export const CategoryPage: React.FC<CategoryPageProps> = ({
               key={item.id}
               item={item}
               onAddToCart={onAddToCart}
-              wished={wishlistIds.has(item.id)}
+              wished={wishlistIds.includes(item.id)}
               onToggleWishlist={onToggleWishlist}
             />
           ))}

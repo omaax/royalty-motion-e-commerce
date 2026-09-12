@@ -1,4 +1,4 @@
-export type Category = 'Wearables' | 'Headgear' | 'Accessories' | 'Limited Edition';
+export type Category = string;
 
 export type CollectionId = 'series-01' | 'series-02' | 'series-03';
 
@@ -19,8 +19,9 @@ export interface ShopItem {
   id: string;
   title: string;
   price: number;
-  category: Category;
-  colors: ProductColor[];
+  originalPrice?: number;
+  category: string;
+  colors: string[];
   inStock: boolean;
   tag?: string;
   description?: string;

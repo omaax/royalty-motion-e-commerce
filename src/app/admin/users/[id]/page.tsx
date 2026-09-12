@@ -1,5 +1,4 @@
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   BadgeCheck,
   Shield,
@@ -11,8 +10,7 @@ import {
   CalendarDays,
   Pencil,
 } from "lucide-react";
-import { adminUsers } from "../../../../data/adminData";
-import { type User } from "../columns";
+import { useAdminUser, useUpdateUser } from "../../../../hooks/useUsers";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,30 +19,29 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../../../../components/ui/breadcrumb";
-import { Badge } from "../../../../components/ui/badge";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../../../../components/ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../../../../components/ui/hover-card";
 import { Progress } from "../../../../components/ui/progress";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "../../../../components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "../../../../components/ui/sheet";
 import { Button } from "../../../../components/ui/button";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "../../../../components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "../../../../components/ui/avatar";
 import AppLineChart from "../../../../components/admin/charts/AppLineChart";
 import EditUser from "../../../../components/admin/forms/EditUser";
+import { resolveImagePath } from "../../../../api/mappers";
+import { getErrorInfo } from "../../../../api/client";
+import { pushToast } from "../../../../lib/useToast";
 
 const UserDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const user = adminUsers.find((u) => u.id === id);
+  const { data: user, isLoading } = useAdminUser(id);
+  const updateUser = useUpdateUser();
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-muted-foreground">Loading user...</p>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -86,6 +83,25 @@ const UserDetailPage = () => {
     .map((n) => n[0])
     .join("")
     .toUpperCase();
+
+  const joined = user.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
+    : "N/A";
+
+  const handleUpdate = (values: { name: string; email: string; role: "user" | "admin" }) => {
+    if (!id) return;
+    updateUser.mutate(
+      { id, payload: values },
+      {
+        onSuccess: () => pushToast("User updated."),
+        onError: (error) => pushToast(getErrorInfo(error).message),
+      }
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -142,13 +158,20 @@ const UserDetailPage = () => {
             </h3>
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage
+                  src={
+                    user.imgProfile
+                      ? resolveImagePath(user.imgProfile, "users")
+                      : "/admin/logo.jpg"
+                  }
+                  alt={user.name}
+                />
                 <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
               <div>
                 <p className="text-lg font-semibold">{user.name}</p>
                 <p className="text-sm text-muted-foreground">
-                  {user.status === "active"
+                  {(user.isActive ?? user.active ?? true)
                     ? "Active customer"
                     : "Inactive customer"}
                 </p>
@@ -172,10 +195,9 @@ const UserDetailPage = () => {
                   defaultValues={{
                     name: user.name,
                     email: user.email,
-                    phone: "+1 (555) 123-4567",
-                    address: "123 Main St",
-                    city: "New York",
+                    role: user.role ?? "user",
                   }}
+                  onSubmit={handleUpdate}
                 />
               </Sheet>
             </div>
@@ -203,22 +225,17 @@ const UserDetailPage = () => {
                 <div className="flex items-center gap-3 text-sm">
                   <Phone className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Phone:</span>
-                  <span className="font-medium">+1 (555) 123-4567</span>
+                  <span className="font-medium">{user.phone ?? "Not set"}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">Address:</span>
-                  <span className="font-medium">123 Main St</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-muted-foreground">City:</span>
-                  <span className="font-medium">New York</span>
+                  <span className="text-muted-foreground">Role:</span>
+                  <span className="font-medium">{user.role ?? "user"}</span>
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <CalendarDays className="h-4 w-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Joined:</span>
-                  <span className="font-medium">Jan 15, 2024</span>
+                  <span className="font-medium">{joined}</span>
                 </div>
               </div>
             </div>

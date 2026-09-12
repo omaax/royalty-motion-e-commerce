@@ -1,44 +1,40 @@
 import React, { useState, useCallback } from 'react';
 import { z } from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { Truck } from 'lucide-react';
-import { CartItem, ShippingInfo } from '../types';
 import { FormField } from '../components/FormField';
 import { OrderSummary } from '../components/shop/OrderSummary';
 import { SEO } from '../components/SEO';
+import { useCart } from '../hooks/useCart';
+import { useCreateOrder } from '../hooks/useOrders';
+import { useMe } from '../hooks/useAuth';
+import { useToken } from '../lib/useToken';
 
 const shippingSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().min(1, 'Email is required').email('Invalid email address'),
-  address: z.string().min(1, 'Address is required'),
+  details: z.string().min(1, 'Address details are required'),
+  phone: z.string().min(1, 'Phone is required'),
   city: z.string().min(1, 'City is required'),
-  state: z.string().min(1, 'State is required'),
-  zip: z.string().min(1, 'Zip code is required'),
-  country: z.string().min(1, 'Country is required'),
+  postalCode: z.string().optional(),
 });
 
-interface CheckoutPageProps {
-  cartCount: number;
-  cartItems: CartItem[];
-  onShippingComplete: (shipping: ShippingInfo) => void;
-}
+type ShippingForm = z.infer<typeof shippingSchema>;
 
-export const CheckoutPage: React.FC<CheckoutPageProps> = ({
-  cartCount,
-  cartItems,
-  onShippingComplete,
-}) => {
+export const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
-  const [shipping, setShipping] = useState<ShippingInfo>({
-    name: '',
-    email: '',
-    address: '',
+  const token = useToken();
+  const { items, isEmpty } = useCart();
+  const { data: user } = useMe();
+  const createOrder = useCreateOrder();
+
+  const [shipping, setShipping] = useState<ShippingForm>({
+    details: '',
+    phone: user?.phone ?? '',
     city: '',
-    state: '',
-    zip: '',
-    country: '',
+    postalCode: '',
   });
+  const [paymentMethodType, setPaymentMethodType] = useState<'cash' | 'card'>('cash');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   const clearError = useCallback((field: string) => {
     setErrors((prev) => {
@@ -49,17 +45,19 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
     });
   }, []);
 
-  const updateShipping = useCallback((field: keyof ShippingInfo) => (value: string) => {
-    setShipping((prev) => ({ ...prev, [field]: value }));
-    clearError(field);
-  }, [clearError]);
+  const updateShipping = useCallback(
+    (field: keyof ShippingForm) => (value: string) => {
+      setShipping((prev) => ({ ...prev, [field]: value }));
+      clearError(field);
+    },
+    [clearError]
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
 
     const result = shippingSchema.safeParse(shipping);
-
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
       for (const issue of result.error.issues) {
@@ -72,9 +70,39 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
       return;
     }
 
-    onShippingComplete(shipping);
-    navigate('/payment');
+    setSubmitting(true);
+    createOrder.mutate(
+      {
+        shippingAddress: {
+          details: result.data.details,
+          phone: result.data.phone,
+          city: result.data.city,
+          postalCode: result.data.postalCode || undefined,
+        },
+        paymentMethodType,
+      },
+      {
+        onSuccess: (order) => {
+          const orderId = String(order._id ?? '');
+          setSubmitting(false);
+          if (paymentMethodType === 'card') {
+            navigate(`/payment/${orderId}`);
+          } else {
+            navigate(`/order-confirmation/${orderId}`);
+          }
+        },
+        onError: () => setSubmitting(false),
+      }
+    );
   };
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (isEmpty) {
+    return <Navigate to="/cart" replace />;
+  }
 
   return (
     <main className="px-6 lg:px-12 pt-10">
@@ -89,7 +117,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             CHECKOUT
           </h2>
           <div className="text-xs font-mono text-red-700 tracking-wider font-semibold leading-relaxed">
-            <div>Step 1 of 2 — Shipping ({cartCount} items)</div>
+            <div>Step 1 of 2 — Shipping ({items.length} items)</div>
             <div>Secure. Discreet. Delivered.</div>
           </div>
         </div>
@@ -105,70 +133,92 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <FormField
-                label="Full Name"
-                placeholder="JOHN DOE"
-                value={shipping.name}
-                onChange={updateShipping('name')}
+                label="Address Details"
+                placeholder="123 MAIN STREET, APT 4B"
+                value={shipping.details}
+                onChange={updateShipping('details')}
                 required
-                error={errors.name}
-              />
-              <FormField
-                label="Email"
-                type="email"
-                placeholder="EMAIL@ADDRESS.COM"
-                value={shipping.email}
-                onChange={updateShipping('email')}
-                required
-                error={errors.email}
-              />
-              <FormField
-                label="Street Address"
-                placeholder="123 MAIN STREET"
-                value={shipping.address}
-                onChange={updateShipping('address')}
-                required
-                error={errors.address}
+                error={errors.details}
                 className="sm:col-span-2"
               />
               <FormField
+                label="Phone"
+                type="tel"
+                placeholder="+20 100 000 0000"
+                value={shipping.phone}
+                onChange={updateShipping('phone')}
+                required
+                error={errors.phone}
+              />
+              <FormField
                 label="City"
-                placeholder="NEW YORK"
+                placeholder="CAIRO"
                 value={shipping.city}
                 onChange={updateShipping('city')}
                 required
                 error={errors.city}
               />
               <FormField
-                label="State / Province"
-                placeholder="NY"
-                value={shipping.state}
-                onChange={updateShipping('state')}
-                required
-                error={errors.state}
+                label="Postal Code"
+                placeholder="11511"
+                value={shipping.postalCode ?? ''}
+                onChange={updateShipping('postalCode')}
+                error={errors.postalCode}
+                className="sm:col-span-2"
               />
-              <FormField
-                label="Zip / Postal Code"
-                placeholder="10001"
-                value={shipping.zip}
-                onChange={updateShipping('zip')}
-                required
-                error={errors.zip}
-              />
-              <FormField
-                label="Country"
-                placeholder="UNITED STATES"
-                value={shipping.country}
-                onChange={updateShipping('country')}
-                required
-                error={errors.country}
-              />
+            </div>
+          </section>
+
+          <section className="mt-6 p-6 border border-gray-200 rounded-md space-y-4">
+            <h3 className="font-orbitron font-bold text-sm tracking-wider uppercase text-black">
+              Payment Method
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label
+                className={`flex items-center justify-between gap-3 border p-4 rounded-md cursor-pointer transition-colors ${
+                  paymentMethodType === 'cash' ? 'border-black' : 'border-gray-200'
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cash"
+                    checked={paymentMethodType === 'cash'}
+                    onChange={() => setPaymentMethodType('cash')}
+                    className="accent-black"
+                  />
+                  <span className="text-xs font-mono tracking-widest uppercase font-bold">
+                    Cash on Delivery
+                  </span>
+                </span>
+              </label>
+              <label
+                className={`flex items-center justify-between gap-3 border p-4 rounded-md cursor-pointer transition-colors ${
+                  paymentMethodType === 'card' ? 'border-black' : 'border-gray-200'
+                }`}
+              >
+                <span className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="card"
+                    checked={paymentMethodType === 'card'}
+                    onChange={() => setPaymentMethodType('card')}
+                    className="accent-black"
+                  />
+                  <span className="text-xs font-mono tracking-widest uppercase font-bold">
+                    Card / Mobile Wallet
+                  </span>
+                </span>
+              </label>
             </div>
           </section>
         </div>
 
         <OrderSummary
-          cartItems={cartItems}
-          buttonLabel="CONTINUE TO PAYMENT"
+          cartItems={items}
+          buttonLabel={submitting ? 'PLACING ORDER…' : 'CONTINUE TO PAYMENT'}
           backLinkTo="/cart"
           backLinkLabel="BACK TO CART"
           onSubmit={handleSubmit}

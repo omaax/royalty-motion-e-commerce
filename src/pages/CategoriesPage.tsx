@@ -1,18 +1,22 @@
 import React, { useMemo } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { CATEGORIES, categoryToSlug } from '../constants/shop';
-import { SHOP_PRODUCTS } from '../data/shopData';
+import { useCategories } from '../hooks/useCategories';
+import { useProducts } from '../hooks/useProducts';
+import { toKebab } from '../api/mappers';
 import { SEO } from '../components/SEO';
 
 export const CategoriesPage: React.FC = () => {
+  const { data: categories = [] } = useCategories();
+  const { data: products = [] } = useProducts({});
+
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    for (const item of SHOP_PRODUCTS) {
+    for (const item of products) {
       counts[item.category] = (counts[item.category] ?? 0) + 1;
     }
     return counts;
-  }, []);
+  }, [products]);
 
   return (
     <main className="px-6 lg:px-12 pt-10">
@@ -25,26 +29,27 @@ export const CategoriesPage: React.FC = () => {
           CATEGORIES
         </h2>
         <div className="text-xs font-mono tracking-widest uppercase text-gray-500">
-          {CATEGORIES.length} CATEGORIES IN LINEUP
+          {categories.length} CATEGORIES IN LINEUP
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pt-10">
-        {CATEGORIES.map((category) => {
-          const count = categoryCounts[category] ?? 0;
+        {categories.map((category) => {
+          const slug = category.slug ?? toKebab(category.name);
+          const count = categoryCounts[category.name] ?? 0;
           return (
             <Link
-              key={category}
-              to={`/category/${categoryToSlug(category)}`}
+              key={category._id}
+              to={`/category/${slug}`}
               className="relative p-6 border border-gray-200 hover:border-black transition-colors group space-y-4 flex flex-col justify-between cursor-pointer"
             >
               <div className="flex items-center justify-between text-[10px] font-mono tracking-widest uppercase text-gray-400">
-                <span>{categoryToSlug(category).toUpperCase()}</span>
+                <span>{slug.toUpperCase()}</span>
                 <span className="group-hover:text-black transition-colors">✦</span>
               </div>
               <div className="space-y-3">
                 <h3 className="font-orbitron font-bold text-lg md:text-xl tracking-wide uppercase text-black leading-snug">
-                  {category}
+                  {category.name}
                 </h3>
                 <p className="text-xs text-gray-600 font-jakarta leading-relaxed">
                   {count} {count === 1 ? 'PRODUCT' : 'PRODUCTS'} IN THIS CATEGORY.

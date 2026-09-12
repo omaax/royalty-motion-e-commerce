@@ -1,5 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal, Copy } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Copy, Pencil, Trash2 } from "lucide-react";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { Button } from "../../../components/ui/button";
 import {
@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu";
+import { formatPrice } from "../../../api/mappers";
 
 export type Product = {
   id: string | number;
@@ -22,7 +23,15 @@ export type Product = {
   images: Record<string, string>;
 };
 
-export const columns: ColumnDef<Product>[] = [
+interface ProductColumnsOptions {
+  onEdit?: (product: Product) => void;
+  onDelete?: (id: string) => void;
+}
+
+export const createProductColumns = ({
+  onEdit,
+  onDelete,
+}: ProductColumnsOptions = {}): ColumnDef<Product>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -50,7 +59,16 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const product = row.original;
       const firstColor = product.colors[0];
-      const imageUrl = product.images[firstColor];
+      const imageUrl =
+        (firstColor && product.images[firstColor]) ??
+        product.images["imageCover"] ??
+        product.images[""] ??
+        "";
+      if (!imageUrl) {
+        return (
+          <div className="h-10 w-10 rounded-md bg-muted" />
+        );
+      }
       return (
         <img
           src={imageUrl}
@@ -81,11 +99,7 @@ export const columns: ColumnDef<Product>[] = [
     },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("price"));
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(amount);
-      return <div className="font-medium">{formatted}</div>;
+      return <div className="font-medium">{formatPrice(amount)}</div>;
     },
   },
   {
@@ -113,6 +127,20 @@ export const columns: ColumnDef<Product>[] = [
             >
               <Copy className="mr-2 h-4 w-4" /> Copy product ID
             </DropdownMenuItem>
+            {onEdit && (
+              <DropdownMenuItem onClick={() => onEdit(product)}>
+                <Pencil className="mr-2 h-4 w-4" /> Edit product
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            {onDelete && (
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => onDelete(String(product.id))}
+              >
+                <Trash2 className="mr-2 h-4 w-4" /> Delete product
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );

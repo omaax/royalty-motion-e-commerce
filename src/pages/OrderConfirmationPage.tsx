@@ -1,18 +1,27 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { CheckCircle, ArrowRight } from 'lucide-react';
-import { Order } from '../types';
+import { useOrder } from '../hooks/useOrders';
+import { formatPrice } from '../api/mappers';
 import { MotionLink } from '../components/MotionButton';
 import { SEO } from '../components/SEO';
 import { APP_NAME, APP_YEAR, APP_TAGLINE } from '../constants/branding';
 
-interface OrderConfirmationPageProps {
-  orders: Order[];
-}
-
-export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({ orders }) => {
+export const OrderConfirmationPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const order = orders.find((o) => o.id === id);
+  const { data: order, isPending } = useOrder(id);
+
+  if (isPending && !order) {
+    return (
+      <main className="px-6 lg:px-12 pt-10 pb-20">
+        <div className="py-24 flex flex-col items-center justify-center text-center space-y-4">
+          <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-gray-400 animate-pulse">
+            Loading...
+          </span>
+        </div>
+      </main>
+    );
+  }
 
   if (!order) {
     return <Navigate to="/shop" replace />;
@@ -65,26 +74,26 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({ or
 
           {/* Items */}
           <div className="space-y-3">
-            {order.items.map(({ key, item, quantity, color, size }) => (
-              <div key={key} className="flex items-center gap-4 py-2 border-b border-gray-50 last:border-0">
-                {item.images[0] && (
+            {order.items.map(({ id: itemId, title, image, color, quantity, price }) => (
+              <div key={itemId} className="flex items-center gap-4 py-2 border-b border-gray-50 last:border-0">
+                {image && (
                   <div className="w-14 h-14 bg-gray-50 border border-gray-100 rounded overflow-hidden shrink-0 flex items-center justify-center p-1">
-                    <img src={item.images[0]} alt={item.title} className="w-full h-full object-contain" />
+                    <img src={image} alt={title} className="w-full h-full object-contain" />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="font-orbitron font-bold text-xs tracking-wide uppercase text-black truncate">
-                    {item.title}
+                    {title}
                   </div>
-                  {(color || size) && (
+                  {color && (
                     <span className="text-[10px] text-gray-400 uppercase font-mono">
-                      {[color, size].filter(Boolean).join(' / ')}
+                      {color}
                     </span>
                   )}
                 </div>
                 <div className="text-right shrink-0">
                   <div className="font-orbitron font-bold text-xs">
-                    ${(item.price * quantity).toLocaleString('en-US')}
+                    {formatPrice(price * quantity)}
                   </div>
                   <div className="text-[10px] font-mono text-gray-400">x{quantity}</div>
                 </div>
@@ -96,40 +105,39 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({ or
           <div className="border-t border-gray-200 pt-4 flex items-center justify-between">
             <span className="uppercase tracking-widest text-xs font-bold text-black">Total</span>
             <span className="font-orbitron font-bold text-lg">
-              ${order.total.toLocaleString('en-US')} USD
+              {formatPrice(order.total)}
             </span>
           </div>
         </section>
 
-        {/* Shipping & Payment Info */}
+        {/* Shipping Info */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {order.shipping && (
+          {order.shippingAddress && (
             <section className="p-5 border border-gray-200 rounded-md space-y-2">
               <div className="text-[10px] font-mono tracking-[0.2em] uppercase font-bold text-gray-400">
                 Shipping To
               </div>
               <div className="space-y-0.5">
-                <div className="font-mono text-xs font-bold uppercase">{order.shipping.name}</div>
-                <div className="font-mono text-[10px] text-gray-500 uppercase">{order.shipping.address}</div>
                 <div className="font-mono text-[10px] text-gray-500 uppercase">
-                  {order.shipping.city}, {order.shipping.state} {order.shipping.zip}
+                  {order.shippingAddress.details}
                 </div>
-                <div className="font-mono text-[10px] text-gray-500 uppercase">{order.shipping.country}</div>
+                <div className="font-mono text-[10px] text-gray-500 uppercase">
+                  {order.shippingAddress.city}
+                  {order.shippingAddress.postalCode ? `, ${order.shippingAddress.postalCode}` : ''}
+                </div>
+                <div className="font-mono text-[10px] text-gray-500 uppercase">
+                  {order.shippingAddress.phone}
+                </div>
               </div>
             </section>
           )}
-          {order.payment && (
+          {order.paymentMethod && (
             <section className="p-5 border border-gray-200 rounded-md space-y-2">
               <div className="text-[10px] font-mono tracking-[0.2em] uppercase font-bold text-gray-400">
                 Payment Method
               </div>
-              <div className="space-y-0.5">
-                <div className="font-mono text-xs font-bold uppercase">
-                  CARD ending in {order.payment.cardLast4}
-                </div>
-                <div className="font-mono text-[10px] text-gray-500 uppercase">
-                  Expires {order.payment.expiry}
-                </div>
+              <div className="font-mono text-xs font-bold uppercase">
+                {order.paymentMethod === 'cash' ? 'CASH ON DELIVERY' : 'CARD / ONLINE PAYMENT'}
               </div>
             </section>
           )}

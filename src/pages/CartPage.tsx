@@ -1,28 +1,48 @@
 import React, { useMemo } from 'react';
 import { ShoppingBag, Trash2, ChevronRight, ArrowRight, Minus, Plus } from 'lucide-react';
-import { CartItem } from '../types';
 import { MotionLink } from '../components/MotionButton';
-import { COLOR_HEX } from '../constants/shop';
+import { colorHex, formatPrice, normalizeColorName } from '../api/mappers';
 import { SEO } from '../components/SEO';
 import { APP_NAME, APP_TAGLINE, APP_YEAR } from '../constants/branding';
+import { useCart, useRemoveFromCart, useUpdateCartItem, useGuestCartActions } from '../hooks/useCart';
 
-interface CartPageProps {
-  cartCount: number;
-  cartItems: CartItem[];
-  onRemoveFromCart: (key: string) => void;
-  onUpdateQuantity: (key: string, delta: number) => void;
-}
+export const CartPage: React.FC = () => {
+  const { items, itemKeys, isEmpty, isGuest } = useCart();
+  const updateCartItem = useUpdateCartItem();
+  const removeFromCart = useRemoveFromCart();
+  const guestActions = useGuestCartActions();
+  const cartCount = items.length;
 
-export const CartPage: React.FC<CartPageProps> = ({
-  cartCount,
-  cartItems,
-  onRemoveFromCart,
-  onUpdateQuantity,
-}) => {
   const totalCartPrice = useMemo(
-    () => cartItems.reduce((acc, c) => acc + c.item.price * c.quantity, 0),
-    [cartItems]
+    () => items.reduce((acc, c) => acc + c.price, 0),
+    [items]
   );
+
+  const changeQuantity = (key: string, delta: number) => {
+    const index = itemKeys.indexOf(key);
+    const cartLine = items[index];
+    if (!cartLine) return;
+    const nextQuantity = cartLine.quantity + delta;
+    if (nextQuantity <= 0) {
+      removeItem(key);
+      return;
+    }
+    if (isGuest) {
+      guestActions.updateQuantity(key, nextQuantity);
+    } else {
+      updateCartItem.mutate({ itemId: cartLine.itemId, quantity: nextQuantity });
+    }
+  };
+
+  const removeItem = (key: string) => {
+    const index = itemKeys.indexOf(key);
+    const cartLine = items[index];
+    if (isGuest) {
+      guestActions.remove(key);
+    } else if (cartLine) {
+      removeFromCart.mutate(cartLine.itemId);
+    }
+  };
 
   return (
     <main className="px-6 lg:px-12 pt-10">
@@ -43,7 +63,7 @@ export const CartPage: React.FC<CartPageProps> = ({
           </div>
         </div>
 
-        {cartItems.length === 0 ? (
+        {isEmpty ? (
           <div className="py-24 flex flex-col items-center justify-center text-center space-y-4 text-gray-400">
             <ShoppingBag className="w-12 h-12 stroke-[1.2]" />
             <p className="text-xs uppercase font-semibold tracking-widest">
@@ -61,53 +81,53 @@ export const CartPage: React.FC<CartPageProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 pt-8">
             {/* Cart Items */}
             <div className="lg:col-span-8 space-y-4">
-              {cartItems.map(({ key, item, quantity, color, size }) => (
+              {items.map((line, index) => {
+                const key = itemKeys[index];
+                return (
                 <div
                   key={key}
                   className="p-4 border border-gray-200 rounded-md flex items-center justify-between gap-4"
                 >
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    {item.images[0] && (
+                    {line.product.images[0] && (
                       <div className="w-16 h-16 bg-gray-50 border border-gray-100 rounded overflow-hidden shrink-0 flex items-center justify-center p-1">
-                        <img src={item.images[0]} alt={item.title} loading="lazy" width={64} height={64} className="w-full h-full object-contain" />
+                        <img src={line.product.images[0]} alt={line.product.title} loading="lazy" width={64} height={64} className="w-full h-full object-contain" />
                       </div>
                     )}
                     <div className="min-w-0">
                       <div className="text-[10px] font-semibold tracking-widest uppercase text-gray-400">
-                        {item.category}
+                        {line.product.category}
                       </div>
                       <h3 className="font-orbitron font-bold text-xs tracking-wide uppercase text-black truncate">
-                        {item.title}
+                        {line.product.title}
                       </h3>
-                      {(color || size) && (
+                      {(line.color) && (
                         <div className="flex items-center gap-1.5 mt-0.5">
-                          {color ? (
-                            <span
-                              style={{ backgroundColor: COLOR_HEX[color as keyof typeof COLOR_HEX] ?? '#999' }}
-                              className="w-2.5 h-2.5 rounded-full inline-block border border-gray-300"
-                            />
-                          ) : null}
+                          <span
+                            style={{ backgroundColor: colorHex(line.color) }}
+                            className="w-2.5 h-2.5 rounded-full inline-block border border-gray-300"
+                          />
                           <span className="text-[10px] text-gray-500 uppercase font-mono">
-                            {[color, size].filter(Boolean).join(' • ')}
+                            {normalizeColorName(line.color)}
                           </span>
                         </div>
                       )}
                       <p className="text-[11px] text-gray-500 font-jakarta mt-0.5">
-                        ${item.price.toLocaleString('en-US')} USD
+                        {formatPrice(line.product.price)}
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
                         <button
-                          onClick={() => onUpdateQuantity(key, -1)}
+                          onClick={() => changeQuantity(key, -1)}
                           className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-black hover:text-black transition-colors cursor-pointer"
                           aria-label="Decrease quantity"
                         >
                           <Minus className="w-3 h-3 stroke-[2]" />
                         </button>
                         <span className="font-mono text-xs font-bold min-w-6 text-center">
-                          {quantity}
+                          {line.quantity}
                         </span>
                         <button
-                          onClick={() => onUpdateQuantity(key, 1)}
+                          onClick={() => changeQuantity(key, 1)}
                           className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:border-black hover:text-black transition-colors cursor-pointer"
                           aria-label="Increase quantity"
                         >
@@ -118,10 +138,10 @@ export const CartPage: React.FC<CartPageProps> = ({
                   </div>
                   <div className="flex items-center gap-4 shrink-0">
                     <span className="font-orbitron font-bold text-xs">
-                      ${(item.price * quantity).toLocaleString('en-US')}
+                      {formatPrice(line.price)}
                     </span>
                     <button
-                      onClick={() => onRemoveFromCart(key)}
+                      onClick={() => removeItem(key)}
                       className="text-gray-400 hover:text-black p-1 transition-colors cursor-pointer"
                       aria-label="Remove item"
                     >
@@ -129,7 +149,8 @@ export const CartPage: React.FC<CartPageProps> = ({
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Order Summary */}
@@ -143,7 +164,7 @@ export const CartPage: React.FC<CartPageProps> = ({
                     Subtotal
                   </span>
                   <span className="font-orbitron font-bold text-base">
-                    ${totalCartPrice.toLocaleString('en-US')} USD
+                    {formatPrice(totalCartPrice)}
                   </span>
                 </div>
                 <MotionLink

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -9,8 +10,15 @@ import { Textarea } from "../../ui/textarea";
 import { Checkbox } from "../../ui/checkbox";
 import { ScrollArea } from "../../ui/scroll-area";
 import { SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../../ui/sheet";
+import { useCreateProduct, useUpdateProduct } from "../../../hooks/useProducts";
+import { useCategories } from "../../../hooks/useCategories";
+import { colorHex } from "../../../api/mappers";
+import { getErrorInfo } from "../../../api/client";
+import { resolveCategory } from "../../../api/mappers";
+import { pushToast } from "../../../lib/useToast";
+import type { ApiProduct } from "../../../api/types";
 
-const categories = [
+const FALLBACK_CATEGORIES = [
   "T-shirts",
   "Shoes",
   "Accessories",
@@ -20,21 +28,21 @@ const categories = [
   "Gloves",
 ];
 
-const colors = [
-  "blue",
-  "green",
-  "red",
-  "yellow",
-  "purple",
-  "orange",
-  "pink",
-  "brown",
-  "gray",
+const COLOR_NAMES = [
   "black",
   "white",
+  "grey",
+  "brown",
+  "red",
+  "orange",
+  "yellow",
+  "green",
+  "blue",
+  "purple",
+  "pink",
 ];
 
-const sizes = [
+const SIZE_OPTIONS = [
   "xs",
   "s",
   "m",
@@ -58,44 +66,91 @@ const sizes = [
   "48",
 ];
 
+const MAX_IMAGES = 5;
+
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   shortDescription: z.string().min(1, "Short description is required"),
-  description: z.string().min(1, "Description is required"),
   price: z.coerce.number().min(0.01, "Price must be greater than 0"),
+  discount: z.coerce.number().min(0, "Discount cannot be negative").optional(),
+  quantity: z.coerce.number().int().min(1, "Quantity must be at least 1"),
   category: z.string().min(1, "Category is required"),
   sizes: z.array(z.string()).min(1, "Select at least one size"),
   colors: z.array(z.string()).min(1, "Select at least one color"),
-  images: z.string().min(1, "Image URL is required"),
 });
 
 type AddProductFormValues = z.infer<typeof formSchema>;
 
-export default function AddProduct() {
+interface AddProductProps {
+  product?: ApiProduct;
+  onSuccess?: () => void;
+}
+
+export default function AddProduct({ product, onSuccess }: AddProductProps) {
+  const isEdit = Boolean(product);
+  const createProduct = useCreateProduct();
+  const updateProduct = useUpdateProduct();
+  const { data: apiCategories } = useCategories();
+  const [error, setError] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
+
+  const categoryOptions =
+    apiCategories && apiCategories.length > 0
+      ? apiCategories.map((c) => c.name)
+      : FALLBACK_CATEGORIES;
+
   const form = useForm<AddProductFormValues>({
     resolver: zodResolver(formSchema) as any,
     defaultValues: {
-      name: "",
-      shortDescription: "",
-      description: "",
-      price: 0,
-      category: "",
-      sizes: [],
-      colors: [],
-      images: "",
+      name: product?.title ?? "",
+      shortDescription: product?.description ?? "",
+      price: product?.priceAfterDiscount ?? product?.price ?? 0,
+      discount: product?.priceAfterDiscount ? product?.price - product?.priceAfterDiscount : 0,
+      quantity: product?.quantity ?? 1,
+      category: product ? resolveCategory(product.category) : "",
+      sizes: product?.sizes ?? [],
+      colors: product?.color ?? [],
     },
   });
 
   function handleSubmit(values: AddProductFormValues) {
-    console.log(values);
-    form.reset();
+    setError(null);
+    const payload = {
+      title: values.name,
+      description: values.shortDescription,
+      quantity: values.quantity,
+      price: values.price,
+      priceAfterDiscount: values.discount ? Math.max(0, values.price - values.discount) : undefined,
+      category: values.category,
+      color: values.colors,
+      imageCover: coverFile ?? undefined,
+      images: galleryFiles.length > 0 ? galleryFiles : undefined,
+    };
+
+    const options = {
+      onSuccess: () => {
+        pushToast(isEdit ? "Product updated." : "Product created.");
+        onSuccess?.();
+      },
+      onError: (err: unknown) => {
+        setError(getErrorInfo(err).message);
+      },
+    };
+
+    if (product?._id ?? product?.id) {
+      const id = (product._id ?? product.id) as string;
+      updateProduct.mutate({ id, payload }, options as never);
+    } else {
+      createProduct.mutate(payload, options as never);
+    }
   }
 
   return (
     <SheetContent>
       <ScrollArea className="h-screen">
         <SheetHeader>
-          <SheetTitle className="mb-4">Add Product</SheetTitle>
+          <SheetTitle className="mb-4">{isEdit ? "Edit Product" : "Add Product"}</SheetTitle>
           <SheetDescription asChild>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
@@ -120,21 +175,7 @@ export default function AddProduct() {
                     <FormItem>
                       <FormLabel>Short Description</FormLabel>
                       <FormControl>
-                        <Input placeholder="Brief description" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Full product description" {...field} />
+                        <Textarea placeholder="Brief description" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -157,18 +198,47 @@ export default function AddProduct() {
 
                 <FormField
                   control={form.control}
+                  name="discount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Discount (EGP)</FormLabel>
+                      <FormControl>
+                        <Input type="number" step="0.01" min={0} placeholder="0.00" {...field} />
+                      </FormControl>
+                      <FormDescription>Leave at 0 for no discount.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="quantity"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock Quantity</FormLabel>
+                      <FormControl>
+                        <Input type="number" min={1} placeholder="1" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="category"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Category</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.map((category) => (
+                          {categoryOptions.map((category) => (
                             <SelectItem key={category} value={category}>
                               {category}
                             </SelectItem>
@@ -183,39 +253,32 @@ export default function AddProduct() {
                 <FormField
                   control={form.control}
                   name="sizes"
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Sizes</FormLabel>
                       <FormDescription>Select available sizes</FormDescription>
                       <div className="grid grid-cols-4 gap-2">
-                        {sizes.map((size) => (
-                          <FormField
+                        {SIZE_OPTIONS.map((size) => (
+                          <FormItem
                             key={size}
-                            control={form.control}
-                            name="sizes"
-                            render={({ field }) => (
-                              <FormItem
-                                key={size}
-                                className="flex flex-row items-center space-x-1 space-y-0"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(size)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange([...field.value, size])
-                                        : field.onChange(
-                                            field.value?.filter((v) => v !== size)
-                                          );
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="text-sm font-normal">
-                                  {size}
-                                </FormLabel>
-                              </FormItem>
-                            )}
-                          />
+                            className="flex flex-row items-center space-x-1 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(size)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, size])
+                                    : field.onChange(
+                                        field.value?.filter((v) => v !== size)
+                                      );
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">
+                              {size}
+                            </FormLabel>
+                          </FormItem>
                         ))}
                       </div>
                       <FormMessage />
@@ -230,59 +293,35 @@ export default function AddProduct() {
                     <FormItem>
                       <FormLabel>Colors</FormLabel>
                       <FormControl>
-                        <div className="space-y-4">
-                          <div className="grid grid-cols-3 gap-4 my-2">
-                            {colors.map((color) => (
-                              <div key={color} className="flex items-center gap-2">
-                                <Checkbox
-                                  id={`color-${color}`}
-                                  checked={field.value?.includes(color)}
-                                  onCheckedChange={(checked) => {
-                                    const currentValues = field.value || [];
-                                    if (checked) {
-                                      field.onChange([...currentValues, color]);
-                                    } else {
-                                      field.onChange(
-                                        currentValues.filter((v) => v !== color)
-                                      );
-                                    }
-                                  }}
-                                />
-                                <label
-                                  htmlFor={`color-${color}`}
-                                  className="flex items-center gap-2 text-xs"
-                                >
-                                  <div
-                                    className="w-2 h-2 rounded-full"
-                                    style={{ backgroundColor: color }}
-                                  />
-                                  {color}
-                                </label>
-                              </div>
-                            ))}
-                          </div>
-                          {field.value && field.value.length > 0 && (
-                            <div className="mt-8 space-y-4">
-                              <p className="text-sm font-medium">
-                                Upload images for selected colors:
-                              </p>
-                              {field.value.map((color) => (
+                        <div className="grid grid-cols-3 gap-4 my-2">
+                          {COLOR_NAMES.map((color) => (
+                            <div key={color} className="flex items-center gap-2">
+                              <Checkbox
+                                id={`color-${color}`}
+                                checked={field.value?.includes(color)}
+                                onCheckedChange={(checked) => {
+                                  const currentValues = field.value || [];
+                                  if (checked) {
+                                    field.onChange([...currentValues, color]);
+                                  } else {
+                                    field.onChange(
+                                      currentValues.filter((v) => v !== color)
+                                    );
+                                  }
+                                }}
+                              />
+                              <label
+                                htmlFor={`color-${color}`}
+                                className="flex items-center gap-2 text-xs"
+                              >
                                 <div
-                                  className="flex items-center gap-2"
-                                  key={color}
-                                >
-                                  <div
-                                    className="w-2 h-2 rounded-full"
-                                    style={{ backgroundColor: color }}
-                                  />
-                                  <span className="text-sm min-w-[60px]">
-                                    {color}
-                                  </span>
-                                  <Input type="file" accept="image/*" />
-                                </div>
-                              ))}
+                                  className="w-2 h-2 rounded-full"
+                                  style={{ backgroundColor: colorHex(color) }}
+                                />
+                                {color}
+                              </label>
                             </div>
-                          )}
+                          ))}
                         </div>
                       </FormControl>
                       <FormDescription>Select the available colors.</FormDescription>
@@ -291,23 +330,57 @@ export default function AddProduct() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="images"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/image.jpg" {...field} />
-                      </FormControl>
-                      <FormDescription>Enter the product image URL.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <FormLabel>Cover Image</FormLabel>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setCoverFile(e.target.files?.[0] ?? null)}
+                    />
+                    <FormDescription>
+                      {isEdit && product?.imageCover
+                        ? "Leave empty to keep the current cover."
+                        : "Main product image."}
+                    </FormDescription>
+                  </div>
 
-                <Button type="submit" className="w-full">
-                  Add Product
+                  <div className="space-y-2">
+                    <FormLabel>Gallery Images (up to {MAX_IMAGES})</FormLabel>
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) =>
+                        setGalleryFiles(
+                          Array.from(e.target.files ?? []).slice(0, MAX_IMAGES)
+                        )
+                      }
+                    />
+                    <FormDescription>
+                      {isEdit && product?.images?.length
+                        ? "Leave empty to keep current images."
+                        : `Upload up to ${MAX_IMAGES} images.`}
+                    </FormDescription>
+                  </div>
+                </div>
+
+                {error && (
+                  <p className="text-sm font-medium text-destructive">{error}</p>
+                )}
+
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={createProduct.isPending || updateProduct.isPending}
+                >
+                  {createProduct.isPending || updateProduct.isPending
+                    ? isEdit
+                      ? "Saving..."
+                      : "Creating..."
+                    : isEdit
+                    ? "Save Changes"
+                    : "Add Product"}
                 </Button>
               </form>
             </Form>

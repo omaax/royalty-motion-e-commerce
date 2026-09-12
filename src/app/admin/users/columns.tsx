@@ -1,5 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Copy, MoreHorizontal, Eye } from "lucide-react";
+import { ArrowUpDown, Copy, MoreHorizontal, Eye, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Checkbox } from "../../../components/ui/checkbox";
 import { Button } from "../../../components/ui/button";
@@ -21,7 +21,9 @@ export type User = {
   status: "active" | "inactive";
 };
 
-export const columns: ColumnDef<User>[] = [
+export const createUserColumns = (
+  onDelete?: (id: string) => void
+): ColumnDef<User>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -122,6 +124,16 @@ export const columns: ColumnDef<User>[] = [
                 View customer
               </Link>
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            {onDelete && (
+              <DropdownMenuItem
+                className="text-destructive"
+                onClick={() => onDelete(user.id)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Delete user
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -7,7 +7,7 @@ export type {
   ShopItem,
 } from './product';
 
-export type { CartLineOptions, CartItem } from './cart';
+export type { CartLineOptions, CartItem, CartLineItem, CartLineProduct } from './cart';
 
 export type {
   OrderStatus,

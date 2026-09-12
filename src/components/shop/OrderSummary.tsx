@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronRight, ArrowLeft } from 'lucide-react';
-import { CartItem } from '../../types';
+import { CartLineItem } from '../../types';
 import { MotionButton } from '../MotionButton';
-import { COLOR_HEX } from '../../constants/shop';
+import { colorHex, formatPrice, normalizeColorName } from '../../api/mappers';
 import { APP_NAME, APP_YEAR } from '../../constants/branding';
 
 interface OrderSummaryProps {
-  cartItems: CartItem[];
+  cartItems: CartLineItem[];
   buttonLabel: string;
   backLinkTo: string;
   backLinkLabel: string;
@@ -21,10 +21,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
   backLinkLabel,
   onSubmit,
 }) => {
-  const totalCartPrice = cartItems.reduce(
-    (acc, c) => acc + c.item.price * c.quantity,
-    0
-  );
+  const totalCartPrice = cartItems.reduce((acc, c) => acc + c.price, 0);
 
   return (
     <aside className="lg:col-span-4">
@@ -34,34 +31,32 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
         </h3>
 
         <div className="space-y-3 max-h-64 overflow-y-auto">
-          {cartItems.map(({ key, item, quantity, color, size }) => (
-            <div key={key} className="flex items-center gap-3">
-              {item.images[0] && (
+          {cartItems.map(({ itemId, product, quantity, color, price }) => (
+            <div key={itemId} className="flex items-center gap-3">
+              {product.images[0] && (
                 <div className="w-12 h-12 bg-gray-50 border border-gray-100 rounded overflow-hidden shrink-0 flex items-center justify-center p-0.5">
-                  <img src={item.images[0]} alt={item.title} className="w-full h-full object-contain" />
+                  <img src={product.images[0]} alt={product.title} className="w-full h-full object-contain" />
                 </div>
               )}
               <div className="flex-1 min-w-0">
                 <div className="font-orbitron font-bold text-[10px] tracking-wide uppercase text-black truncate">
-                  {item.title}
+                  {product.title}
                 </div>
-                {(color || size) && (
+                {color && (
                   <div className="flex items-center gap-1 mt-0.5">
-                    {color && (
-                      <span
-                        style={{ backgroundColor: COLOR_HEX[color as keyof typeof COLOR_HEX] ?? '#999' }}
-                        className="w-2 h-2 rounded-full inline-block border border-gray-300"
-                      />
-                    )}
+                    <span
+                      style={{ backgroundColor: colorHex(color) }}
+                      className="w-2 h-2 rounded-full inline-block border border-gray-300"
+                    />
                     <span className="text-[9px] text-gray-400 uppercase font-mono">
-                      {[color, size].filter(Boolean).join(' / ')}
+                      {normalizeColorName(color)}
                     </span>
                   </div>
                 )}
                 <div className="flex items-center justify-between mt-0.5">
                   <span className="text-[10px] font-mono text-gray-400">x{quantity}</span>
                   <span className="font-orbitron font-bold text-[10px]">
-                    ${(item.price * quantity).toLocaleString('en-US')}
+                    {formatPrice(price)}
                   </span>
                 </div>
               </div>
@@ -73,7 +68,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
           <div className="flex items-center justify-between text-sm font-jakarta font-bold">
             <span className="uppercase tracking-widest text-xs text-gray-500">Subtotal</span>
             <span className="font-orbitron font-bold text-base">
-              ${totalCartPrice.toLocaleString('en-US')} USD
+              {formatPrice(totalCartPrice)}
             </span>
           </div>
           <div className="flex items-center justify-between text-sm font-jakarta">
@@ -83,7 +78,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
           <div className="border-t border-gray-200 pt-3 flex items-center justify-between">
             <span className="uppercase tracking-widest text-xs font-bold text-black">Total</span>
             <span className="font-orbitron font-bold text-lg">
-              ${totalCartPrice.toLocaleString('en-US')} USD
+              {formatPrice(totalCartPrice)}
             </span>
           </div>
         </div>

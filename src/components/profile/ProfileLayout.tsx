@@ -1,19 +1,23 @@
 import React from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, Navigate } from 'react-router-dom';
 import { UserRound } from 'lucide-react';
 import { RollingText } from '../RollingText';
-import { UserProfile } from '../../types';
+import { useMe } from '../../hooks/useAuth';
+import { useToken } from '../../lib/useToken';
 
 const PROFILE_TABS: { label: string; path: string; end?: boolean }[] = [
   { label: 'ACCOUNT', path: '/profile', end: true },
   { label: 'ORDER HISTORY', path: '/profile/orders' },
 ];
 
-interface ProfileLayoutProps {
-  profile: UserProfile;
-}
+export const ProfileLayout: React.FC = () => {
+  const token = useToken();
+  const { data: user } = useMe();
 
-export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ profile }) => {
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <main className="px-6 lg:px-12 pt-10 pb-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-black">
@@ -39,10 +43,10 @@ export const ProfileLayout: React.FC<ProfileLayoutProps> = ({ profile }) => {
                 MEMBER
               </div>
               <div className="font-orbitron font-bold text-xs tracking-wide uppercase text-black truncate">
-                {profile.name}
+                {user?.name ?? 'Guest'}
               </div>
               <div className="text-[10px] font-mono text-gray-500 uppercase truncate">
-                {profile.email}
+                {user?.email ?? ''}
               </div>
             </div>
           </div>

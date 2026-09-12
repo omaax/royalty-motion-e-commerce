@@ -2,29 +2,22 @@ import { useEffect, useLayoutEffect, useMemo, useCallback, useRef, useState } fr
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, ChevronLeft, ChevronRight, Plus, Sparkles, Heart } from 'lucide-react';
 import { motion } from 'motion/react';
-import { ShopItem, CartLineOptions } from '../types';
-import { SHOP_PRODUCTS } from '../data/shopData';
-import { COLOR_HEX, categoryToSlug } from '../constants/shop';
+import { useProduct, useProducts } from '../hooks/useProducts';
+import { useShopActions } from '../hooks/useCart';
+import { useWishlistIds } from '../hooks/useWishlist';
+import { colorHex, formatPrice, normalizeColorName } from '../api/mappers';
 import { ProductCard } from '../components/shop/ProductCard';
 import { ProductInfoDrawer, InfoTab } from '../components/shop/ProductInfoDrawer';
 import { MotionButton } from '../components/MotionButton';
 import { SEO } from '../components/SEO';
 
-interface ProductDetailPageProps {
-  onAddToCart: (item: ShopItem, options?: CartLineOptions) => void;
-  wishlistIds: Set<string>;
-  onToggleWishlist: (item: ShopItem) => void;
-}
-
-export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCart, wishlistIds, onToggleWishlist }) => {
+export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-
-  const item = useMemo(
-    () => SHOP_PRODUCTS.find((p) => p.id === id) ?? null,
-    [id]
-  );
-
-  const wished = item ? wishlistIds.has(item.id) : false;
+  const { data: item, isPending } = useProduct(id);
+  const { data: allProducts = [] } = useProducts({});
+  const { onAddToCart, onToggleWishlist } = useShopActions();
+  const wishlistIds = useWishlistIds();
+  const wished = item ? wishlistIds.includes(item.id) : false;
 
   const [activeImage, setActiveImage] = useState(0);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
@@ -48,21 +41,38 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
     el.scrollBy({ left: direction * 320, behavior: 'smooth' });
   };
 
+  const sizes = item?.measurements?.sizes ?? [];
+  const colorList = item?.colors ?? [];
+  const imageList = item?.images ?? [];
+
   useLayoutEffect(() => {
     const el = thumbStripRef.current;
     if (el) el.scrollLeft = 0;
     updateThumbArrows();
     window.addEventListener('resize', updateThumbArrows);
     return () => window.removeEventListener('resize', updateThumbArrows);
-  }, [id, item?.images.length]);
+  }, [id, imageList.length, updateThumbArrows]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     setActiveImage(0);
-    setSelectedColor(item?.colors[0] ?? null);
-    setSelectedSize(item?.measurements?.sizes?.[0] ?? null);
+    setSelectedColor(colorList[0] ?? null);
+    setSelectedSize(sizes[0] ?? null);
     setInfoTab(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
+
+  if (isPending && !item) {
+    return (
+      <main className="px-6 lg:px-12 pt-10 pb-20">
+        <div className="py-24 flex flex-col items-center justify-center text-center space-y-4">
+          <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-gray-400 animate-pulse">
+            Loading...
+          </span>
+        </div>
+      </main>
+    );
+  }
 
   if (!item) {
     return (
@@ -84,10 +94,10 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
     );
   }
 
-  const primaryImage = item.images[activeImage];
+  const primaryImage = imageList[activeImage];
   const relatedProducts = useMemo(
-    () => SHOP_PRODUCTS.filter((p) => p.id !== item.id).slice(0, 4),
-    [item.id]
+    () => allProducts.filter((p) => p.id !== item.id).slice(0, 4),
+    [allProducts, item.id]
   );
 
   return (
@@ -99,7 +109,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
         product={{
           name: item.title,
           price: item.price,
-          image: item.images[0] || '',
+          image: imageList[0] || '',
           description: item.description,
         }}
       />
@@ -127,7 +137,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
               </div>
             )}
             <motion.button
-              onClick={() => onToggleWishlist(item)}
+              onClick={() => onToggleWishlist(item.id)}
               initial="initial"
               whileHover="hover"
               whileTap={{ scale: 0.97 }}
@@ -160,7 +170,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             )}
           </div>
 
-          {item.images.length > 1 && (
+          {imageList.length > 1 && (
             <div className="flex items-center gap-2">
               {canScrollLeft && (
                 <button
@@ -176,7 +186,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
                 onScroll={updateThumbArrows}
                 className="flex flex-1 min-w-0 gap-2.5 overflow-x-auto scrollbar-hide"
               >
-                {item.images.map((img, i) => (
+                {imageList.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
@@ -208,16 +218,16 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-[10px] font-mono tracking-widest text-gray-500 uppercase">
               <Link
-                to={`/category/${categoryToSlug(item.category)}`}
+                to={`/category/${encodeURIComponent(item.category)}`}
                 className="cursor-pointer hover:text-black transition-colors"
                 title={`View all ${item.category}`}
               >
                 {item.category}
               </Link>
-              {item.colors.length > 0 && (
+              {colorList.length > 0 && (
                 <>
                   <span className="text-gray-300">/</span>
-                  <span>{item.colors.map((c) => c.toUpperCase()).join(' • ')}</span>
+                  <span>{colorList.map((c) => normalizeColorName(c).toUpperCase()).join(' • ')}</span>
                 </>
               )}
             </div>
@@ -227,7 +237,14 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             </h2>
 
             <div className="font-mono text-xl font-bold">
-              ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              <span className="inline-flex items-baseline gap-2">
+                <span>{formatPrice(item.price)}</span>
+                {item.originalPrice != null && item.originalPrice > 0 && (
+                  <span className="text-sm font-normal text-gray-400 line-through">
+                    {formatPrice(item.originalPrice)}
+                  </span>
+                )}
+              </span>
             </div>
 
             <div className="text-[11px] font-mono uppercase tracking-widest">
@@ -238,21 +255,21 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             </div>
           </div>
 
-          {item.colors.length > 0 && (
+          {colorList.length > 0 && (
             <div className="mt-6 space-y-2">
               <div className="text-[10px] font-mono uppercase tracking-widest text-gray-400">
                 Color
               </div>
               <div className="flex items-center gap-2.5">
-                {item.colors.map((color) => (
+                {colorList.map((color) => (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color === selectedColor ? null : color)}
-                    title={color}
-                    aria-label={color}
-                    style={{ backgroundColor: COLOR_HEX[color] }}
+                    title={normalizeColorName(color)}
+                    aria-label={normalizeColorName(color)}
+                    style={{ backgroundColor: colorHex(color) }}
                     className={`w-8 h-8 rounded-full cursor-pointer transition-all ${
-                      color === 'White' ? 'border border-gray-300' : 'border border-black/10'
+                      color.trim().toLowerCase() === 'white' ? 'border border-gray-300' : 'border border-black/10'
                     } ${
                       selectedColor === color
                         ? 'ring-2 ring-black ring-offset-2'
@@ -269,7 +286,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
             {item.description}
           </p>
 
-          {item.measurements?.sizes && item.measurements.sizes.length > 0 ? (
+          {sizes.length > 0 ? (
             <div className="mt-6 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-mono uppercase tracking-widest text-gray-400">
@@ -282,7 +299,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
-                {item.measurements.sizes.map((size) => {
+                {sizes.map((size) => {
                   const isSelected = selectedSize === size;
                   return (
                     <MotionButton
@@ -308,10 +325,7 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <MotionButton
               variant="solid"
-              onClick={() => onAddToCart(item, {
-                color: selectedColor ?? undefined,
-                size: selectedSize ?? undefined,
-              })}
+              onClick={() => onAddToCart(item, 1)}
               disabled={!item.inStock}
               className="font-mono text-xs uppercase tracking-widest px-5 py-3"
             >
@@ -343,22 +357,24 @@ export const ProductDetailPage: React.FC<ProductDetailPageProps> = ({ onAddToCar
       </div>
 
       {/* You May Also Like */}
-      <section className="mt-16 lg:mt-20 pt-8 border-t border-gray-100">
-        <h3 className="font-serif text-2xl md:text-3xl font-bold uppercase tracking-wide">
-          You May Also Like
-        </h3>
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
-          {relatedProducts.map((related) => (
-            <ProductCard
-              key={related.id}
-              item={related}
-              onAddToCart={onAddToCart}
-              wished={wishlistIds.has(related.id)}
-              onToggleWishlist={onToggleWishlist}
-            />
-          ))}
-        </div>
-      </section>
+      {relatedProducts.length > 0 && (
+        <section className="mt-16 lg:mt-20 pt-8 border-t border-gray-100">
+          <h3 className="font-serif text-2xl md:text-3xl font-bold uppercase tracking-wide">
+            You May Also Like
+          </h3>
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8">
+            {relatedProducts.map((related) => (
+              <ProductCard
+                key={related.id}
+                item={related}
+                onAddToCart={onAddToCart}
+                wished={wishlistIds.includes(related.id)}
+                onToggleWishlist={onToggleWishlist}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       {infoTab && (
         <ProductInfoDrawer

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ShopItem } from '../types';
 import { useShopFilters } from '../hooks/useShopFilters';
+import { useShopActions } from '../hooks/useCart';
+import { useWishlistIds } from '../hooks/useWishlist';
 import { ShopSidebar } from '../components/shop/ShopSidebar';
 import { ShopToolbar } from '../components/shop/ShopToolbar';
 import { SearchBar } from '../components/shop/SearchBar';
@@ -8,14 +9,10 @@ import { ProductGrid } from '../components/shop/ProductGrid';
 import { JoinCircleModal } from '../components/shop/JoinCircleModal';
 import { SEO } from '../components/SEO';
 
-interface ShopPageProps {
-  onAddToCart: (item: ShopItem) => void;
-  wishlistIds: Set<string>;
-  onToggleWishlist: (item: ShopItem) => void;
-}
-
-export const ShopPage: React.FC<ShopPageProps> = ({ onAddToCart, wishlistIds, onToggleWishlist }) => {
+export const ShopPage: React.FC = () => {
   const filters = useShopFilters();
+  const { onAddToCart, onToggleWishlist } = useShopActions();
+  const wishlistIds = useWishlistIds();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showJoinModal, setShowJoinModal] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);

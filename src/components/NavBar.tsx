@@ -10,13 +10,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { useCartCount } from '../hooks/useCart';
+import { useWishlistIds } from '../hooks/useWishlist';
+import { useUserRole } from '../hooks/useAuth';
+import { useLogout } from '../hooks/useAuth';
+import { useToken } from '../lib/useToken';
 
 interface NavBarProps {
   activeNavTab: string;
-  cartCount?: number;
-  wishlistCount?: number;
-  isLoggedIn?: boolean;
-  onLogout?: () => void;
   className?: string;
 }
 
@@ -27,20 +28,21 @@ const NAV_ITEMS: { label: string; path: string }[] = [
   { label: 'COLLECTIONS', path: '/collections' },
 ];
 
-export const NavBar: React.FC<NavBarProps> = ({
-  activeNavTab,
-  cartCount = 0,
-  wishlistCount = 0,
-  isLoggedIn = false,
-  onLogout,
-  className = '',
-}) => {
+export const NavBar: React.FC<NavBarProps> = ({ activeNavTab, className = '' }) => {
   const navigate = useNavigate();
+  const cartCount = useCartCount();
+  const wishlistIds = useWishlistIds();
+  const token = useToken();
+  const role = useUserRole();
+  const logout = useLogout();
 
   const handleLogout = () => {
-    onLogout?.();
+    logout();
     navigate('/login');
   };
+
+  const isLoggedIn = Boolean(token);
+  const isAdmin = role === 'admin';
 
   return (
     <div className={`flex flex-col md:flex-row md:items-center gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-2 md:gap-y-0 ${className}`}>
@@ -64,47 +66,55 @@ export const NavBar: React.FC<NavBarProps> = ({
       </nav>
 
       <div className="flex items-center justify-end md:justify-start gap-4 w-full md:w-auto md:shrink-0">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
-              title="Profile"
-            >
-              <UserRound className="w-5 h-5 stroke-[2]" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" sideOffset={8}>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
-                <User className="h-4 w-4" />
-                Profile
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
-                <LayoutDashboard className="h-4 w-4" />
-                Dashboard
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
-                <Settings className="h-4 w-4" />
-                Settings
-              </Link>
-            </DropdownMenuItem>
-            {isLoggedIn && (
-              <>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600">
-                  <LogOut className="h-4 w-4" />
-                  Log out
+        {isLoggedIn ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer"
+                title="Profile"
+              >
+                <UserRound className="w-5 h-5 stroke-[2]" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={8}>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
+                  <User className="h-4 w-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              {isAdmin && (
+                <DropdownMenuItem asChild>
+                  <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
+                    <LayoutDashboard className="h-4 w-4" />
+                    Dashboard
+                  </Link>
                 </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              )}
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-red-600 focus:text-red-600">
+                <LogOut className="h-4 w-4" />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Link
+            to="/login"
+            className="relative pb-2 hover:opacity-60 transition-opacity cursor-pointer font-mono text-xs tracking-widest uppercase font-bold"
+            title="Sign in"
+          >
+            SIGN IN
+          </Link>
+        )}
 
         <Link
           to="/wishlist"
@@ -112,9 +122,9 @@ export const NavBar: React.FC<NavBarProps> = ({
           title="Wishlist"
         >
           <Heart className="w-5 h-5 stroke-[2]" />
-          {wishlistCount > 0 && (
+          {wishlistIds.length > 0 && (
             <span className="absolute top-0 -right-1 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-              {wishlistCount}
+              {wishlistIds.length}
             </span>
           )}
         </Link>

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import {
   Home,
   Inbox,
@@ -9,6 +9,7 @@ import {
   Package,
   CreditCard,
   Plus,
+  Tags,
   User2,
   ChevronUp,
   LogOut,
@@ -19,7 +20,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -42,6 +42,7 @@ import AddProduct from "./forms/AddProduct"
 import AddCategory from "./forms/AddCategory"
 import AddUser from "./forms/AddUser"
 import AddOrder from "./forms/AddOrder"
+import { useMe, useLogout } from "../../hooks/useAuth"
 
 const applicationItems = [
   { title: "Home", url: "/admin", icon: Home },
@@ -64,6 +65,16 @@ const orderItems = [
 ]
 
 export function AppSidebar() {
+  const { data: me } = useMe()
+  const name = me?.name || "Omar Adel"
+  const navigate = useNavigate()
+  const logout = useLogout()
+
+  const handleLogout = () => {
+    logout()
+    navigate("/login")
+  }
+
   return (
     <Sidebar side="left" collapsible="icon">
       <SidebarHeader className="py-4">
@@ -78,7 +89,7 @@ export function AppSidebar() {
                   height={20}
                   className="rounded-full"
                 />
-                <span>Omar Adel</span>
+                <span>{name}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -109,10 +120,6 @@ export function AppSidebar() {
         {/* Products */}
         <SidebarGroup>
           <SidebarGroupLabel>Products</SidebarGroupLabel>
-          <SidebarGroupAction title="Add Product">
-            <Plus />
-            <span className="sr-only">Add Product</span>
-          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
               {productItems.map((item) => (
@@ -137,6 +144,14 @@ export function AppSidebar() {
                 </Sheet>
               </SidebarMenuItem>
               <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link to="/admin/categories">
+                    <Tags className="h-4 w-4" />
+                    <span>See All Categories</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
                 <Sheet>
                   <SheetTrigger asChild>
                     <SidebarMenuButton>
@@ -154,10 +169,6 @@ export function AppSidebar() {
         {/* Users */}
         <SidebarGroup>
           <SidebarGroupLabel>Users</SidebarGroupLabel>
-          <SidebarGroupAction title="Add User">
-            <Plus />
-            <span className="sr-only">Add User</span>
-          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
               {userItems.map((item) => (
@@ -188,10 +199,6 @@ export function AppSidebar() {
         {/* Orders / Payments */}
         <SidebarGroup>
           <SidebarGroupLabel>Orders / Payments</SidebarGroupLabel>
-          <SidebarGroupAction title="Add Order">
-            <Plus />
-            <span className="sr-only">Add Order</span>
-          </SidebarGroupAction>
           <SidebarGroupContent>
             <SidebarMenu>
               {orderItems.map((item) => (
@@ -228,23 +235,30 @@ export function AppSidebar() {
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
                   <User2 className="h-4 w-4" />
-                  <span>Omar Adel</span>
+                  <span>{name}</span>
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" className="w-[--radix-dropdown-menu-trigger-width]">
+              <DropdownMenuContent side="top" align="end" sideOffset={8} className="w-[--radix-dropdown-menu-trigger-width]">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User2 className="mr-2 h-4 w-4" />
-                  Profile
+                <DropdownMenuItem asChild>
+                  <Link to="/profile">
+                    <User2 className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
+                <DropdownMenuItem asChild>
+                  <Link to="/profile">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleLogout}
+                  className="text-red-600 focus:text-red-600"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>

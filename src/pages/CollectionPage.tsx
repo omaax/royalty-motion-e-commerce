@@ -1,25 +1,18 @@
 import { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Sparkles } from 'lucide-react';
-import { ShopItem } from '../types';
 import { COLLECTION_ITEMS } from '../data/pageData';
 import { COLLECTION_PRODUCTS } from '../data/shopData';
 import { ProductCard } from '../components/shop/ProductCard';
 import { MotionLink } from '../components/MotionButton';
 import { SEO } from '../components/SEO';
+import { useShopActions } from '../hooks/useCart';
+import { useWishlistIds } from '../hooks/useWishlist';
 
-interface CollectionPageProps {
-  onAddToCart: (item: ShopItem) => void;
-  wishlistIds: Set<string>;
-  onToggleWishlist: (item: ShopItem) => void;
-}
-
-export const CollectionPage: React.FC<CollectionPageProps> = ({
-  onAddToCart,
-  wishlistIds,
-  onToggleWishlist,
-}) => {
+export const CollectionPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { onAddToCart, onToggleWishlist } = useShopActions();
+  const wishlistIds = useWishlistIds();
 
   const collection = useMemo(
     () => COLLECTION_ITEMS.find((c) => c.id === id) ?? null,
@@ -107,7 +100,7 @@ export const CollectionPage: React.FC<CollectionPageProps> = ({
               key={item.id}
               item={item}
               onAddToCart={onAddToCart}
-              wished={wishlistIds.has(item.id)}
+              wished={wishlistIds.includes(item.id)}
               onToggleWishlist={onToggleWishlist}
             />
           ))}

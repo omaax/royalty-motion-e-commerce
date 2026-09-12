@@ -15,6 +15,10 @@ export interface AuthFormValues {
 interface AuthFormProps {
   mode: AuthMode;
   onSubmit?: (values: AuthFormValues) => void;
+  loading?: boolean;
+  serverErrors?: Record<string, string>;
+  banner?: string | null;
+  onClearServerError?: (field: string) => void;
 }
 
 const loginSchema = z.object({
@@ -37,26 +41,37 @@ const signupSchema = z
 const inputClass =
   'w-full px-4 py-3 border text-xs font-mono tracking-widest uppercase focus:outline-none';
 
-export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit }) => {
+export const AuthForm: React.FC<AuthFormProps> = ({
+  mode,
+  onSubmit,
+  loading,
+  serverErrors,
+  banner,
+  onClearServerError,
+}) => {
   const isSignup = mode === 'signup';
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [localErrors, setLocalErrors] = useState<Record<string, string>>({});
+
+  const errors = { ...localErrors, ...(serverErrors ?? {}) };
 
   const clearError = (field: string) => {
-    setErrors((prev) => {
+    setLocalErrors((prev) => {
       if (!(field in prev)) return prev;
       const next = { ...prev };
       delete next[field];
       return next;
     });
+    onClearServerError?.(field);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors({});
+    setLocalErrors({});
+    onClearServerError?.('__banner__');
 
     const schema = isSignup ? signupSchema : loginSchema;
     const result = schema.safeParse({ name, email, password, confirm });
@@ -69,7 +84,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit }) => {
           fieldErrors[path] = issue.message;
         }
       }
-      setErrors(fieldErrors);
+      setLocalErrors(fieldErrors);
       return;
     }
 
@@ -91,6 +106,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit }) => {
             <input
               type="text"
               placeholder="FULL NAME"
+              autoFocus={Boolean(errors.name)}
               className={`${inputClass} ${errors.name ? 'border-red-700 focus:border-red-700' : 'border-gray-300 focus:border-black'}`}
               value={name}
               onChange={(e) => { setName(e.target.value); clearError('name'); }}
@@ -108,6 +124,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit }) => {
         <input
           type="email"
           placeholder="EMAIL ADDRESS"
+          autoFocus={!isSignup && Boolean(errors.email)}
           className={`${inputClass} ${errors.email ? 'border-red-700 focus:border-red-700' : 'border-gray-300 focus:border-black'}`}
           value={email}
           onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
@@ -123,6 +140,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit }) => {
         <input
           type="password"
           placeholder="PASSWORD"
+          autoFocus={!isSignup && Boolean(errors.password)}
           className={`${inputClass} ${errors.password ? 'border-red-700 focus:border-red-700' : 'border-gray-300 focus:border-black'}`}
           value={password}
           onChange={(e) => { setPassword(e.target.value); clearError('password'); }}
@@ -147,6 +165,7 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit }) => {
             <input
               type="password"
               placeholder="CONFIRM PASSWORD"
+              autoFocus={Boolean(errors.confirm)}
               className={`${inputClass} ${errors.confirm ? 'border-red-700 focus:border-red-700' : 'border-gray-300 focus:border-black'}`}
               value={confirm}
               onChange={(e) => { setConfirm(e.target.value); clearError('confirm'); }}
@@ -160,9 +179,20 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit }) => {
         )}
       </AnimatePresence>
 
+      {banner && !errors.__banner__ && (
+        <p className="text-[10px] font-mono tracking-widest uppercase font-bold text-red-700 border border-red-700/30 bg-red-50 px-3 py-2">
+          {banner}
+        </p>
+      )}
+
       <div className="flex justify-center">
-        <MotionButton type="submit" variant="solid" className="font-mono text-xs tracking-widest uppercase px-6 py-3">
-          <span>{isSignup ? 'CREATE ACCOUNT' : 'SIGN IN'}</span>
+        <MotionButton
+          type="submit"
+          variant="solid"
+          disabled={loading}
+          className="font-mono text-xs tracking-widest uppercase px-6 py-3"
+        >
+          <span>{loading ? 'PLEASE WAIT…' : isSignup ? 'CREATE ACCOUNT' : 'SIGN IN'}</span>
           <ArrowRight className="w-4 h-4" />
         </MotionButton>
       </div>

@@ -7,7 +7,7 @@ interface ProductGridProps {
   gridCols: GridCols;
   onAddToCart: (item: ShopItem) => void;
   onResetFilters: () => void;
-  wishlistIds?: Set<string>;
+  wishlistIds?: Set<string> | string[];
   onToggleWishlist?: (item: ShopItem) => void;
 }
 
@@ -19,6 +19,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   wishlistIds,
   onToggleWishlist,
 }) => {
+  const wishedIds = wishlistIds instanceof Set ? wishlistIds : new Set<string>(wishlistIds ?? []);
   if (items.length === 0) {
     return (
       <div className="py-24 text-center space-y-4 border border-dashed border-gray-200">
@@ -50,7 +51,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
           key={item.id}
           item={item}
           onAddToCart={onAddToCart}
-          wished={wishlistIds?.has(item.id)}
+          wished={wishedIds.has(item.id)}
           onToggleWishlist={onToggleWishlist}
           priority={index === 0}
         />

@@ -2,7 +2,7 @@ import React from 'react';
 import { Plus, Sparkles, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopItem } from '../../types';
-import { COLOR_HEX } from '../../constants/shop';
+import { colorHex, formatPrice, normalizeColorName } from '../../api/mappers';
 import { MotionButton } from '../MotionButton';
 import { getOptimizedImage } from '../../utils/imageOptimize';
 
@@ -93,17 +93,24 @@ export const ProductCard: React.FC<ProductCardProps> = React.memo(({ item, onAdd
             {item.title}
           </Link>
           <div className="font-mono text-xs font-bold text-black">
-            ${item.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            <span className="inline-flex items-baseline gap-1.5">
+              <span>{formatPrice(item.price)}</span>
+              {item.originalPrice != null && item.originalPrice > 0 && (
+                <span className="text-[10px] font-normal text-gray-400 line-through">
+                  {formatPrice(item.originalPrice)}
+                </span>
+              )}
+            </span>
           </div>
           {item.colors.length > 0 && (
             <div className="flex items-center gap-1.5 pt-1">
               {item.colors.map((color) => (
                 <span
                   key={color}
-                  title={color}
-                  style={{ backgroundColor: COLOR_HEX[color] }}
-                  className={`w-3 h-3 rounded-full inline-block ${
-                    color === 'White' ? 'border border-gray-300' : 'border border-black/10'
+                  title={normalizeColorName(color)}
+                  style={{ backgroundColor: colorHex(color) }}
+                  className={`w-3 h-3 rounded-full inline-block border border-black/10 ${
+                    color.trim().toLowerCase() === 'white' ? 'border border-gray-300' : ''
                   }`}
                 />
               ))}

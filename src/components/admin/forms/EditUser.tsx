@@ -5,16 +5,21 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone is required"),
-  address: z.string().min(1, "Address is required"),
-  city: z.string().min(1, "City is required"),
+  role: z.enum(["user", "admin"]),
 });
 
-type EditUserFormValues = z.infer<typeof formSchema>;
+export type EditUserFormValues = z.infer<typeof formSchema>;
 
 interface EditUserProps {
   defaultValues?: Partial<EditUserFormValues>;
@@ -27,9 +32,7 @@ export default function EditUser({ defaultValues, onSubmit }: EditUserProps) {
     defaultValues: {
       name: defaultValues?.name ?? "",
       email: defaultValues?.email ?? "",
-      phone: defaultValues?.phone ?? "",
-      address: defaultValues?.address ?? "",
-      city: defaultValues?.city ?? "",
+      role: defaultValues?.role ?? "user",
     },
   });
 
@@ -76,41 +79,21 @@ export default function EditUser({ defaultValues, onSubmit }: EditUserProps) {
 
           <FormField
             control={form.control}
-            name="phone"
+            name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Phone</FormLabel>
-                <FormControl>
-                  <Input placeholder="+1 (555) 000-0000" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Street address" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="city"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>City</FormLabel>
-                <FormControl>
-                  <Input placeholder="City" {...field} />
-                </FormControl>
+                <FormLabel>Role</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="admin">Admin</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

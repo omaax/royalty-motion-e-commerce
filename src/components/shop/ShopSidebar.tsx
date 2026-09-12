@@ -5,6 +5,7 @@ import { PriceRangeFilter } from './PriceRangeFilter';
 import { ColorFilter } from './ColorFilter';
 import { JoinCircleBox } from './JoinCircleBox';
 import { useShopFilters } from '../../hooks/useShopFilters';
+import { useCategories } from '../../hooks/useCategories';
 
 interface ShopSidebarProps {
   filters: ReturnType<typeof useShopFilters>;
@@ -14,6 +15,8 @@ interface ShopSidebarProps {
 export const ShopSidebar: React.FC<ShopSidebarProps> = ({ filters, onOpenJoinModal }) => {
   const isDesktop = typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches;
   const [filtersCollapsed, setFiltersCollapsed] = useState(!isDesktop);
+  const { data: apiCategories = [] } = useCategories();
+  const categoryNames = apiCategories.map((category) => category.name);
   const {
     categoryCounts,
     colorCounts,
@@ -80,6 +83,7 @@ export const ShopSidebar: React.FC<ShopSidebarProps> = ({ filters, onOpenJoinMod
               selectedCategory={selectedCategory}
               onSelect={selectCategory}
               counts={categoryCounts}
+              categories={categoryNames}
             />
 
             <PriceRangeFilter

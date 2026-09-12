@@ -1,22 +1,50 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link, Navigate } from 'react-router-dom';
 import { SEO } from '../../components/SEO';
 import { APP_NAME } from '../../constants/branding';
-import { UserProfile } from '../../types';
+import { useLogin } from '../../hooks/useAuth';
+import { useToken } from '../../lib/useToken';
+import { getErrorInfo } from '../../api/client';
 import { AuthForm, AuthFormValues } from './AuthForm';
 
-interface LoginPageProps {
-  onLogin?: (session: UserProfile) => void;
-}
+export const LoginPage: React.FC = () => {
+  const login = useLogin();
+  const token = useToken();
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
+  const [banner, setBanner] = useState<string | null>(null);
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
-  const navigate = useNavigate();
+  if (token) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleSubmit = (values: AuthFormValues) => {
-    onLogin?.({ name: '', email: values.email, address: '' });
-    navigate('/');
+    setServerErrors({});
+    setBanner(null);
+    login.mutate(
+      { email: values.email, password: values.password },
+      {
+        onError: (error) => {
+          const info = getErrorInfo(error);
+          if (info.fieldErrors && Object.keys(info.fieldErrors).length) {
+            setServerErrors(info.fieldErrors);
+          } else {
+            setBanner(info.message);
+          }
+        },
+      }
+    );
   };
+
+  const clearServerError = (field: string) => {
+    if (field === '__banner__') setBanner(null);
+    setServerErrors((prev) => {
+      if (!(field in prev)) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
   return (
     <main className="min-h-screen bg-white text-black font-jakarta flex flex-col">
       <SEO
@@ -44,7 +72,14 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
             </p>
           </div>
 
-          <AuthForm mode="login" onSubmit={handleSubmit} />
+          <AuthForm
+            mode="login"
+            onSubmit={handleSubmit}
+            loading={login.isPending}
+            serverErrors={serverErrors}
+            banner={banner}
+            onClearServerError={clearServerError}
+          />
 
           <p className="pt-6 text-[10px] font-mono tracking-widest uppercase font-bold text-gray-400">
             New member?{' '}
